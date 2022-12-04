@@ -1,7 +1,7 @@
 package com.uber.app.team23.AirRide.model.rideData;
 
 import com.uber.app.team23.AirRide.model.users.Passenger;
-import jakarta.persistence.*;
+//import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

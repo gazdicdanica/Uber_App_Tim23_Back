@@ -3,7 +3,7 @@ package com.uber.app.team23.AirRide.model.rideData;
 import com.uber.app.team23.AirRide.model.messageData.Rejection;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
-import jakarta.persistence.*;
+//import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +13,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 //@Entity
-//@Table(name = "Rides") @Getter
+//@Table(name = "Rides")
+@Getter
 @Setter
 @NoArgsConstructor
 public class Ride {

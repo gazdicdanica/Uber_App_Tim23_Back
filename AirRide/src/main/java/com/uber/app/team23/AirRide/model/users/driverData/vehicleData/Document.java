@@ -1,7 +1,7 @@
 package com.uber.app.team23.AirRide.model.users.driverData.vehicleData;
 
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
-import jakarta.persistence.*;
+//import jakarta.persistence.*;
 
 //@Entity @Table(name = "documents")
 public class Document {
