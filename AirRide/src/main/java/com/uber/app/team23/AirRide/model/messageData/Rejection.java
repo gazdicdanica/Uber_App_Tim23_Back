@@ -3,6 +3,7 @@ package com.uber.app.team23.AirRide.model.messageData;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.users.User;
 //import jakarta.persistence.*;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,3 +27,4 @@ public class Rejection {
 //    @Column(name = "time")
     public LocalDateTime time;
 }
+
