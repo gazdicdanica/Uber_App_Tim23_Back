@@ -1,5 +1,6 @@
 package com.uber.app.team23.AirRide.controller;
 
+import com.uber.app.team23.AirRide.dto.PassengerDTO;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.service.PassengerService;
@@ -23,7 +24,7 @@ public class PassengerController {
 
     @GetMapping(value ={"/{id}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Passenger> getPassenger(@PathVariable("id") Long id){
-        Passenger p = new Passenger();
+        Passenger p = passengerService.get(id);
 
         if (p == null){
             return new ResponseEntity<Passenger>(HttpStatus.NOT_FOUND);
@@ -49,20 +50,21 @@ public class PassengerController {
         return null;
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Passenger> createPassenger(@RequestBody Passenger passenger){
-        //TODO GENERATE PASSENGER
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Passenger> createPassenger(){
         Passenger p = new Passenger();
-        return new ResponseEntity<Passenger>(p, HttpStatus.CREATED);
+        Passenger createdPassenger = passengerService.create(p);
+        return new ResponseEntity<>(createdPassenger, HttpStatus.CREATED);
     }
 
-    @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Passenger> updatePassenger(@RequestBody Passenger passenger, @PathVariable Long id){
-        Passenger p = new Passenger();
+        Passenger p = passengerService.get(id);
 
         if (p == null){
             return new ResponseEntity<Passenger>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        //TODO Actually update p
 
         return new ResponseEntity<Passenger>(p, HttpStatus.OK);
     }
