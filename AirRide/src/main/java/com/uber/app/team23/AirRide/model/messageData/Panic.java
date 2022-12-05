@@ -5,6 +5,7 @@ import com.uber.app.team23.AirRide.model.users.User;
 
 import java.time.LocalDateTime;
 
+
 public class Panic {
     public User user;
     public Ride currentRide;
