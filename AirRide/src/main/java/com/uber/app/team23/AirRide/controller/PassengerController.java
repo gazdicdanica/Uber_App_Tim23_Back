@@ -23,14 +23,14 @@ public class PassengerController {
 
 
     @GetMapping(value ={"/{id}"}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Passenger> getPassenger(@PathVariable("id") Long id){
+    public ResponseEntity<PassengerDTO> getPassenger(@PathVariable("id") Long id){
         Passenger p = passengerService.get(id);
 
         if (p == null){
-            return new ResponseEntity<Passenger>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<Passenger>(p, HttpStatus.OK);
+        return new ResponseEntity<>(new PassengerDTO(p), HttpStatus.OK);
 
     }
 
@@ -51,10 +51,12 @@ public class PassengerController {
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Passenger> createPassenger(){
+    public ResponseEntity<PassengerDTO> createPassenger(){
         Passenger p = new Passenger();
+        p.setId((long)1);
         Passenger createdPassenger = passengerService.create(p);
-        return new ResponseEntity<>(createdPassenger, HttpStatus.CREATED);
+
+        return new ResponseEntity<>(new PassengerDTO(createdPassenger), HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
