@@ -1,5 +1,6 @@
 package com.uber.app.team23.AirRide.model.rideData;
 
+
 //import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ public class Location {
 //    @Column(name = "latitude", nullable = false)
     public double latitude;
 //    @Column(name = "name")
+
     public String name;
 
     public Location(Long id, double longitude, double latitude, String name) {
@@ -26,4 +28,6 @@ public class Location {
         this.latitude = latitude;
         this.name = name;
     }
+
 }
+

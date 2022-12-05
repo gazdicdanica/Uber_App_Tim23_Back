@@ -1,6 +1,8 @@
 package com.uber.app.team23.AirRide.model.rideData;
 
+
 //import jakarta.persistence.*;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,6 +20,7 @@ public class Route {
 //    @OneToOne(fetch = FetchType.LAZY)
     public Location endLocation;
 //    @Column(name = "distance")
+
     public double distance;
 
     public Route(Long id, Location startLocation, Location endLocation, double distance) {
