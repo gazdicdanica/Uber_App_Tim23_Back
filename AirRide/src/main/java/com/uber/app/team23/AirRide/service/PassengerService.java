@@ -10,25 +10,16 @@ import java.util.List;
 public class PassengerService {
     List<Passenger> passengers = new ArrayList<Passenger>();
 
-    public Passenger get(Long id){
-        for(Passenger p : passengers){
-            if (p.getId().equals(id))
-                return p;
-        }
-        return null;
-    }
-
-    public List<Passenger> getAll(){
-        passengers.add(new Passenger((long)1, "Pera", "Peric", "1234", "+381123123", "pera.peric@email.com", "Bulevar", "123", false, true, null, null));
-        passengers.add(new Passenger((long)2, "Pera", "Peric", "1234", "+381123123", "pera.peric@email.com", "Bulevar", "123", false, true, null, null));
-        passengers.add(new Passenger((long)3, "Pera", "Peric", "1234", "+381123123", "pera.peric@email.com", "Bulevar", "123", false, true, null, null));
-        passengers.add(new Passenger((long)4, "Pera", "Peric", "1234", "+381123123", "pera.peric@email.com", "Bulevar", "123", false, true, null, null));
-        return passengers;
-    }
-
-    public Passenger create(Passenger passenger){
-        //TODO persist data
-        passengers.add(passenger);
-        return passenger;
+    public Passenger getMockPassenger(){
+        Passenger p = new Passenger();
+        p.setId((long)1);
+        p.setName("Pera");
+        p.setLastName("Peric");
+        p.setPassword("sifra123");
+        p.setAddress("Bulevar Oslobodjenja 47");
+        p.setPhoneNumber("+381123123");
+        p.setProfilePhoto("profilna");
+        p.setEmail("test@email.com");
+        return p;
     }
 }

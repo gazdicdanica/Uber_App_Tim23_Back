@@ -24,13 +24,7 @@ public class PassengerController {
 
     @GetMapping(value ={"/{id}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PassengerDTO> getPassenger(@PathVariable("id") Long id){
-        Passenger p = passengerService.get(id);
-//
-//        if (p == null){
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-
-        return new ResponseEntity<>(new PassengerDTO(p), HttpStatus.OK);
+        return new ResponseEntity<>(new PassengerDTO(passengerService.getMockPassenger()), HttpStatus.OK);
 
     }
 
@@ -52,18 +46,7 @@ public class PassengerController {
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PassengerDTO> createPassenger(@RequestBody PassengerDTO passengerDTO){
-        Passenger p = new Passenger();
-        p.setId((long)1);
-        p.setName(passengerDTO.getName());
-        p.setLastName(passengerDTO.getLastName());
-        p.setPassword(passengerDTO.getPassword());
-        p.setAddress(passengerDTO.getAddress());
-        p.setPhoneNumber(passengerDTO.getPhoneNumber());
-        p.setProfilePhoto(passengerDTO.getProfilePhoto());
-        p.setEmail(passengerDTO.getEmail());
-//        p = passengerService.create(p);
-
-        return new ResponseEntity<>(new PassengerDTO(p), HttpStatus.CREATED);
+        return new ResponseEntity<>(new PassengerDTO(passengerService.getMockPassenger()), HttpStatus.CREATED);
     }
 
     @PostMapping("/{activationId}")
@@ -73,24 +56,8 @@ public class PassengerController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PassengerDTO> updatePassenger(@RequestBody PassengerDTO passengerDTO, @PathVariable Long id){
-//        Passenger p = passengerService.get(id);
-        passengerDTO.setId(1);
-        Passenger p = new Passenger();
 
-//        if (p == null){
-//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-        //TODO Actually update p
-        p.setId((long)passengerDTO.getId());
-        p.setName(passengerDTO.getName());
-        p.setLastName(passengerDTO.getLastName());
-        p.setPassword(passengerDTO.getPassword());
-        p.setAddress(passengerDTO.getAddress());
-        p.setPhoneNumber(passengerDTO.getPhoneNumber());
-        p.setProfilePhoto(passengerDTO.getProfilePhoto());
-        p.setEmail(passengerDTO.getEmail());
-
-        return new ResponseEntity<>(new PassengerDTO(p), HttpStatus.OK);
+        return new ResponseEntity<>(new PassengerDTO(passengerService.getMockPassenger()), HttpStatus.OK);
     }
 
 
