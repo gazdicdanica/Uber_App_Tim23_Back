@@ -1,5 +1,6 @@
 package com.uber.app.team23.AirRide.dto;
 
+import com.uber.app.team23.AirRide.model.messageData.Rejection;
 import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.rideData.RideStatus;
@@ -25,11 +26,12 @@ public class RideResponseDTO {
     private boolean babyTransport;
     private boolean petTransport;
     private RideStatus status;
+    private Rejection rejection;
 
     public RideResponseDTO(Ride ride, ArrayList<Location> locations, ArrayList<PassengerRideDTO> passengers){
         this(ride.getStart(), ride.getEnd(), ride.getTotalPrice(),null, ride.getTimeEstimate(),
                 null, null, ride.getVehicle().getVehicleType().getType(), ride.isBabies(),
-                ride.isPets(), ride.getRideStatus());
+                ride.isPets(), ride.getRideStatus(), ride.getRejection());
         this.driverDTO = new DriverRideDTO(ride.getDriver().getId().intValue(), ride.getDriver().getEmail());
         this.locations = locations;
         this.passengers = passengers;
@@ -37,7 +39,8 @@ public class RideResponseDTO {
     }
 
     public RideResponseDTO(LocalDateTime startTime, LocalDateTime endTime, double totalCost, DriverRideDTO driverDTO,
-                           int estimatedTimeInMinutes, ArrayList<Location> locations, ArrayList<PassengerRideDTO> passengers, VehicleEnum vehicleType, boolean babyTransport, boolean petTransport, RideStatus status) {
+                           int estimatedTimeInMinutes, ArrayList<Location> locations, ArrayList<PassengerRideDTO> passengers,
+                           VehicleEnum vehicleType, boolean babyTransport, boolean petTransport, RideStatus status, Rejection rejection) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.totalCost = totalCost;
@@ -49,5 +52,6 @@ public class RideResponseDTO {
         this.babyTransport = babyTransport;
         this.petTransport = petTransport;
         this.status = status;
+        this.rejection = rejection;
     }
 }
