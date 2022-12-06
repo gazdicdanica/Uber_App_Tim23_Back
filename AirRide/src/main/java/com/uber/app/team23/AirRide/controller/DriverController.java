@@ -10,6 +10,7 @@ import com.uber.app.team23.AirRide.model.users.driverData.WorkingHours;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
 import com.uber.app.team23.AirRide.service.DriverService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -58,9 +59,9 @@ public class DriverController {
     }
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}")
-    public ResponseEntity<DriverDTO> updateDriver(@RequestBody DriverDTO driverDTO) {
+    public ResponseEntity<DriverDTO> updateDriver(@RequestBody DriverDTO driverDTO, @PathVariable Integer id) {
         Driver driver = new Driver();
-        driver.setId((long)driverDTO.getId());
+        driver.setId((long) id);
         driver.setName(driverDTO.getName());
         driver.setLastName(driverDTO.getSurname());
         driver.setProfilePhoto(driverDTO.getProfilePicture());
@@ -90,12 +91,12 @@ public class DriverController {
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/documents")
-    public ResponseEntity<DriverDocumentsDTO> addDriverDocuments(@RequestBody DriverDocumentsDTO documentsDTO) {
+    public ResponseEntity<DriverDocumentsDTO> addDriverDocuments(@RequestBody DriverDocumentsDTO documentsDTO, @PathVariable Integer id) {
         DriverDocumentsDTO driverDocumentsDTO = new DriverDocumentsDTO();
         driverDocumentsDTO.setId((long) 123);
         driverDocumentsDTO.setName(documentsDTO.getName());
         driverDocumentsDTO.setDocumentImage(documentsDTO.getDocumentImage());
-        driverDocumentsDTO.setDriverId(documentsDTO.getDriverId());
+        driverDocumentsDTO.setDriverId((long) id);
 
         return new ResponseEntity<>(driverDocumentsDTO, HttpStatus.OK);
     }
@@ -117,7 +118,7 @@ public class DriverController {
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/vehicle")
-    public ResponseEntity<VehicleDTO> addVehicleTODriver(@PathVariable Integer id, @RequestBody VehicleDTO vehicleDTO) {
+    public ResponseEntity<VehicleDTO> addVehicleToDriver(@PathVariable Integer id, @RequestBody VehicleDTO vehicleDTO) {
         VehicleDTO vehicle = new VehicleDTO();
         vehicle.setId((long) 12);
         vehicle.setDriverId((long) id);
@@ -157,5 +158,30 @@ public class DriverController {
         workingHoursDTO.updateWorkingHours(wh2);
 
         return new ResponseEntity<>(workingHoursDTO, HttpStatus.OK);
+    }
+
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/working-hours")
+    public ResponseEntity<DriverWorkingHoursDTO> updateDriverWorkingHours(@PathVariable Integer id) {
+        // Time generated when driver logged
+        LocalDateTime startShift = LocalDateTime.now().minusHours(3);
+        // Time generated when driver finished shift
+        LocalDateTime endShift = LocalDateTime.now();
+        WorkingHours wh = new WorkingHours(startShift, endShift, (long) 1);
+        DriverWorkingHoursDTO whDTO = new DriverWorkingHoursDTO();
+        whDTO.updateWorkingHours(wh);
+
+        return new ResponseEntity<>(whDTO, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/working-hour/{id}")
+    public ResponseEntity<WorkingHours> getOneWorkingHour(@PathVariable Integer id) {
+        return new ResponseEntity<>(new WorkingHours(LocalDateTime.now(), LocalDateTime.now().plusHours(2), (long) id), HttpStatus.OK);
+    }
+
+    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/working-hour/{id}")
+    public ResponseEntity<WorkingHours> updateWorkingHours(@PathVariable Integer id) {
+        WorkingHours wh = new WorkingHours(LocalDateTime.now().minusHours(4), LocalDateTime.now().minusHours(2), (long) id);
+        wh.setEnd(LocalDateTime.now());
+        return new ResponseEntity<>(wh, HttpStatus.OK);
     }
 }
