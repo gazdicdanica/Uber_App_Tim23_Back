@@ -25,10 +25,10 @@ public class PassengerController {
     @GetMapping(value ={"/{id}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PassengerDTO> getPassenger(@PathVariable("id") Long id){
         Passenger p = passengerService.get(id);
-
-        if (p == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+//
+//        if (p == null){
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
 
         return new ResponseEntity<>(new PassengerDTO(p), HttpStatus.OK);
 
@@ -61,7 +61,7 @@ public class PassengerController {
         p.setPhoneNumber(passengerDTO.getPhoneNumber());
         p.setProfilePhoto(passengerDTO.getProfilePhoto());
         p.setEmail(passengerDTO.getEmail());
-        p = passengerService.create(p);
+//        p = passengerService.create(p);
 
         return new ResponseEntity<>(new PassengerDTO(p), HttpStatus.CREATED);
     }

@@ -16,7 +16,7 @@ import java.util.HashSet;
 @Getter @Setter
 public class RideDTO {
     private ArrayList<Location> locations = new ArrayList<>();
-    private ArrayList<PassengerRideDTO> passengers = new ArrayList<>();
+    private ArrayList<UserRideDTO> passengers = new ArrayList<>();
     private VehicleEnum vehicleType;
     private boolean babyTransport;
     private boolean petTransport;
@@ -27,7 +27,7 @@ public class RideDTO {
             locations.add(route.startLocation);
         }
         for(Passenger p : ride.getPassengers()){
-            passengers.add(new PassengerRideDTO(p));
+            passengers.add(new UserRideDTO(p));
         }
 
         this.vehicleType = ride.getVehicle().getVehicleType().getType();
@@ -36,7 +36,7 @@ public class RideDTO {
 
     }
 
-    public RideDTO(ArrayList<Location> locations, ArrayList<PassengerRideDTO> passengers, VehicleEnum vehicleType, boolean babyTransport, boolean petTransport) {
+    public RideDTO(ArrayList<Location> locations, ArrayList<UserRideDTO> passengers, VehicleEnum vehicleType, boolean babyTransport, boolean petTransport) {
         this.locations = locations;
         this.passengers = passengers;
         this.vehicleType = vehicleType;

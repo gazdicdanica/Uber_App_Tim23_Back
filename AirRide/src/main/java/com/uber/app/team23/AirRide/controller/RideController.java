@@ -1,9 +1,6 @@
 package com.uber.app.team23.AirRide.controller;
 
-import com.uber.app.team23.AirRide.dto.PanicDTO;
-import com.uber.app.team23.AirRide.dto.PassengerRideDTO;
-import com.uber.app.team23.AirRide.dto.RideDTO;
-import com.uber.app.team23.AirRide.dto.RideResponseDTO;
+import com.uber.app.team23.AirRide.dto.*;
 import com.uber.app.team23.AirRide.model.messageData.Panic;
 import com.uber.app.team23.AirRide.model.messageData.Rejection;
 import com.uber.app.team23.AirRide.model.rideData.Location;
@@ -15,8 +12,6 @@ import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -57,9 +52,9 @@ public class RideController {
         d.setId(driverId);
         d.setEmail("test@gmail.com");
         r.setDriver(d);
-        ArrayList<PassengerRideDTO> passengers= new ArrayList<>();
-        passengers.add(new PassengerRideDTO(1, "email"));
-        passengers.add(new PassengerRideDTO(2, "email"));
+        ArrayList<UserRideDTO> passengers= new ArrayList<>();
+        passengers.add(new UserRideDTO(1, "email"));
+        passengers.add(new UserRideDTO(2, "email"));
         Vehicle v = new Vehicle();
         v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARD, 123));
         r.setVehicle(v);
@@ -78,8 +73,8 @@ public class RideController {
         d.setId((long)1);
         d.setEmail("test@gmail.com");
         r.setDriver(d);
-        ArrayList<PassengerRideDTO> passengers= new ArrayList<>();
-        passengers.add(new PassengerRideDTO(passengerId.intValue(), "email"));
+        ArrayList<UserRideDTO> passengers= new ArrayList<>();
+        passengers.add(new UserRideDTO(passengerId.intValue(), "email"));
         Vehicle v = new Vehicle();
         v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARD, 123));
         r.setVehicle(v);
@@ -98,8 +93,8 @@ public class RideController {
         d.setId((long)1);
         d.setEmail("test@gmail.com");
         r.setDriver(d);
-        ArrayList<PassengerRideDTO> passengers= new ArrayList<>();
-        passengers.add(new PassengerRideDTO(1, "email"));
+        ArrayList<UserRideDTO> passengers= new ArrayList<>();
+        passengers.add(new UserRideDTO(1, "email"));
         Vehicle v = new Vehicle();
         v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARD, 123));
         r.setVehicle(v);
@@ -119,8 +114,8 @@ public class RideController {
         d.setId((long)1);
         d.setEmail("test@gmail.com");
         r.setDriver(d);
-        ArrayList<PassengerRideDTO> passengers= new ArrayList<>();
-        passengers.add(new PassengerRideDTO(1, "email"));
+        ArrayList<UserRideDTO> passengers= new ArrayList<>();
+        passengers.add(new UserRideDTO(1, "email"));
         Vehicle v = new Vehicle();
         v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARD, 123));
         r.setVehicle(v);
@@ -151,8 +146,8 @@ public class RideController {
         d.setId((long)1);
         d.setEmail("test@gmail.com");
         r.setDriver(d);
-        ArrayList<PassengerRideDTO> passengers= new ArrayList<>();
-        passengers.add(new PassengerRideDTO(1, "email"));
+        ArrayList<UserRideDTO> passengers= new ArrayList<>();
+        passengers.add(new UserRideDTO(1, "email"));
         Vehicle v = new Vehicle();
         v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARD, 123));
         r.setVehicle(v);
@@ -172,8 +167,8 @@ public class RideController {
         d.setId((long)1);
         d.setEmail("test@gmail.com");
         r.setDriver(d);
-        ArrayList<PassengerRideDTO> passengers= new ArrayList<>();
-        passengers.add(new PassengerRideDTO(1, "email"));
+        ArrayList<UserRideDTO> passengers= new ArrayList<>();
+        passengers.add(new UserRideDTO(1, "email"));
         Vehicle v = new Vehicle();
         v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARD, 123));
         r.setVehicle(v);
@@ -193,8 +188,8 @@ public class RideController {
         d.setId((long)1);
         d.setEmail("test@gmail.com");
         r.setDriver(d);
-        ArrayList<PassengerRideDTO> passengers= new ArrayList<>();
-        passengers.add(new PassengerRideDTO(1, "email"));
+        ArrayList<UserRideDTO> passengers= new ArrayList<>();
+        passengers.add(new UserRideDTO(1, "email"));
         Vehicle v = new Vehicle();
         v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARD, 123));
         r.setVehicle(v);
