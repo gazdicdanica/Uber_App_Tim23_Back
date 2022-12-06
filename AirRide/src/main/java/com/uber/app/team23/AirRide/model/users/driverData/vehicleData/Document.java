@@ -11,7 +11,7 @@ public class Document {
 //    @Column(name = "name")
     public String name;
 //    @Column(name = "photo")
-    public byte[] photo;
+    public String photo;
 //    @OneToOne
 
     public Driver driver;

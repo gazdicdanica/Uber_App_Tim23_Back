@@ -5,7 +5,7 @@ import com.uber.app.team23.AirRide.model.users.Passenger;
 public class PassengerDTO {
     private String name;
     private String lastName;
-    private byte[] profilePhoto;
+    private String profilePhoto;
     private String phoneNumber;
     private String email;
     private String address;
@@ -15,7 +15,7 @@ public class PassengerDTO {
         this(passenger.getName(), passenger.getLastName(), passenger.getProfilePhoto(),
                 passenger.getPhoneNumber(), passenger.getEmail(), passenger.getAddress(), passenger.getPassword());
     }
-    public PassengerDTO(String name, String lastName, byte[] profilePhoto,
+    public PassengerDTO(String name, String lastName, String profilePhoto,
                         String phoneNumber, String email, String address, String password) {
         this.name = name;
         this.lastName = lastName;
