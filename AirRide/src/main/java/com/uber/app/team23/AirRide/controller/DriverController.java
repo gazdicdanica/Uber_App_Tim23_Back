@@ -155,8 +155,8 @@ public class DriverController {
 
     @GetMapping(value = "/{id}/working-hours")
     public ResponseEntity<DriverWorkingHoursDTO> getTotalWorkHours(
-            @PathVariable Integer id, @RequestParam int page, @RequestParam int size, @RequestParam LocalDateTime from,
-            @RequestParam LocalDateTime to) {
+            @PathVariable Integer id, @RequestParam int page, @RequestParam int size, @RequestParam String from,
+            @RequestParam String to) {
 
         WorkingHours wh1 = new WorkingHours(LocalDateTime.now(), LocalDateTime.now().plusHours(2), (long) 1);
         WorkingHours wh2 = new WorkingHours(LocalDateTime.now(), LocalDateTime.now().plusHours(2), (long) 1);
@@ -183,7 +183,7 @@ public class DriverController {
     @GetMapping(value = "/{id}/ride", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DriverWorkingHoursDTO> getRidesSorted(
             @PathVariable Integer id, @RequestParam int page, @RequestParam int size, @RequestParam String sort,
-            @RequestParam LocalDateTime from, @RequestParam LocalDateTime to){
+            @RequestParam String from, @RequestParam String to){
 
         return new ResponseEntity<>(new DriverWorkingHoursDTO(), HttpStatus.OK);
     }

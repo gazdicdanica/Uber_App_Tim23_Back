@@ -26,7 +26,7 @@ public class UserController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user/{id}/ride")
     public ResponseEntity<UserPaginatedDTO> getUserRidesPaginated(
             @PathVariable Integer id, @RequestParam int page, @RequestParam int size, @RequestParam String sort,
-            @RequestParam LocalDateTime from, @RequestParam LocalDateTime to) {
+            @RequestParam String from, @RequestParam String to) {
 
         return new ResponseEntity<>(new UserPaginatedDTO(), HttpStatus.OK);
     }
