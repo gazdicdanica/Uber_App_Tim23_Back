@@ -1,5 +1,6 @@
 package com.uber.app.team23.AirRide.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,11 +9,12 @@ import lombok.Setter;
 public class PassengerDTO {
     private int id;
     private String name;
-    private String lastName;
-    private String profilePhoto;
-    private String phoneNumber;
+    private String surname;
+    private String profilePicture;
+    private String telephoneNumber;
     private String email;
     private String address;
+    @JsonIgnore
     private String password;
 
     public PassengerDTO(Passenger passenger){
@@ -23,9 +25,9 @@ public class PassengerDTO {
                         String phoneNumber, String email, String address) {
         this.id = id;
         this.name = name;
-        this.lastName = lastName;
-        this.profilePhoto = profilePhoto;
-        this.phoneNumber = phoneNumber;
+        this.surname = lastName;
+        this.profilePicture = profilePhoto;
+        this.telephoneNumber = phoneNumber;
         this.email = email;
         this.address = address;
     }

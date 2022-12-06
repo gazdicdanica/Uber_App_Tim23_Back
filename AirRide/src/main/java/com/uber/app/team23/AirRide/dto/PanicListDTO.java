@@ -10,10 +10,10 @@ import java.util.List;
 @Getter @Setter
 public class PanicListDTO {
     private int totalCount;
-    private List<PanicDTO> entries;
+    private List<PanicDTO> results;
 
     public PanicListDTO(List<PanicDTO> panics){
-        this.entries = panics;
+        this.results = panics;
         this.totalCount = panics.size();
     }
 }
