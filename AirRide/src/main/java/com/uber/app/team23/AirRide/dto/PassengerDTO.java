@@ -9,7 +9,7 @@ public class PassengerDTO {
     private int id;
     private String name;
     private String lastName;
-    private byte[] profilePhoto;
+    private String profilePhoto;
     private String phoneNumber;
     private String email;
     private String address;
@@ -17,10 +17,10 @@ public class PassengerDTO {
 
     public PassengerDTO(Passenger passenger){
         this(passenger.getId().intValue(), passenger.getName(), passenger.getLastName(), passenger.getProfilePhoto(),
-                passenger.getPhoneNumber(), passenger.getEmail(), passenger.getAddress(), passenger.getPassword());
+                passenger.getPhoneNumber(), passenger.getEmail(), passenger.getAddress());
     }
-    public PassengerDTO(int id, String name, String lastName, byte[] profilePhoto,
-                        String phoneNumber, String email, String address, String password) {
+    public PassengerDTO(int id, String name, String lastName, String profilePhoto,
+                        String phoneNumber, String email, String address) {
         this.id = id;
         this.name = name;
         this.lastName = lastName;
@@ -28,6 +28,5 @@ public class PassengerDTO {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.address = address;
-        this.password = password;
     }
 }

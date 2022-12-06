@@ -14,7 +14,7 @@ public abstract class User {
 //    @Column(name = "lastName", nullable = false)
     protected String lastName;
 //    @Column(name = "profilePhoto")
-    protected byte[] profilePhoto;
+    protected String profilePhoto;
 //    @Column(name = "phoneNum", unique = true, nullable = false)
     protected String phoneNumber;
 //    @Column(name = "email", unique = true, nullable = false)
@@ -28,7 +28,7 @@ public abstract class User {
 //    @Column(name = "activeStatus")
     protected boolean active;
 
-    public User(Long id, String name, String lastName, byte[] profilePhoto, String phoneNumber, String email,
+    public User(Long id, String name, String lastName, String profilePhoto, String phoneNumber, String email,
                 String address, String password, boolean blocked, boolean active) {
         this.id = id;
         this.name = name;

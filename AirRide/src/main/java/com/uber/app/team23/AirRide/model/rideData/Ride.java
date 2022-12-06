@@ -2,6 +2,7 @@ package com.uber.app.team23.AirRide.model.rideData;
 
 import com.uber.app.team23.AirRide.model.messageData.Rejection;
 import com.uber.app.team23.AirRide.model.users.Passenger;
+import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
 //import jakarta.persistence.*;
 import lombok.Getter;
@@ -29,7 +30,7 @@ public class Ride {
 //    @OneToMany(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Set<Passenger> passengers = new HashSet<>();
 //    @Column(name = "timeEstimate")
-    public double timeEstimate;
+    public int timeEstimate;
 //    @OneToMany(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Set<Review> reviews = new HashSet<>();
 //    @OneToMany(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -46,10 +47,11 @@ public class Ride {
     public boolean pets;
 //    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Vehicle vehicle;
+    private Driver driver;
 
     public Ride(Long id, LocalDateTime start, LocalDateTime end, double totalPrice, Set<Passenger> passengers,
-                double timeEstimate, Set<Review> reviews, Set<Route> route, RideStatus rideStatus,
-                Rejection rejection, boolean panic, boolean babies, boolean pets, Vehicle vehicle) {
+                int timeEstimate, Set<Review> reviews, Set<Route> route, RideStatus rideStatus,
+                Rejection rejection, boolean panic, boolean babies, boolean pets, Vehicle vehicle, Driver driver) {
         this.id = id;
         this.start = start;
         this.end = end;
@@ -64,5 +66,6 @@ public class Ride {
         this.babies = babies;
         this.pets = pets;
         this.vehicle = vehicle;
+        this.driver = driver;
     }
 }

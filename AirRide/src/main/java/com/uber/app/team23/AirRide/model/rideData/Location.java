@@ -17,13 +17,13 @@ public class Location {
     public double longitude;
 //    @Column(name = "latitude", nullable = false)
     public double latitude;
-//    @Column(name = "name")
-    public String name;
+//    @Column(name = "address")
+    public String address;
 
-    public Location(Long id, double longitude, double latitude, String name) {
+    public Location(Long id, double longitude, double latitude, String address) {
         this.id = id;
         this.longitude = longitude;
         this.latitude = latitude;
-        this.name = name;
+        this.address = address;
     }
 }

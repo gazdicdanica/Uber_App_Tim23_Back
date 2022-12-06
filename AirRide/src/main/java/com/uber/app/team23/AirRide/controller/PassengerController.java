@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@RestController @RequestMapping("/putnik")
+@RestController @RequestMapping("api/passenger")
 public class PassengerController {
 
     @Autowired
@@ -37,12 +37,12 @@ public class PassengerController {
     //TODO PAGING
     @GetMapping
     public ResponseEntity<List<Passenger>> getPassengersPage(Pageable page){
-//        Page<Passenger> passengers = findAll(page);
+//        Page<Passenger> passengers = passengerService.getAll(page);
 //        return new ResponseEntity<Passenger>(passengers, HttpStatus.OK);
         return null;
     }
 
-    @GetMapping("/{id}/voznja")
+    @GetMapping("/{id}/ride")
     public ResponseEntity<List<Ride>> getPassengerRidesPage(@PathVariable Long id, Pageable page, LocalDateTime from,
                                                             LocalDateTime to, String sortBy)
     {
@@ -51,24 +51,46 @@ public class PassengerController {
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PassengerDTO> createPassenger(){
+    public ResponseEntity<PassengerDTO> createPassenger(@RequestBody PassengerDTO passengerDTO){
         Passenger p = new Passenger();
         p.setId((long)1);
-        Passenger createdPassenger = passengerService.create(p);
+        p.setName(passengerDTO.getName());
+        p.setLastName(passengerDTO.getLastName());
+        p.setPassword(passengerDTO.getPassword());
+        p.setAddress(passengerDTO.getAddress());
+        p.setPhoneNumber(passengerDTO.getPhoneNumber());
+        p.setProfilePhoto(passengerDTO.getProfilePhoto());
+        p.setEmail(passengerDTO.getEmail());
+        p = passengerService.create(p);
 
-        return new ResponseEntity<>(new PassengerDTO(createdPassenger), HttpStatus.CREATED);
+        return new ResponseEntity<>(new PassengerDTO(p), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{activationId}")
+    public ResponseEntity<Void> activatePassengerAccount(@PathVariable Long activationId){
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Passenger> updatePassenger(@RequestBody Passenger passenger, @PathVariable Long id){
-        Passenger p = passengerService.get(id);
+    public ResponseEntity<PassengerDTO> updatePassenger(@RequestBody PassengerDTO passengerDTO, @PathVariable Long id){
+//        Passenger p = passengerService.get(id);
+        passengerDTO.setId(1);
+        Passenger p = new Passenger();
 
-        if (p == null){
-            return new ResponseEntity<Passenger>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+//        if (p == null){
+//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
         //TODO Actually update p
+        p.setId((long)passengerDTO.getId());
+        p.setName(passengerDTO.getName());
+        p.setLastName(passengerDTO.getLastName());
+        p.setPassword(passengerDTO.getPassword());
+        p.setAddress(passengerDTO.getAddress());
+        p.setPhoneNumber(passengerDTO.getPhoneNumber());
+        p.setProfilePhoto(passengerDTO.getProfilePhoto());
+        p.setEmail(passengerDTO.getEmail());
 
-        return new ResponseEntity<Passenger>(p, HttpStatus.OK);
+        return new ResponseEntity<>(new PassengerDTO(p), HttpStatus.OK);
     }
 
 

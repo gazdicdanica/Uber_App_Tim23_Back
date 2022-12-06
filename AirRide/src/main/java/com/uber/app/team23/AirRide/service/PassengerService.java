@@ -18,6 +18,14 @@ public class PassengerService {
         return null;
     }
 
+    public List<Passenger> getAll(){
+        passengers.add(new Passenger((long)1, "Pera", "Peric", "1234", "+381123123", "pera.peric@email.com", "Bulevar", "123", false, true, null, null));
+        passengers.add(new Passenger((long)2, "Pera", "Peric", "1234", "+381123123", "pera.peric@email.com", "Bulevar", "123", false, true, null, null));
+        passengers.add(new Passenger((long)3, "Pera", "Peric", "1234", "+381123123", "pera.peric@email.com", "Bulevar", "123", false, true, null, null));
+        passengers.add(new Passenger((long)4, "Pera", "Peric", "1234", "+381123123", "pera.peric@email.com", "Bulevar", "123", false, true, null, null));
+        return passengers;
+    }
+
     public Passenger create(Passenger passenger){
         //TODO persist data
         passengers.add(passenger);

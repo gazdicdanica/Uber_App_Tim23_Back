@@ -26,7 +26,7 @@ public class Driver extends User {
 //    @OneToOne(fetch = FetchType.LAZY)
     public Vehicle vehicle;
 
-    public Driver(Long id, String name, String lastName, byte[] profilePhoto, String phoneNumber, String email,
+    public Driver(Long id, String name, String lastName, String profilePhoto, String phoneNumber, String email,
                   String address, String password, boolean blocked, boolean active, Document driverLicence,
                   Document registrationCertificate, Set<Ride> rides, Vehicle vehicle) {
         super(id, name, lastName, profilePhoto, phoneNumber, email, address, password, blocked, active);
