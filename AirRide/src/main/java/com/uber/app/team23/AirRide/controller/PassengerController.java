@@ -1,6 +1,9 @@
 package com.uber.app.team23.AirRide.controller;
 
 import com.uber.app.team23.AirRide.dto.PassengerDTO;
+import com.uber.app.team23.AirRide.dto.PassengerPaginatedDTO;
+import com.uber.app.team23.AirRide.dto.RidePaginatedDTO;
+import com.uber.app.team23.AirRide.dto.RideResponseDTO;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.service.PassengerService;
@@ -13,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController @RequestMapping("api/passenger")
@@ -28,34 +32,30 @@ public class PassengerController {
 
     }
 
-    //TODO PAGING
-    @GetMapping
-    public ResponseEntity<List<Passenger>> getPassengersPage(Pageable page){
-//        Page<Passenger> passengers = passengerService.getAll(page);
-//        return new ResponseEntity<Passenger>(passengers, HttpStatus.OK);
-        return null;
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PassengerPaginatedDTO> getPassengersPage(@RequestParam int page, @RequestParam int size){
+        return new ResponseEntity<>(new PassengerPaginatedDTO(new ArrayList<>()), HttpStatus.OK);
     }
 
     @GetMapping("/{id}/ride")
-    public ResponseEntity<List<Ride>> getPassengerRidesPage(@PathVariable Long id, Pageable page, LocalDateTime from,
-                                                            LocalDateTime to, String sortBy)
+    public ResponseEntity<RidePaginatedDTO> getPassengerRidesPage(@PathVariable Long id,  @RequestParam int page, @RequestParam int size,
+                                                                  @RequestParam String sort, @RequestParam String from, @RequestParam String to)
     {
-        //TODO POGLEDATI VEZBE 7 - JPA-EXAMPLE
-        return null;
+        return new ResponseEntity<>(new RidePaginatedDTO(new ArrayList<>()), HttpStatus.OK);
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PassengerDTO> createPassenger(@RequestBody PassengerDTO passengerDTO){
+    public ResponseEntity<PassengerDTO> createPassenger(@RequestBody Passenger passenger){
         return new ResponseEntity<>(new PassengerDTO(passengerService.getMockPassenger()), HttpStatus.CREATED);
     }
 
-    @PostMapping("/{activationId}")
+    @GetMapping("/activate/{activationId}")
     public ResponseEntity<Void> activatePassengerAccount(@PathVariable Long activationId){
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PassengerDTO> updatePassenger(@RequestBody PassengerDTO passengerDTO, @PathVariable Long id){
+    public ResponseEntity<PassengerDTO> updatePassenger(@RequestBody Passenger passenger, @PathVariable Long id){
 
         return new ResponseEntity<>(new PassengerDTO(passengerService.getMockPassenger()), HttpStatus.OK);
     }

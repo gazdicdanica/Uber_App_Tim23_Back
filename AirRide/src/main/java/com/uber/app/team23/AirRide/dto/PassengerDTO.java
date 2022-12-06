@@ -14,8 +14,6 @@ public class PassengerDTO {
     private String telephoneNumber;
     private String email;
     private String address;
-    @JsonIgnore
-    private String password;
 
     public PassengerDTO(Passenger passenger){
         this(passenger.getId().intValue(), passenger.getName(), passenger.getLastName(), passenger.getProfilePhoto(),
