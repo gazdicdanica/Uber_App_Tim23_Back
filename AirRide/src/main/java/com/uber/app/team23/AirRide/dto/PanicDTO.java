@@ -4,6 +4,7 @@ import com.uber.app.team23.AirRide.model.messageData.Panic;
 import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.rideData.RideStatus;
+import com.uber.app.team23.AirRide.model.rideData.Route;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
@@ -41,9 +42,8 @@ public class PanicDTO {
         Vehicle v = new Vehicle();
         v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARD, 123));
         r.setVehicle(v);
-        ArrayList<Location> locations = new ArrayList<>();
-        locations.add(new Location((long)1, 12.33, 12.34, "Bulevar Oslobodjenja 45"));
-        locations.add(new Location());
+        ArrayList<Route> locations = new ArrayList<>();
+        locations.add(new Route());
         this.ride = new RideResponseDTO(r, locations, passengers);
     }
 }

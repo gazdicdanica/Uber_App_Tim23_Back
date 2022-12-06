@@ -15,17 +15,14 @@ import java.util.HashSet;
 
 @Getter @Setter
 public class RideDTO {
-    private ArrayList<Location> locations = new ArrayList<>();
+    private ArrayList<Route> locations = new ArrayList<>();
     private ArrayList<UserRideDTO> passengers = new ArrayList<>();
     private VehicleEnum vehicleType;
     private boolean babyTransport;
     private boolean petTransport;
 
     public RideDTO (Ride ride){
-        for(Route route : ride.getRoute()){
-            locations.add(route.endLocation);
-            locations.add(route.startLocation);
-        }
+        locations.addAll(ride.getRoute());
         for(Passenger p : ride.getPassengers()){
             passengers.add(new UserRideDTO(p));
         }
@@ -36,7 +33,7 @@ public class RideDTO {
 
     }
 
-    public RideDTO(ArrayList<Location> locations, ArrayList<UserRideDTO> passengers, VehicleEnum vehicleType, boolean babyTransport, boolean petTransport) {
+    public RideDTO(ArrayList<Route> locations, ArrayList<UserRideDTO> passengers, VehicleEnum vehicleType, boolean babyTransport, boolean petTransport) {
         this.locations = locations;
         this.passengers = passengers;
         this.vehicleType = vehicleType;

@@ -3,9 +3,9 @@ package com.uber.app.team23.AirRide.controller;
 import com.uber.app.team23.AirRide.dto.*;
 import com.uber.app.team23.AirRide.model.messageData.Panic;
 import com.uber.app.team23.AirRide.model.messageData.Rejection;
-import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.rideData.RideStatus;
+import com.uber.app.team23.AirRide.model.rideData.Route;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
@@ -22,6 +22,27 @@ import java.util.ArrayList;
 
 @RestController @RequestMapping("/api/ride")
 public class RideController {
+
+//    public RideResponseDTO getDTO(){
+//        Ride ride = new Ride();
+//        ride.setId((long)1);
+//        ride.setStart(LocalDateTime.now());
+//        ride.setStart(LocalDateTime.now().plusMinutes(10));
+//        ride.setTotalPrice(1235);
+//        Driver d = new Driver();
+//        d.setId((long)1);
+//        d.setEmail("test@email.com");
+//        ride.setDriver(d);
+//        ride.setTimeEstimate(10);
+//        ride.setRideStatus(RideStatus.PENDING);
+//        ride.setBabies(true);
+//        ride.setPets(false);
+//        Vehicle v = new Vehicle();
+//        v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARD, 123));
+//        ride.setVehicle(v);
+//
+//        return new RideResponseDTO(ride);
+//    }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RideResponseDTO> createRide(@RequestBody RideDTO rideDTO){
@@ -58,9 +79,8 @@ public class RideController {
         Vehicle v = new Vehicle();
         v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARD, 123));
         r.setVehicle(v);
-        ArrayList<Location> locations = new ArrayList<>();
-        locations.add(new Location((long)1, 12.33, 12.34, "Bulevar Oslobodjenja 45"));
-        locations.add(new Location());
+        ArrayList<Route> locations = new ArrayList<>();
+        locations.add(new Route());
         //TODO add rejection
         return new ResponseEntity<>(new RideResponseDTO(r, locations, passengers), HttpStatus.OK);
     }
@@ -78,9 +98,8 @@ public class RideController {
         Vehicle v = new Vehicle();
         v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARD, 123));
         r.setVehicle(v);
-        ArrayList<Location> locations = new ArrayList<>();
-        locations.add(new Location((long)1, 12.33, 12.34, "Bulevar Oslobodjenja 45"));
-        locations.add(new Location());
+        ArrayList<Route> locations = new ArrayList<>();
+        locations.add(new Route());
         //TODO add rejection
         return new ResponseEntity<>(new RideResponseDTO(r, locations, passengers), HttpStatus.OK);
     }
@@ -98,9 +117,8 @@ public class RideController {
         Vehicle v = new Vehicle();
         v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARD, 123));
         r.setVehicle(v);
-        ArrayList<Location> locations = new ArrayList<>();
-        locations.add(new Location((long)1, 12.33, 12.34, "Bulevar Oslobodjenja 45"));
-        locations.add(new Location());
+        ArrayList<Route> locations = new ArrayList<>();
+        locations.add(new Route());
         //TODO add rejection
         return new ResponseEntity<>(new RideResponseDTO(r, locations, passengers), HttpStatus.OK);
 
@@ -119,9 +137,8 @@ public class RideController {
         Vehicle v = new Vehicle();
         v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARD, 123));
         r.setVehicle(v);
-        ArrayList<Location> locations = new ArrayList<>();
-        locations.add(new Location((long)1, 12.33, 12.34, "Bulevar Oslobodjenja 45"));
-        locations.add(new Location());
+        ArrayList<Route> locations = new ArrayList<>();
+        locations.add(new Route());
         //TODO add rejection
         return new ResponseEntity<>(new RideResponseDTO(r, locations, passengers), HttpStatus.OK);
 
@@ -151,9 +168,8 @@ public class RideController {
         Vehicle v = new Vehicle();
         v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARD, 123));
         r.setVehicle(v);
-        ArrayList<Location> locations = new ArrayList<>();
-        locations.add(new Location((long)1, 12.33, 12.34, "Bulevar Oslobodjenja 45"));
-        locations.add(new Location());
+        ArrayList<Route> locations = new ArrayList<>();
+        locations.add(new Route());
         //TODO add rejection
         return new ResponseEntity<>(new RideResponseDTO(r, locations, passengers), HttpStatus.OK);
 
@@ -172,9 +188,8 @@ public class RideController {
         Vehicle v = new Vehicle();
         v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARD, 123));
         r.setVehicle(v);
-        ArrayList<Location> locations = new ArrayList<>();
-        locations.add(new Location((long)1, 12.33, 12.34, "Bulevar Oslobodjenja 45"));
-        locations.add(new Location());
+        ArrayList<Route> locations = new ArrayList<>();
+        locations.add(new Route());
         //TODO add rejection
         return new ResponseEntity<>(new RideResponseDTO(r, locations, passengers), HttpStatus.OK);
 
@@ -193,9 +208,8 @@ public class RideController {
         Vehicle v = new Vehicle();
         v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARD, 123));
         r.setVehicle(v);
-        ArrayList<Location> locations = new ArrayList<>();
-        locations.add(new Location((long)1, 12.33, 12.34, "Bulevar Oslobodjenja 45"));
-        locations.add(new Location());
+        ArrayList<Route> locations = new ArrayList<>();
+        locations.add(new Route());
         rejection.setTime(LocalDateTime.now());
         r.setRejection(rejection);
         //TODO add rejection
