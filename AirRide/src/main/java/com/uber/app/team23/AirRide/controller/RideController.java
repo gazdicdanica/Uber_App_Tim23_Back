@@ -29,9 +29,9 @@ public class RideController {
         d.setId((long)1);
         d.setEmail("test@gmail.com");
         r.setDriver(d);
-        ArrayList<UserRideDTO> passengers= new ArrayList<>();
-        passengers.add(new UserRideDTO(1, "email"));
-        passengers.add(new UserRideDTO(2, "email"));
+        ArrayList<UserShortDTO> passengers= new ArrayList<>();
+        passengers.add(new UserShortDTO(1, "email"));
+        passengers.add(new UserShortDTO(2, "email"));
         Vehicle v = new Vehicle();
         v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARD, 123));
         r.setVehicle(v);

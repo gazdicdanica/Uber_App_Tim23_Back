@@ -1,7 +1,6 @@
 package com.uber.app.team23.AirRide.dto;
 
 import com.uber.app.team23.AirRide.model.messageData.Rejection;
-import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.rideData.RideStatus;
 import com.uber.app.team23.AirRide.model.rideData.Route;
@@ -12,7 +11,6 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 @Getter @Setter @NoArgsConstructor
 public class RideResponseDTO {
@@ -21,28 +19,28 @@ public class RideResponseDTO {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private double totalCost;
-    private UserRideDTO driver;
+    private UserShortDTO driver;
     private int estimatedTimeInMinutes;
     private ArrayList<Route> locations;
-    private ArrayList<UserRideDTO> passengers;
+    private ArrayList<UserShortDTO> passengers;
     private VehicleEnum vehicleType;
     private boolean babyTransport;
     private boolean petTransport;
     private RideStatus status;
     private Rejection rejection;
 
-    public RideResponseDTO(Ride ride, ArrayList<Route> locations, ArrayList<UserRideDTO> passengers){
+    public RideResponseDTO(Ride ride, ArrayList<Route> locations, ArrayList<UserShortDTO> passengers){
         this(ride.getId(), ride.getStart(), ride.getEnd(), ride.getTotalPrice(),null, ride.getTimeEstimate(),
                 null, null, ride.getVehicle().getVehicleType().getType(), ride.isBabies(),
                 ride.isPets(), ride.getRideStatus(), ride.getRejection());
-        this.driver = new UserRideDTO(ride.getDriver().getId().intValue(), ride.getDriver().getEmail());
+        this.driver = new UserShortDTO(ride.getDriver().getId().intValue(), ride.getDriver().getEmail());
         this.locations = locations;
         this.passengers = passengers;
 
     }
 
-    public RideResponseDTO(Long id, LocalDateTime startTime, LocalDateTime endTime, double totalCost, UserRideDTO driver,
-                           int estimatedTimeInMinutes, ArrayList<Route> locations, ArrayList<UserRideDTO> passengers,
+    public RideResponseDTO(Long id, LocalDateTime startTime, LocalDateTime endTime, double totalCost, UserShortDTO driver,
+                           int estimatedTimeInMinutes, ArrayList<Route> locations, ArrayList<UserShortDTO> passengers,
                            VehicleEnum vehicleType, boolean babyTransport, boolean petTransport, RideStatus status, Rejection rejection) {
         this.id = id;
         this.startTime = startTime;

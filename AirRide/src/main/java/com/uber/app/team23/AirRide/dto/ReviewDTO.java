@@ -13,9 +13,9 @@ public class ReviewDTO {
     private Long id;
     private int rating;
     private String comment;
-    private List<PassengerShortDTO> passengers = new ArrayList<PassengerShortDTO>();
+    private List<UserShortDTO> passengers = new ArrayList<>();
 
-    public void addPassenger(PassengerShortDTO psngr) {
-        this.passengers.add(psngr);
+    public void addPassenger(UserShortDTO user) {
+        this.passengers.add(user);
     }
 }

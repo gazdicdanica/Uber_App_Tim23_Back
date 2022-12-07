@@ -1,23 +1,15 @@
 package com.uber.app.team23.AirRide.controller;
 
-import com.uber.app.team23.AirRide.dto.PassengerDTO;
-import com.uber.app.team23.AirRide.dto.PassengerPaginatedDTO;
-import com.uber.app.team23.AirRide.dto.RidePaginatedDTO;
-import com.uber.app.team23.AirRide.dto.RideResponseDTO;
-import com.uber.app.team23.AirRide.model.rideData.Ride;
+import com.uber.app.team23.AirRide.dto.*;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.service.PassengerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 @RestController @RequestMapping("api/passenger")
 public class PassengerController {
@@ -27,14 +19,14 @@ public class PassengerController {
 
 
     @GetMapping(value ={"/{id}"}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PassengerDTO> getPassenger(@PathVariable("id") Long id){
-        return new ResponseEntity<>(new PassengerDTO(passengerService.getMockPassenger()), HttpStatus.OK);
+    public ResponseEntity<UserDTO> getPassenger(@PathVariable("id") Long id){
+        return new ResponseEntity<>(new UserDTO(passengerService.getMockPassenger()), HttpStatus.OK);
 
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PassengerPaginatedDTO> getPassengersPage(@RequestParam int page, @RequestParam int size){
-        return new ResponseEntity<>(new PassengerPaginatedDTO(new ArrayList<>()), HttpStatus.OK);
+    public ResponseEntity<UserPaginatedDTO> getPassengersPage(@RequestParam int page, @RequestParam int size){
+        return new ResponseEntity<>(new UserPaginatedDTO(new ArrayList<>()), HttpStatus.OK);
     }
 
     @GetMapping("/{id}/ride")
@@ -45,8 +37,8 @@ public class PassengerController {
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PassengerDTO> createPassenger(@RequestBody Passenger passenger){
-        return new ResponseEntity<>(new PassengerDTO(passengerService.getMockPassenger()), HttpStatus.CREATED);
+    public ResponseEntity<UserDTO> createPassenger(@RequestBody Passenger passenger){
+        return new ResponseEntity<>(new UserDTO(passengerService.getMockPassenger()), HttpStatus.CREATED);
     }
 
     @GetMapping("/activate/{activationId}")
@@ -55,9 +47,9 @@ public class PassengerController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PassengerDTO> updatePassenger(@RequestBody Passenger passenger, @PathVariable Long id){
+    public ResponseEntity<UserDTO> updatePassenger(@RequestBody Passenger passenger, @PathVariable Long id){
 
-        return new ResponseEntity<>(new PassengerDTO(passengerService.getMockPassenger()), HttpStatus.OK);
+        return new ResponseEntity<>(new UserDTO(passengerService.getMockPassenger()), HttpStatus.OK);
     }
 
 

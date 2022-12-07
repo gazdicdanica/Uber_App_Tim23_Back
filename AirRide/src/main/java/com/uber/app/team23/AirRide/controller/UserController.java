@@ -34,8 +34,9 @@ public class UserController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user")
     public ResponseEntity<UserPaginatedDTO> getUserPaginated(@RequestParam int page, @RequestParam int size) {
         Passenger p = new Passenger((long) 10, "Ime", "Prezime", "Phhoto", "123", "email", "adr", null, false, false, null, null);
-
-        return new ResponseEntity<>(new UserPaginatedDTO(p), HttpStatus.OK);
+        List<UserDTO> users = new ArrayList<>();
+        users.add(new UserDTO(p));
+        return new ResponseEntity<>(new UserPaginatedDTO(users), HttpStatus.OK);
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/login")

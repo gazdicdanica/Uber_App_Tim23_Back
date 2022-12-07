@@ -12,14 +12,10 @@ import java.util.List;
 @Setter @Getter @NoArgsConstructor @AllArgsConstructor
 public class UserPaginatedDTO {
     private int totalCount;
-    private List<User> results = new ArrayList<>();
+    private List<UserDTO> results = new ArrayList<>();
 
-    public void addUser(User user) {
-        results.add(user);
-    }
-
-    public UserPaginatedDTO(User user) {
-        totalCount += 1;
-        addUser(user);
+    public UserPaginatedDTO(List<UserDTO> results){
+        this.results = results;
+        this.totalCount = results.size();
     }
 }

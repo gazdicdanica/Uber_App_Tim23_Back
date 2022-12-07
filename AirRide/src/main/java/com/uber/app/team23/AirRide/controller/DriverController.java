@@ -7,13 +7,14 @@ import com.uber.app.team23.AirRide.model.users.driverData.WorkingHours;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
 import com.uber.app.team23.AirRide.service.DriverService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RestController @RequestMapping("api/driver")
@@ -23,29 +24,30 @@ public class DriverController {
     private DriverService driverService;
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DriverDTO> createDriver(@RequestBody DriverDTO driverDTO) {
+    public ResponseEntity<UserDTO> createDriver(@RequestBody UserDTO userDTO) {
         Driver driver = new Driver();
         driver.setId((long)123);
-        driver.setName(driverDTO.getName());
-        driver.setLastName(driverDTO.getSurname());
-        driver.setProfilePhoto(driverDTO.getProfilePicture());
-        driver.setPhoneNumber(driverDTO.getTelephoneNumber());
-        driver.setEmail(driverDTO.getEmail());
-        driver.setAddress(driverDTO.getAddress());
+        driver.setName(userDTO.getName());
+        driver.setLastName(userDTO.getSurname());
+        driver.setProfilePhoto(userDTO.getProfilePicture());
+        driver.setPhoneNumber(userDTO.getTelephoneNumber());
+        driver.setEmail(userDTO.getEmail());
+        driver.setAddress(userDTO.getAddress());
 
 //        driver = driverService.save(driver);
-        return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.CREATED);
+        return new ResponseEntity<>(new UserDTO(driver), HttpStatus.CREATED);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DriverPaginatedDTO> getPaginatedDrivers(@RequestParam int page, @RequestParam int size) {
-        DriverDTO driverDTO = new DriverDTO((long) 12, "Pera", "Peric", "sghdh", "1234", "email", "adresa");
-
-        return new ResponseEntity<>(new DriverPaginatedDTO(driverDTO), HttpStatus.OK);
+    public ResponseEntity<UserPaginatedDTO> getPaginatedDrivers(@RequestParam int page, @RequestParam int size) {
+        UserDTO driver = new UserDTO(12, "Pera", "Peric", "sghdh", "1234", "email", "adresa");
+        List<UserDTO> users = new ArrayList<>();
+        users.add(driver);
+        return new ResponseEntity<>(new UserPaginatedDTO(users), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<DriverDTO> getDriver(@PathVariable Integer id) {
+    public ResponseEntity<UserDTO> getDriver(@PathVariable Integer id) {
 //        Driver driver = driverService.findOne(id);
 //        if (driver == null) {
 //            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -59,11 +61,11 @@ public class DriverController {
         driver.setPhoneNumber("+381123123");
         driver.setEmail("pera.peric@email.com");
         driver.setAddress("Bulevar Oslobodjenja 74");
-        return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
+        return new ResponseEntity<>(new UserDTO(driver), HttpStatus.OK);
     }
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}")
-    public ResponseEntity<DriverDTO> updateDriver(@RequestBody DriverDTO driverDTO, @PathVariable Integer id) {
+    public ResponseEntity<UserDTO> updateDriver(@RequestBody UserDTO driverDTO, @PathVariable Integer id) {
         Driver driver = new Driver();
         driver.setId((long) id);
         driver.setName(driverDTO.getName());
@@ -73,7 +75,7 @@ public class DriverController {
         driver.setEmail(driverDTO.getEmail());
         driver.setAddress(driverDTO.getAddress());
 
-        return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.OK);
+        return new ResponseEntity<>(new UserDTO(driver), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}/documents")
