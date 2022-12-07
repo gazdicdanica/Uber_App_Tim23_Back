@@ -23,7 +23,7 @@ public class Passenger extends User{
 
     public ArrayList<Location> favouriteLocations = new ArrayList<Location>();
 
-    public Passenger(Long id, String name, String lastName, byte[] profilePhoto, String phoneNumber, String email,
+    public Passenger(Long id, String name, String lastName, String profilePhoto, String phoneNumber, String email,
                      String address, String password, boolean blocked, boolean active, ArrayList<Ride> rides,
                      ArrayList<Location> favouriteLocations) {
         super(id, name, lastName, profilePhoto, phoneNumber, email, address, password, blocked, active);

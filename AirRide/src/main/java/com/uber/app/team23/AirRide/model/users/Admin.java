@@ -1,20 +1,20 @@
 package com.uber.app.team23.AirRide.model.users;
 
-import jakarta.persistence.*;
+//import jakarta.persistence.*;
 
 
-@Entity
+//@Entity
 public class Admin{
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
-    @Column(name = "userName", unique = true, nullable = false)
+//    @Column(name = "userName", unique = true, nullable = false)
     public String userName;
-    @Column(name = "password", nullable = false)
+//    @Column(name = "password", nullable = false)
     public String password;
-    @Column(name = "name")
+//    @Column(name = "name")
     public String name;
-    @Column(name = "lastName")
+//    @Column(name = "lastName")
     public String lastName;
-    @Column(name = "profilePhoto")
+//    @Column(name = "profilePhoto")
     public byte[] profilePhoto;
 }
