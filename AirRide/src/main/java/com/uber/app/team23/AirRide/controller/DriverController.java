@@ -1,9 +1,6 @@
 package com.uber.app.team23.AirRide.controller;
 
-import com.uber.app.team23.AirRide.dto.DriverDTO;
-import com.uber.app.team23.AirRide.dto.DriverDocumentsDTO;
-import com.uber.app.team23.AirRide.dto.DriverWorkingHoursDTO;
-import com.uber.app.team23.AirRide.dto.VehicleDTO;
+import com.uber.app.team23.AirRide.dto.*;
 import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.WorkingHours;
@@ -38,6 +35,13 @@ public class DriverController {
 
 //        driver = driverService.save(driver);
         return new ResponseEntity<>(new DriverDTO(driver), HttpStatus.CREATED);
+    }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DriverPaginatedDTO> getPaginatedDrivers(@RequestParam int page, @RequestParam int size) {
+        DriverDTO driverDTO = new DriverDTO((long) 12, "Pera", "Peric", "sghdh", "1234", "email", "adresa");
+
+        return new ResponseEntity<>(new DriverPaginatedDTO(driverDTO), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}")
@@ -150,7 +154,10 @@ public class DriverController {
     }
 
     @GetMapping(value = "/{id}/working-hours")
-    public ResponseEntity<DriverWorkingHoursDTO> getTotalWorkHours(@PathVariable Integer id) {
+    public ResponseEntity<DriverWorkingHoursDTO> getTotalWorkHours(
+            @PathVariable Integer id, @RequestParam int page, @RequestParam int size, @RequestParam String from,
+            @RequestParam String to) {
+
         WorkingHours wh1 = new WorkingHours(LocalDateTime.now(), LocalDateTime.now().plusHours(2), (long) 1);
         WorkingHours wh2 = new WorkingHours(LocalDateTime.now(), LocalDateTime.now().plusHours(2), (long) 1);
         DriverWorkingHoursDTO workingHoursDTO = new DriverWorkingHoursDTO();
@@ -171,6 +178,14 @@ public class DriverController {
         whDTO.updateWorkingHours(wh);
 
         return new ResponseEntity<>(whDTO, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{id}/ride", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DriverWorkingHoursDTO> getRidesSorted(
+            @PathVariable Integer id, @RequestParam int page, @RequestParam int size, @RequestParam String sort,
+            @RequestParam String from, @RequestParam String to){
+
+        return new ResponseEntity<>(new DriverWorkingHoursDTO(), HttpStatus.OK);
     }
 
     @GetMapping(value = "/working-hour/{id}")
