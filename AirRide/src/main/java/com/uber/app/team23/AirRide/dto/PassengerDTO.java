@@ -19,6 +19,7 @@ public class PassengerDTO {
         this(passenger.getId().intValue(), passenger.getName(), passenger.getLastName(), passenger.getProfilePhoto(),
                 passenger.getPhoneNumber(), passenger.getEmail(), passenger.getAddress());
     }
+
     public PassengerDTO(int id, String name, String lastName, String profilePhoto,
                         String phoneNumber, String email, String address) {
         this.id = id;

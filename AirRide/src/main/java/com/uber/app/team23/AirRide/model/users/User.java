@@ -1,9 +1,11 @@
 package com.uber.app.team23.AirRide.model.users;
 
 //import jakarta.persistence.*;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 
 @Getter @Setter @NoArgsConstructor //@Entity //@Table(name = "Users")
 public abstract class User {

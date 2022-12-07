@@ -13,39 +13,35 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-//@Entity
-//@Table(name = "Rides")
-@Getter
-@Setter
-@NoArgsConstructor
+@Getter @Setter @NoArgsConstructor
 public class Ride {
-//    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
-//    @Column(name = "start")
+    //    @Column(name = "start")
     public LocalDateTime start;
-//    @Column(name = "end")
+    //    @Column(name = "end")
     public LocalDateTime end;
-//    @Column(name = "totalPrice")
+    //    @Column(name = "totalPrice")
     public double totalPrice;
-//    @OneToMany(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    //    @OneToMany(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Set<Passenger> passengers = new HashSet<>();
 //    @Column(name = "timeEstimate")
     public int timeEstimate;
 //    @OneToMany(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Set<Review> reviews = new HashSet<>();
-//    @OneToMany(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    //    @OneToMany(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Set<Route> route = new HashSet<>();
-//    @Column(name = "rideStatus")
+    //    @Column(name = "rideStatus")
     public RideStatus rideStatus;
-//    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    //    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Rejection rejection;
-//    @Column(name = "panic")
+    //    @Column(name = "panic")
     public boolean panic;
-//    @Column(name = "babies")
+    //    @Column(name = "babies")
     public boolean babies;
-//    @Column(name = "pets")
+    //    @Column(name = "pets")
     public boolean pets;
-//    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    //    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Vehicle vehicle;
     private Driver driver;
 

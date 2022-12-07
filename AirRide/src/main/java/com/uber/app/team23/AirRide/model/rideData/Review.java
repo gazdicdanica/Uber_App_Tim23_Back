@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
 //@Entity
 @Getter
 @Setter
@@ -24,6 +25,7 @@ public class Review {
 
     public Driver driver;
 //    @ManyToOne(fetch = FetchType.LAZY)
+
     public Passenger passenger;
 
     public Review(Long id, int grade, String comment, Ride ride, Driver driver, Passenger passenger) {
@@ -33,5 +35,6 @@ public class Review {
         this.ride = ride;
         this.driver = driver;
         this.passenger = passenger;
-    }
+  }
 }
+
