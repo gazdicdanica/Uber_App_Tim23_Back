@@ -25,9 +25,9 @@ public class Ride {
     public double totalPrice;
     //    @OneToMany(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Set<Passenger> passengers = new HashSet<>();
-    //    @Column(name = "timeEstimate")
+//    @Column(name = "timeEstimate")
     public int timeEstimate;
-    //    @OneToMany(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @OneToMany(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Set<Review> reviews = new HashSet<>();
     //    @OneToMany(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Set<Route> route = new HashSet<>();

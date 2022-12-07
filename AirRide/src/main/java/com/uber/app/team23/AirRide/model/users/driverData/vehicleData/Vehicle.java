@@ -20,9 +20,9 @@ public class Vehicle {
 //    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Driver driver;
 //    @Column(name = "vehicleModel")
-    public String VehicleModel;
+    public String vehicleModel;
 //    @OneToOne
-    public VehicleType vehicle;
+    public VehicleType vehicleType;
 //    @Column(name = "plates")
     public String plates;
 //    @Column(name = "capacity")
@@ -39,8 +39,8 @@ public class Vehicle {
                    Location currentLocation, boolean acceptBabies, boolean acceptPets) {
         this.id = id;
         this.driver = driver;
-        VehicleModel = vehicleModel;
-        this.vehicle = vehicle;
+        vehicleModel = vehicleModel;
+        this.vehicleType = vehicle;
         this.plates = plates;
         this.capacity = capacity;
         this.currentLocation = currentLocation;

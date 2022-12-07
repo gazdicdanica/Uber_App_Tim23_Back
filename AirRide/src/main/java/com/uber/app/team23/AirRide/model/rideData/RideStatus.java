@@ -5,5 +5,6 @@ public enum RideStatus {
     ACCEPTED,
     REJECTED,
     ACTIVE,
-    FINISHED
+    FINISHED,
+    CANCELED
 }
