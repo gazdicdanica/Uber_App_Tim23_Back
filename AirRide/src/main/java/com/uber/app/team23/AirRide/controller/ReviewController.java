@@ -28,6 +28,11 @@ public class ReviewController {
         return new ResponseEntity<>(rev, HttpStatus.OK);
     }
 
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/vehicle/{id}")
+    public ResponseEntity<ReviewLongDTO> getOneReview(@PathVariable Integer id) {
+        return new ResponseEntity<>(new ReviewLongDTO(), HttpStatus.OK);
+    }
+
     @GetMapping(value = "/driver/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ReviewLongDTO> getReviewsForVehicle(@PathVariable Integer id) {
         ReviewLongDTO reviewLong = new ReviewLongDTO();
@@ -41,7 +46,7 @@ public class ReviewController {
         // Returns list of passengers who left reviews in case multiple passengers were on ride
         rev.addPassenger(passenger);
 
-        reviewLong.setTotalReviews(rev.getPassengers().size());
+        reviewLong.setTotalCount(rev.getPassenger().size());
         reviewLong.updateReviewLi(rev);
 
         return new ResponseEntity<>(reviewLong, HttpStatus.OK);

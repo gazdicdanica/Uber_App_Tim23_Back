@@ -12,9 +12,9 @@ import java.util.List;
 @Setter @Getter @NoArgsConstructor @AllArgsConstructor
 public class NoteDTO {
     private int totalCount;
-    private List<Note> noteLi = new ArrayList<>();
+    private List<Note> results = new ArrayList<>();
 
     public void addNote(Note note) {
-        this.noteLi.add(note);
+        this.results.add(note);
     }
 }

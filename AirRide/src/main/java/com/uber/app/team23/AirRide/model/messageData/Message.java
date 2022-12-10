@@ -12,7 +12,7 @@ public class Message {
     public Long senderId;
     public Long receiverId;
     public String message;
-    public LocalDateTime sendTime;
+    public LocalDateTime timeOfSending;
     public MessageType type;
     public Long id;
     public Long rideId;
