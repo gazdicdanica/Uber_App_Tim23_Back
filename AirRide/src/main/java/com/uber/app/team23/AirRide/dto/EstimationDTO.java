@@ -8,5 +8,5 @@ import lombok.Setter;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class EstimationDTO {
     private int estimatedTimeInMinutes;
-    private double estimatedCost;
+    private int estimatedCost;
 }
