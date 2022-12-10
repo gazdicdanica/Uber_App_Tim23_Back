@@ -5,7 +5,6 @@ import com.uber.app.team23.AirRide.model.messageData.Message;
 import com.uber.app.team23.AirRide.model.messageData.MessageType;
 import com.uber.app.team23.AirRide.model.messageData.Note;
 import com.uber.app.team23.AirRide.model.users.Passenger;
-import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,7 +38,7 @@ public class UserController {
         return new ResponseEntity<>(new UserPaginatedDTO(users), HttpStatus.OK);
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/login")
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user/login")
     public ResponseEntity<TokensDTO> userLogin(@RequestBody LoginDTO loginParams){
         return new ResponseEntity<>(new TokensDTO( "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC"),
                 HttpStatus.OK);
@@ -52,7 +51,7 @@ public class UserController {
         Message msg = new Message((long) 123, (long) 456, "Text", LocalDateTime.now(), MessageType.RIDE, (long) 10, (long) 123);
 
         msgDTO.addMessageToList(msg);
-        msgDTO.setTotalCount(msgDTO.getMessageList().size());
+        msgDTO.setTotalCount(msgDTO.getResults().size());
 
         return new ResponseEntity<>(msgDTO, HttpStatus.OK);
     }
@@ -61,7 +60,7 @@ public class UserController {
     public ResponseEntity<Message> sendMessage(@PathVariable Integer id, @RequestBody Message msg) {
         Message msgResponse = new Message();
         msgResponse.setId((long) 1);
-        msgResponse.setSendTime(LocalDateTime.now());
+        msgResponse.setTimeOfSending(LocalDateTime.now());
         msgResponse.setSenderId((long) id);
         msgResponse.setReceiverId(msg.getReceiverId());
         msgResponse.setMessage(msg.getMessage());
@@ -93,7 +92,7 @@ public class UserController {
         Note note = new Note((long) page, LocalDateTime.now(), "Text");
 
         noteDTO.addNote(note);
-        noteDTO.setTotalCount(noteDTO.getNoteLi().size());
+        noteDTO.setTotalCount(noteDTO.getResults().size());
 
         return new ResponseEntity<>(noteDTO, HttpStatus.OK);
     }

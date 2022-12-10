@@ -10,10 +10,10 @@ import java.util.List;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class ReviewLongDTO {
-    private int totalReviews;
-    private List<ReviewDTO> reviewLi = new ArrayList<>();
+    private int totalCount;
+    private List<ReviewDTO> results = new ArrayList<>();
 
     public void updateReviewLi(ReviewDTO review){
-        this.reviewLi.add(review);
+        this.results.add(review);
     }
 }
