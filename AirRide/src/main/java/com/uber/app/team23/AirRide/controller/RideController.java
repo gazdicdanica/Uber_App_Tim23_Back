@@ -33,7 +33,7 @@ public class RideController {
         passengers.add(new UserRideDTO(1, "email"));
         passengers.add(new UserRideDTO(2, "email"));
         Vehicle v = new Vehicle();
-        v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARD, 123));
+        v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARDNO, 123));
         r.setVehicle(v);
         ArrayList<Route> locations = new ArrayList<>();
         locations.add(new Route());
@@ -44,7 +44,7 @@ public class RideController {
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RideResponseDTO> createRide(@RequestBody RideDTO rideDTO){
 
-        return new ResponseEntity<>(getDTO(), HttpStatus.CREATED);
+        return new ResponseEntity<>(getDTO(), HttpStatus.OK);
     }
 
     @GetMapping("/driver/{driverId}/active")

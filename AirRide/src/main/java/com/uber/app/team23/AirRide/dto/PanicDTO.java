@@ -40,7 +40,7 @@ public class PanicDTO {
         ArrayList<UserRideDTO> passengers= new ArrayList<>();
         passengers.add(new UserRideDTO(1, "email"));
         Vehicle v = new Vehicle();
-        v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARD, 123));
+        v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARDNO, 123));
         r.setVehicle(v);
         ArrayList<Route> locations = new ArrayList<>();
         locations.add(new Route());

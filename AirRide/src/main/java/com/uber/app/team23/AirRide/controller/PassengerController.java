@@ -46,7 +46,7 @@ public class PassengerController {
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PassengerDTO> createPassenger(@RequestBody Passenger passenger){
-        return new ResponseEntity<>(new PassengerDTO(passengerService.getMockPassenger()), HttpStatus.CREATED);
+        return new ResponseEntity<>(new PassengerDTO(passengerService.getMockPassenger()), HttpStatus.OK);
     }
 
     @GetMapping("/activate/{activationId}")
