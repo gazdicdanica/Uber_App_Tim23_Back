@@ -2,7 +2,6 @@ package com.uber.app.team23.AirRide.controller;
 
 import com.uber.app.team23.AirRide.dto.EstimationDTO;
 import com.uber.app.team23.AirRide.dto.UnregisteredRideRequestDTO;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

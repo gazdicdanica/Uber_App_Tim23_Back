@@ -3,21 +3,15 @@ package com.uber.app.team23.AirRide.controller;
 import com.uber.app.team23.AirRide.dto.PassengerDTO;
 import com.uber.app.team23.AirRide.dto.PassengerPaginatedDTO;
 import com.uber.app.team23.AirRide.dto.RidePaginatedDTO;
-import com.uber.app.team23.AirRide.dto.RideResponseDTO;
-import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.service.PassengerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 @RestController @RequestMapping("api/passenger")
 public class PassengerController {
