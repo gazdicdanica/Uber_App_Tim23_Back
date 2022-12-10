@@ -35,7 +35,7 @@ public class DriverController {
         driver.setAddress(userDTO.getAddress());
 
 //        driver = driverService.save(driver);
-        return new ResponseEntity<>(new UserDTO(driver), HttpStatus.CREATED);
+        return new ResponseEntity<>(new UserDTO(driver), HttpStatus.OK);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -89,7 +89,7 @@ public class DriverController {
         return new ResponseEntity<>(documentsDTO, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/{id}/documents")
+    @DeleteMapping(value = "/document/{id}")
     public ResponseEntity<DriverDocumentsDTO> deleteDriverDocuments(@PathVariable Integer id) {
         DriverDocumentsDTO documentsDTO = new DriverDocumentsDTO();
         documentsDTO.setId(id);
@@ -112,7 +112,7 @@ public class DriverController {
         VehicleDTO vehicle = new VehicleDTO();
         vehicle.setId((long) 123);
         vehicle.setDriverId((long) id);
-        vehicle.setVehicleType(VehicleEnum.STANDARD);
+        vehicle.setVehicleType(VehicleEnum.STANDARDNO);
         vehicle.setModel("VW Golf 2");
         vehicle.setLicenseNumber("NS 123-AB");
         vehicle.setCurrentLocation(new Location((long) 1, 19.833549, 45.267136, "Bulevar oslobodjenja 46"));
@@ -155,7 +155,7 @@ public class DriverController {
         return new ResponseEntity<>(vehicle, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/{id}/working-hours")
+    @GetMapping(value = "/{id}/working-hour")
     public ResponseEntity<DriverWorkingHoursDTO> getTotalWorkHours(
             @PathVariable Integer id, @RequestParam int page, @RequestParam int size, @RequestParam String from,
             @RequestParam String to) {
@@ -169,17 +169,15 @@ public class DriverController {
         return new ResponseEntity<>(workingHoursDTO, HttpStatus.OK);
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/working-hours")
-    public ResponseEntity<DriverWorkingHoursDTO> updateDriverWorkingHours(@PathVariable Integer id) {
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/working-hour")
+    public ResponseEntity<WorkingHours> updateDriverWorkingHours(@PathVariable Integer id) {
         // Time generated when driver logged
         LocalDateTime startShift = LocalDateTime.now().minusHours(3);
         // Time generated when driver finished shift
         LocalDateTime endShift = LocalDateTime.now();
         WorkingHours wh = new WorkingHours(startShift, endShift, (long) 1);
-        DriverWorkingHoursDTO whDTO = new DriverWorkingHoursDTO();
-        whDTO.updateWorkingHours(wh);
 
-        return new ResponseEntity<>(whDTO, HttpStatus.OK);
+        return new ResponseEntity<>(wh, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}/ride", produces = MediaType.APPLICATION_JSON_VALUE)

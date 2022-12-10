@@ -10,11 +10,11 @@ import java.time.LocalDateTime;
 public class WorkingHours {
     private LocalDateTime start;
     private LocalDateTime end;
-    private Long driverId;
+    private Long id;
 
-    public WorkingHours(LocalDateTime start, LocalDateTime end, Long driverId) {
+    public WorkingHours(LocalDateTime start, LocalDateTime end, Long id) {
         this.start = start;
         this.end = end;
-        this.driverId = driverId;
+        this.id = id;
     }
 }

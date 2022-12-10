@@ -12,9 +12,9 @@ import java.util.List;
 @Setter @Getter @NoArgsConstructor @AllArgsConstructor
 public class MessageDTO {
     private int totalCount;
-    private List<Message> messageList = new ArrayList<>();
+    private List<Message> results = new ArrayList<>();
 
     public void addMessageToList(Message msg) {
-        this.messageList.add(msg);
+        this.results.add(msg);
     }
 }
