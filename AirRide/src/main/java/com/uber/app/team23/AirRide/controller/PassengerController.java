@@ -1,6 +1,8 @@
 package com.uber.app.team23.AirRide.controller;
 
-import com.uber.app.team23.AirRide.dto.*;
+import com.uber.app.team23.AirRide.dto.PassengerDTO;
+import com.uber.app.team23.AirRide.dto.PassengerPaginatedDTO;
+import com.uber.app.team23.AirRide.dto.RidePaginatedDTO;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.service.PassengerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +39,10 @@ public class PassengerController {
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> createPassenger(@RequestBody Passenger passenger){
-        return new ResponseEntity<>(new UserDTO(passengerService.getMockPassenger()), HttpStatus.CREATED);
+
+    public ResponseEntity<PassengerDTO> createPassenger(@RequestBody Passenger passenger){
+        return new ResponseEntity<>(new PassengerDTO(passengerService.getMockPassenger()), HttpStatus.OK);
+
     }
 
     @GetMapping("/activate/{activationId}")
