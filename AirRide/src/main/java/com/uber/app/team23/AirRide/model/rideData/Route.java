@@ -1,5 +1,6 @@
 package com.uber.app.team23.AirRide.model.rideData;
 
+
 //import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;

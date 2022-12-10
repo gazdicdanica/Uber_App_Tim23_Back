@@ -3,9 +3,11 @@ package com.uber.app.team23.AirRide.model.users.driverData.vehicleData;
 import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 //import jakarta.persistence.*;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 
 //@Entity
 @Getter
@@ -30,6 +32,7 @@ public class Vehicle {
 //    @Column(name = "babies")
     public boolean acceptBabies;
 //    @Column(name = "pets")
+
     public boolean acceptPets;
 
     public Vehicle(Long id, Driver driver, String vehicleModel, VehicleType vehicle, String plates, int capacity,

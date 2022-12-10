@@ -21,14 +21,14 @@ public class PassengerController {
 
 
     @GetMapping(value ={"/{id}"}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PassengerDTO> getPassenger(@PathVariable("id") Long id){
-        return new ResponseEntity<>(new PassengerDTO(passengerService.getMockPassenger()), HttpStatus.OK);
+    public ResponseEntity<UserDTO> getPassenger(@PathVariable("id") Long id){
+        return new ResponseEntity<>(new UserDTO(passengerService.getMockPassenger()), HttpStatus.OK);
 
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PassengerPaginatedDTO> getPassengersPage(@RequestParam int page, @RequestParam int size){
-        return new ResponseEntity<>(new PassengerPaginatedDTO(new ArrayList<>()), HttpStatus.OK);
+    public ResponseEntity<UserPaginatedDTO> getPassengersPage(@RequestParam int page, @RequestParam int size){
+        return new ResponseEntity<>(new UserPaginatedDTO(new ArrayList<>()), HttpStatus.OK);
     }
 
     @GetMapping("/{id}/ride")
@@ -39,8 +39,10 @@ public class PassengerController {
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+
     public ResponseEntity<PassengerDTO> createPassenger(@RequestBody Passenger passenger){
         return new ResponseEntity<>(new PassengerDTO(passengerService.getMockPassenger()), HttpStatus.OK);
+
     }
 
     @GetMapping("/activate/{activationId}")
@@ -49,9 +51,9 @@ public class PassengerController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PassengerDTO> updatePassenger(@RequestBody Passenger passenger, @PathVariable Long id){
+    public ResponseEntity<UserDTO> updatePassenger(@RequestBody Passenger passenger, @PathVariable Long id){
 
-        return new ResponseEntity<>(new PassengerDTO(passengerService.getMockPassenger()), HttpStatus.OK);
+        return new ResponseEntity<>(new UserDTO(passengerService.getMockPassenger()), HttpStatus.OK);
     }
 
 
