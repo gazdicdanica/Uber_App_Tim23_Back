@@ -9,6 +9,8 @@ import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleType;
+import com.uber.app.team23.AirRide.repository.RideRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -16,6 +18,9 @@ import java.util.ArrayList;
 
 @Service
 public class RideService {
+
+    @Autowired
+    private RideRepository rideRepository;
 
     public RideResponseDTO getDTO(){
         Ride r = new Ride((long)1, LocalDateTime.now(), LocalDateTime.now().plusMinutes(10), 1234, null, 10, null, null,
