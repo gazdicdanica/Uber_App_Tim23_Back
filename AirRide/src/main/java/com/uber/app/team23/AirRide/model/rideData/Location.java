@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
-@Entity @Table(name = "Location")
+@Entity @Table(name = "locations")
 public class Location {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
