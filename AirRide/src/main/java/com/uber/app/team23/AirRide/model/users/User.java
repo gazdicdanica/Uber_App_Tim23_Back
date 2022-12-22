@@ -18,19 +18,19 @@ public abstract class User {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mySeqGenV1")
     @Column(name = "id")
     protected Long id;
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
     protected String name;
-    @Column(name = "last_name", nullable = false)
+    @Column(name = "last_name")
     protected String lastName;
     @Column(name = "profile_photo")
     protected String profilePhoto;
-    @Column(name = "phone_number", unique = true, nullable = false)
+    @Column(name = "phone_number", unique = true)
     protected String phoneNumber;
-    @Column(name = "email", unique = true, nullable = false)
+    @Column(name = "email", unique = true)
     protected String email;
     @Column(name = "address")
     protected String address;
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     protected String password;
     @Column(name = "blocked")
     protected boolean blocked;

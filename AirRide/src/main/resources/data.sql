@@ -7,6 +7,8 @@ insert into drivers (id, active, address, blocked, email, last_name, name, passw
 VALUES (3, true, 'Adresa1', false, 'pp@gmail.com', 'Peric', 'Pera', '1234', '0641212', 'qwer');
 insert into drivers (id, active, address, blocked, email, last_name, name, password, phone_number, profile_photo)
 VALUES (6, false, 'Adresa2', false, 'pr@gmail.com', 'Radovanovic', 'Pera', '1234', '06412', 'qwer');
+insert into drivers (id, active, address, blocked, email, last_name, name, password, phone_number, profile_photo)
+VALUES (5, false, 'Adresa2', false, 'pa@gmail.com', 'Bro', 'Da', '1234', '062134412', 'qwer');
 
 insert into working_hours (id, end_time, start_time, driver_id) VALUES (1, '2022-12-22T22:37:56.469083', '2022-12-22T17:37:56.469083', 3);
 
