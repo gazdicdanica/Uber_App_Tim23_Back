@@ -13,4 +13,7 @@ public class DriverService {
     @Autowired
     private DriverRepository driverRepository;
 
+    public List<Driver> findAll() {
+        return driverRepository.findAll();
+    }
 }

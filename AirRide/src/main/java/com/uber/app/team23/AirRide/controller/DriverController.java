@@ -1,6 +1,7 @@
 package com.uber.app.team23.AirRide.controller;
 
 import com.uber.app.team23.AirRide.dto.*;
+import com.uber.app.team23.AirRide.mapper.DriverDTOMapper;
 import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.WorkingHours;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController @RequestMapping("api/driver")
@@ -40,9 +42,10 @@ public class DriverController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserPaginatedDTO> getPaginatedDrivers(@RequestParam int page, @RequestParam int size) {
-        UserDTO driver = new UserDTO(12, "Pera", "Peric", "sghdh", "1234", "email", "adresa");
-        List<UserDTO> users = new ArrayList<>();
-        users.add(driver);
+        List<Driver> drivers = driverService.findAll();
+
+        List<UserDTO> users = drivers.stream().map(DriverDTOMapper::fromDriverToDTO).collect(Collectors.toList());
+
         return new ResponseEntity<>(new UserPaginatedDTO(users), HttpStatus.OK);
     }
 
