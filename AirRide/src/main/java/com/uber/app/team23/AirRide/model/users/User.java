@@ -1,46 +1,40 @@
 package com.uber.app.team23.AirRide.model.users;
 
-//import jakarta.persistence.*;
+import jakarta.persistence.*;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
-@Getter @Setter @NoArgsConstructor //@Entity //@Table(name = "Users")
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class User {
-    //@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "generatorUserId", sequenceName = "mySeqUser", initialValue = 1, allocationSize = 1)
+    @Id
+//    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mySeqGenV1")
+    @Column(name = "id")
     protected Long id;
-//    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false)
     protected String name;
-//    @Column(name = "lastName", nullable = false)
+    @Column(name = "last_name", nullable = false)
     protected String lastName;
-//    @Column(name = "profilePhoto")
+    @Column(name = "profile_photo")
     protected String profilePhoto;
-//    @Column(name = "phoneNum", unique = true, nullable = false)
+    @Column(name = "phone_number", unique = true, nullable = false)
     protected String phoneNumber;
-//    @Column(name = "email", unique = true, nullable = false)
+    @Column(name = "email", unique = true, nullable = false)
     protected String email;
-//    @Column(name = "address")
+    @Column(name = "address")
     protected String address;
-//    @Column(name = "password", nullable = false)
+    @Column(name = "password", nullable = false)
     protected String password;
-//    @Column(name = "blockedStatus")
+    @Column(name = "blocked")
     protected boolean blocked;
-//    @Column(name = "activeStatus")
+    @Column(name = "active")
     protected boolean active;
 
-    public User(Long id, String name, String lastName, String profilePhoto, String phoneNumber, String email,
-                String address, String password, boolean blocked, boolean active) {
-        this.id = id;
-        this.name = name;
-        this.lastName = lastName;
-        this.profilePhoto = profilePhoto;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.address = address;
-        this.password = password;
-        this.blocked = blocked;
-        this.active = active;
-    }
 }

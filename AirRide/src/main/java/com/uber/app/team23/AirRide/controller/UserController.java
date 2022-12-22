@@ -4,7 +4,10 @@ import com.uber.app.team23.AirRide.dto.*;
 import com.uber.app.team23.AirRide.model.messageData.Message;
 import com.uber.app.team23.AirRide.model.messageData.MessageType;
 import com.uber.app.team23.AirRide.model.messageData.Note;
+import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.users.Passenger;
+import com.uber.app.team23.AirRide.model.users.User;
+import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,8 +50,7 @@ public class UserController {
     @GetMapping(value = "/user/{id}/message", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageDTO> getAllMessages(@PathVariable Integer id) {
         MessageDTO msgDTO = new MessageDTO();
-
-        Message msg = new Message((long) 123, (long) 456, "Text", LocalDateTime.now(), MessageType.RIDE, (long) 10, (long) 123);
+        Message msg = new Message((long) 123, new Passenger(), new Driver(),"text", LocalDateTime.now(), MessageType.RIDE, new Ride());
 
         msgDTO.addMessageToList(msg);
         msgDTO.setTotalCount(msgDTO.getResults().size());
@@ -61,11 +63,13 @@ public class UserController {
         Message msgResponse = new Message();
         msgResponse.setId((long) 1);
         msgResponse.setTimeOfSending(LocalDateTime.now());
-        msgResponse.setSenderId((long) id);
-        msgResponse.setReceiverId(msg.getReceiverId());
+        User u = new Passenger();
+        u.setId((long) id);
+        msgResponse.setSender(u);
+        msgResponse.setReceiver(msg.getReceiver());
         msgResponse.setMessage(msg.getMessage());
         msgResponse.setType(msg.getType());
-        msgResponse.setRideId(msg.getRideId());
+        msgResponse.setRide(msg.getRide());
 
         return new ResponseEntity<>(msgResponse, HttpStatus.OK);
     }

@@ -160,8 +160,9 @@ public class DriverController {
             @PathVariable Integer id, @RequestParam int page, @RequestParam int size, @RequestParam String from,
             @RequestParam String to) {
 
-        WorkingHours wh1 = new WorkingHours(LocalDateTime.now(), LocalDateTime.now().plusHours(2), (long) 1);
-        WorkingHours wh2 = new WorkingHours(LocalDateTime.now(), LocalDateTime.now().plusHours(2), (long) 1);
+        Driver d = new Driver();
+        WorkingHours wh1 = new WorkingHours(LocalDateTime.now(), LocalDateTime.now().plusHours(2), d, (long) 1);
+        WorkingHours wh2 = new WorkingHours(LocalDateTime.now(), LocalDateTime.now().plusHours(2),d, (long) 1);
         DriverWorkingHoursDTO workingHoursDTO = new DriverWorkingHoursDTO();
         workingHoursDTO.updateWorkingHours(wh1);
         workingHoursDTO.updateWorkingHours(wh2);
@@ -175,7 +176,8 @@ public class DriverController {
         LocalDateTime startShift = LocalDateTime.now().minusHours(3);
         // Time generated when driver finished shift
         LocalDateTime endShift = LocalDateTime.now();
-        WorkingHours wh = new WorkingHours(startShift, endShift, (long) 1);
+        Driver d = new Driver();
+        WorkingHours wh = new WorkingHours(startShift, endShift,d, (long) 1);
 
         return new ResponseEntity<>(wh, HttpStatus.OK);
     }
@@ -190,12 +192,12 @@ public class DriverController {
 
     @GetMapping(value = "/working-hour/{id}")
     public ResponseEntity<WorkingHours> getOneWorkingHour(@PathVariable Integer id) {
-        return new ResponseEntity<>(new WorkingHours(LocalDateTime.now(), LocalDateTime.now().plusHours(2), (long) id), HttpStatus.OK);
+        return new ResponseEntity<>(new WorkingHours(LocalDateTime.now(), LocalDateTime.now().plusHours(2),new Driver(), (long) id), HttpStatus.OK);
     }
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/working-hour/{id}")
     public ResponseEntity<WorkingHours> updateWorkingHours(@PathVariable Integer id) {
-        WorkingHours wh = new WorkingHours(LocalDateTime.now().minusHours(4), LocalDateTime.now().minusHours(2), (long) id);
+        WorkingHours wh = new WorkingHours(LocalDateTime.now().minusHours(4), LocalDateTime.now().minusHours(2),new Driver(), (long) id);
         wh.setEnd(LocalDateTime.now());
         return new ResponseEntity<>(wh, HttpStatus.OK);
     }

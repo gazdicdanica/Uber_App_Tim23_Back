@@ -1,6 +1,8 @@
 package com.uber.app.team23.AirRide.service;
 
 import com.uber.app.team23.AirRide.model.users.Passenger;
+import com.uber.app.team23.AirRide.repository.PassengerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -8,8 +10,8 @@ import java.util.List;
 
 @Service
 public class PassengerService {
-    List<Passenger> passengers = new ArrayList<Passenger>();
-
+    @Autowired
+    private PassengerRepository passengerRepository;
     public Passenger getMockPassenger(){
         Passenger p = new Passenger();
         p.setId((long)1);
