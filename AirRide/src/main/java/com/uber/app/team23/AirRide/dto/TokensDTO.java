@@ -8,5 +8,5 @@ import lombok.Setter;
 @Setter @Getter @AllArgsConstructor @NoArgsConstructor
 public class TokensDTO {
     private String accessToken;
-    private String refreshToken;
+    private Long expiresIn;
 }

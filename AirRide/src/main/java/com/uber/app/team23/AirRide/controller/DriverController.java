@@ -1,12 +1,17 @@
 package com.uber.app.team23.AirRide.controller;
 
 import com.uber.app.team23.AirRide.dto.*;
+import com.uber.app.team23.AirRide.mapper.DriverDTOMapper;
 import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.WorkingHours;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
 import com.uber.app.team23.AirRide.service.DriverService;
+import jakarta.persistence.Id;
+import org.hibernate.annotations.NotFound;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController @RequestMapping("api/driver")
@@ -27,6 +33,7 @@ public class DriverController {
     public ResponseEntity<UserDTO> createDriver(@RequestBody UserDTO userDTO) {
         Driver driver = new Driver();
         driver.setId((long)123);
+        driver.setPassword("123adq");
         driver.setName(userDTO.getName());
         driver.setLastName(userDTO.getSurname());
         driver.setProfilePhoto(userDTO.getProfilePicture());
@@ -34,34 +41,32 @@ public class DriverController {
         driver.setEmail(userDTO.getEmail());
         driver.setAddress(userDTO.getAddress());
 
-//        driver = driverService.save(driver);
+        driver = driverService.save(driver);
         return new ResponseEntity<>(new UserDTO(driver), HttpStatus.OK);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserPaginatedDTO> getPaginatedDrivers(@RequestParam int page, @RequestParam int size) {
-        UserDTO driver = new UserDTO(12, "Pera", "Peric", "sghdh", "1234", "email", "adresa");
-        List<UserDTO> users = new ArrayList<>();
-        users.add(driver);
+    public ResponseEntity<UserPaginatedDTO> getPaginatedDrivers(Pageable page) {
+        Page<Driver> drivers = driverService.findAll(page);
+
+        List<UserDTO> users = drivers.stream().map(DriverDTOMapper::fromDriverToDTO).collect(Collectors.toList());
+
+        System.err.println(users.size());
+
         return new ResponseEntity<>(new UserPaginatedDTO(users), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<UserDTO> getDriver(@PathVariable Integer id) {
-//        Driver driver = driverService.findOne(id);
-//        if (driver == null) {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-
-        Driver driver = new Driver();
-        driver.setId((long)id);
-        driver.setName("Pera");
-        driver.setLastName("Perić");
-        driver.setProfilePhoto("U3dhZ2dlciByb2Nrcw==");
-        driver.setPhoneNumber("+381123123");
-        driver.setEmail("pera.peric@email.com");
-        driver.setAddress("Bulevar Oslobodjenja 74");
-        return new ResponseEntity<>(new UserDTO(driver), HttpStatus.OK);
+    public ResponseEntity<UserDTO> getDriver(@PathVariable Long id) {
+        try {
+            Driver driver = driverService.findOne(id);
+            if (driver != null) {
+                return new ResponseEntity<>(new UserDTO(driver), HttpStatus.OK);
+            }
+        } catch (NullPointerException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}")

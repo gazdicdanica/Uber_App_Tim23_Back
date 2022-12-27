@@ -1,10 +1,15 @@
 package com.uber.app.team23.AirRide.service;
 
 import com.uber.app.team23.AirRide.model.users.Passenger;
+import com.uber.app.team23.AirRide.model.users.Role;
+import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.repository.PassengerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +17,13 @@ import java.util.List;
 public class PassengerService {
     @Autowired
     private PassengerRepository passengerRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RoleService roleService;
+
     public Passenger getMockPassenger(){
         Passenger p = new Passenger();
         p.setId((long)1);
@@ -23,5 +35,33 @@ public class PassengerService {
         p.setProfilePhoto("profilna");
         p.setEmail("test@email.com");
         return p;
+    }
+
+    public Passenger findByEmail(String email) throws UsernameNotFoundException {
+        return passengerRepository.findByEmail(email);
+    }
+
+    public Passenger findById(Long id) throws AccessDeniedException {
+        return passengerRepository.findById(id).orElseGet(null);
+    }
+
+    public List<Passenger> findAll() throws AccessDeniedException {
+        return passengerRepository.findAll();
+    }
+
+    public Passenger save(User u) {
+        Passenger p = new Passenger();
+        p.setEmail(u.getEmail());
+        p.setPassword(passwordEncoder.encode(u.getPassword()));
+        p.setName(u.getName());
+        p.setLastName(u.getLastName());
+        p.setPhoneNumber(u.getPhoneNumber());
+        p.setProfilePhoto(u.getProfilePhoto());
+        p.setAddress(u.getAddress());
+        p.setBlocked(false);
+        p.setActive(false);
+
+        p.setRole(new Role(1L, "ROLE_USER"));
+        return this.passengerRepository.save(p);
     }
 }

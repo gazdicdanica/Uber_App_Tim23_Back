@@ -16,7 +16,6 @@ import java.util.Set;
 @Getter @Setter @NoArgsConstructor
 @Entity @Table(name = "passengers")
 public class Passenger extends User{
-
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "ride_passengers", joinColumns = @JoinColumn(name = "passenger_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "ride_id", referencedColumnName = "id"))
     public Set<Ride> rides = new HashSet<>();
@@ -25,8 +24,8 @@ public class Passenger extends User{
 
     public Passenger(Long id, String name, String lastName, String profilePhoto, String phoneNumber, String email,
                      String address, String password, boolean blocked, boolean active, Set<Ride> rides,
-                     Set<Location> favouriteLocations) {
-        super(id, name, lastName, profilePhoto, phoneNumber, email, address, password, blocked, active);
+                     Set<Location> favouriteLocations, Role role) {
+        super(id, name, lastName, profilePhoto, phoneNumber, email, address, password, blocked, active, role);
         this.rides = rides;
         this.favouriteLocations = favouriteLocations;
     }
