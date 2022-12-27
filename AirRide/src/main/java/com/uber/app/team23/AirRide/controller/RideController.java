@@ -47,16 +47,16 @@ public class RideController {
 
     }
 
-    @PutMapping("/{id}/panic")
-    public ResponseEntity<PanicDTO> panic(@PathVariable Long id, @RequestBody Panic panic){
-        Panic p = new Panic();
-        p.setReason(panic.getReason());
-        p.setTime(LocalDateTime.now());
-        p.setId(id);
-        p.setUser(new Passenger((long)1, "Pera", "Peric", "111111", "+3811231234",
-                "test@gmail.com","sifra123", "Bulevar Oslobodjenja", false, true, null, null));
-        return new ResponseEntity<>(new PanicDTO(p), HttpStatus.OK);
-    }
+//    @PutMapping("/{id}/panic")
+//    public ResponseEntity<PanicDTO> panic(@PathVariable Long id, @RequestBody Panic panic){
+//        Panic p = new Panic();
+//        p.setReason(panic.getReason());
+//        p.setTime(LocalDateTime.now());
+//        p.setId(id);
+//        p.setUser(new Passenger((long)1, "Pera", "Peric", "111111", "+3811231234",
+//                "test@gmail.com","sifra123", "Bulevar Oslobodjenja", false, true, null, null));
+//        return new ResponseEntity<>(new PanicDTO(p), HttpStatus.OK);
+//    }
 
     @PutMapping("/{id}/accept")
     public ResponseEntity<RideResponseDTO> acceptRide(@PathVariable Long id){

@@ -1,7 +1,7 @@
 insert into passengers (id, active, address, blocked, profile_photo, name, last_name, phone_number, email, password)
-VALUES (1, true, 'Dimitrija Avramovic 4', false, '123asdq', 'Danica', 'Gazdic', '0691852001', 'test@email.com', '12345');
+VALUES (1, true, 'Dimitrija Avramovic 4', false, '123asdq', 'Danica', 'Gazdic', '0691852001', 'test@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
 insert into passengers (id, active, address, blocked, profile_photo, name, last_name, phone_number, email, password)
-VALUES (2, false, 'Maksima Gorkog 55', false, '123qwerty', 'Milos', 'Obradovic', '12341234', 'test2@email.com', '1234');
+VALUES (2, false, 'Maksima Gorkog 55', false, '123qwerty', 'Milos', 'Obradovic', '12341234', 'test2@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
 
 insert into drivers (id, active, address, blocked, email, last_name, name, password, phone_number, profile_photo)
 VALUES (3, true, 'Adresa1', false, 'pp@gmail.com', 'Peric', 'Pera', '1234', '0641212', 'qwer');

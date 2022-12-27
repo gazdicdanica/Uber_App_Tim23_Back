@@ -33,19 +33,19 @@ public class UserController {
         return new ResponseEntity<>(new UserPaginatedDTO(), HttpStatus.OK);
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user")
-    public ResponseEntity<UserPaginatedDTO> getUserPaginated(@RequestParam int page, @RequestParam int size) {
-        Passenger p = new Passenger((long) 10, "Ime", "Prezime", "Phhoto", "123", "email", "adr", null, false, false, null, null);
-        List<UserDTO> users = new ArrayList<>();
-        users.add(new UserDTO(p));
-        return new ResponseEntity<>(new UserPaginatedDTO(users), HttpStatus.OK);
-    }
+//    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user")
+//    public ResponseEntity<UserPaginatedDTO> getUserPaginated(@RequestParam int page, @RequestParam int size) {
+//        Passenger p = new Passenger((long) 10, "Ime", "Prezime", "Phhoto", "123", "email", "adr", null, false, false, null, null);
+//        List<UserDTO> users = new ArrayList<>();
+//        users.add(new UserDTO(p));
+//        return new ResponseEntity<>(new UserPaginatedDTO(users), HttpStatus.OK);
+//    }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user/login")
-    public ResponseEntity<TokensDTO> userLogin(@RequestBody LoginDTO loginParams){
-        return new ResponseEntity<>(new TokensDTO( "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC"),
-                HttpStatus.OK);
-    }
+//    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user/login")
+//    public ResponseEntity<TokensDTO> userLogin(@RequestBody LoginDTO loginParams){
+//        return new ResponseEntity<>(new TokensDTO( "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC"),
+//                HttpStatus.OK);
+//    }
 
     @GetMapping(value = "/user/{id}/message", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageDTO> getAllMessages(@PathVariable Integer id) {

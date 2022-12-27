@@ -2,6 +2,7 @@ package com.uber.app.team23.AirRide.model.users.driverData;
 
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 
+import com.uber.app.team23.AirRide.model.users.Role;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Document;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
@@ -11,7 +12,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -30,8 +33,8 @@ public class Driver extends User {
 
     public Driver(Long id, String name, String lastName, String profilePhoto, String phoneNumber, String email,
                   String address, String password, boolean blocked, boolean active, Set<Document> documents,
-                  Set<Ride> rides, Vehicle vehicle) {
-        super(id, name, lastName, profilePhoto, phoneNumber, email, address, password, blocked, active);
+                  Set<Ride> rides, Vehicle vehicle, Role role) {
+        super(id, name, lastName, profilePhoto, phoneNumber, email, address, password, blocked, active, role);
 
         this.documents = documents;
         this.rides = rides;
