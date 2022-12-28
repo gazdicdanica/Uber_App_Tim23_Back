@@ -1,16 +1,16 @@
 insert into users(type, admin_username, password, name, last_name)
 VALUES ('admin', 'admin', '123', 'John', 'Doe');
 
-insert into users (type, active, address, blocked, profile_photo, name, last_name, phone_number, email, password)
+insert into users (type, active, address, blocked, profile_picture, name, last_name, telephone_number, email, password)
 VALUES ('passenger', true, 'Dimitrija Avramovic 4', false, '123asdq', 'Danica', 'Gazdic', '0691852001', 'test@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
-insert into users (type, active, address, blocked, profile_photo, name, last_name, phone_number, email, password)
+insert into users (type, active, address, blocked, profile_picture, name, last_name, telephone_number, email, password)
 VALUES ('passenger', false, 'Maksima Gorkog 55', false, '123qwerty', 'Milos', 'Obradovic', '12341234', 'test2@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
 
-insert into users (type, active, address, blocked, email, last_name, name, password, phone_number, profile_photo)
+insert into users (type, active, address, blocked, email, last_name, name, password, telephone_number, profile_picture)
 VALUES ('driver', true, 'Adresa1', false, 'pp@gmail.com', 'Peric', 'Pera', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0641212', 'qwer');
-insert into users (type, active, address, blocked, email, last_name, name, password, phone_number, profile_photo)
+insert into users (type, active, address, blocked, email, last_name, name, password, telephone_number, profile_picture)
 VALUES ('driver', false, 'Adresa2', false, 'pr@gmail.com', 'Radovanovic', 'Pera', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '06412', 'qwer');
-insert into users (type, active, address, blocked, email, last_name, name, password, phone_number, profile_photo)
+insert into users (type, active, address, blocked, email, last_name, name, password, telephone_number, profile_picture)
 VALUES ('driver', false, 'Adresa2', false, 'pa@gmail.com', 'Bro', 'Da', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '062134412', 'qwer');
 
 insert into role (name) VALUES ('ROLE_USER');

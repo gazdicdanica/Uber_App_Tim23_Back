@@ -28,11 +28,11 @@ public class PassengerService {
         Passenger p = new Passenger();
         p.setId((long)1);
         p.setName("Pera");
-        p.setLastName("Peric");
+        p.setSurname("Peric");
         p.setPassword("sifra123");
         p.setAddress("Bulevar Oslobodjenja 47");
-        p.setPhoneNumber("+381123123");
-        p.setProfilePhoto("profilna");
+        p.setTelephoneNumber("+381123123");
+        p.setProfilePicture("profilna");
         p.setEmail("test@email.com");
         return p;
     }
@@ -54,9 +54,9 @@ public class PassengerService {
         p.setEmail(u.getEmail());
         p.setPassword(passwordEncoder.encode(u.getPassword()));
         p.setName(u.getName());
-        p.setLastName(u.getLastName());
-        p.setPhoneNumber(u.getPhoneNumber());
-        p.setProfilePhoto(u.getProfilePhoto());
+        p.setSurname(u.getSurname());
+        p.setTelephoneNumber(u.getTelephoneNumber());
+        p.setProfilePicture(u.getProfilePicture());
         p.setAddress(u.getAddress());
         p.setBlocked(false);
         p.setActive(false);
