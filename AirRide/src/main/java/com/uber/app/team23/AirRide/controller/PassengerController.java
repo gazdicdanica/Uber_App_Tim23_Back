@@ -41,7 +41,8 @@ public class PassengerController {
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 
     public ResponseEntity<UserDTO> createPassenger(@RequestBody Passenger passenger){
-        return new ResponseEntity<>(new UserDTO(passengerService.getMockPassenger()), HttpStatus.OK);
+        Passenger newPassenger = passengerService.save(passenger);
+        return new ResponseEntity<>(new UserDTO(newPassenger), HttpStatus.OK);
 
     }
 
