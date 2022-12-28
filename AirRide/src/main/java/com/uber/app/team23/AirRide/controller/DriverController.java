@@ -1,5 +1,8 @@
 package com.uber.app.team23.AirRide.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.uber.app.team23.AirRide.dto.*;
 import com.uber.app.team23.AirRide.mapper.DriverDTOMapper;
 import com.uber.app.team23.AirRide.model.rideData.Location;
@@ -8,6 +11,7 @@ import com.uber.app.team23.AirRide.model.users.driverData.WorkingHours;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
 import com.uber.app.team23.AirRide.service.DriverService;
 import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,15 +32,12 @@ public class DriverController {
     private DriverService driverService;
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> createDriver(@RequestBody Driver driver) {
+    public ResponseEntity<UserDTO> createDriver(@Valid @RequestBody Driver driver) throws ConstraintViolationException {
+        Driver newDriver = driverService.save(driver);
+//            ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+//            String json = ow.writeValueAsString(new UserDTO(driverService.findByEmail(driver.getEmail()).getId(), newDriver));
+        return new ResponseEntity<>(new UserDTO(driverService.findByEmail(driver.getEmail()).getId(), newDriver), HttpStatus.OK);
 
-        try {
-            Driver newDriver = driverService.save(driver);
-            return new ResponseEntity<>(new UserDTO(driverService.findByEmail(driver.getEmail()).getId(), driver), HttpStatus.OK);
-        } catch (Exception e) {
-
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
