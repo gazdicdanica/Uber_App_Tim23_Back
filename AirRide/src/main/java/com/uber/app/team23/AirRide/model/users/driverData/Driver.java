@@ -18,7 +18,8 @@ import java.util.List;
 import java.util.Set;
 
 
-@Entity @Table(name = "drivers")
+@Entity
+@DiscriminatorValue("driver")
 @Getter @Setter @NoArgsConstructor
 public class Driver extends User {
 

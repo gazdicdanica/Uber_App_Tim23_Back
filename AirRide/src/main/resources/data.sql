@@ -1,21 +1,21 @@
-insert into passengers (id, active, address, blocked, profile_photo, name, last_name, phone_number, email, password)
-VALUES (1, true, 'Dimitrija Avramovic 4', false, '123asdq', 'Danica', 'Gazdic', '0691852001', 'test@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
-insert into passengers (id, active, address, blocked, profile_photo, name, last_name, phone_number, email, password)
-VALUES (2, false, 'Maksima Gorkog 55', false, '123qwerty', 'Milos', 'Obradovic', '12341234', 'test2@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
+insert into users (type,active, address, blocked, profile_photo, name, last_name, phone_number, email, password)
+VALUES ('passenger', true, 'Dimitrija Avramovic 4', false, '123asdq', 'Danica', 'Gazdic', '0691852001', 'test@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
+insert into users (type, active, address, blocked, profile_photo, name, last_name, phone_number, email, password)
+VALUES ('passenger', false, 'Maksima Gorkog 55', false, '123qwerty', 'Milos', 'Obradovic', '12341234', 'test2@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
 
-insert into drivers (id, active, address, blocked, email, last_name, name, password, phone_number, profile_photo)
-VALUES (3, true, 'Adresa1', false, 'pp@gmail.com', 'Peric', 'Pera', '1234', '0641212', 'qwer');
-insert into drivers (id, active, address, blocked, email, last_name, name, password, phone_number, profile_photo)
-VALUES (6, false, 'Adresa2', false, 'pr@gmail.com', 'Radovanovic', 'Pera', '1234', '06412', 'qwer');
-insert into drivers (id, active, address, blocked, email, last_name, name, password, phone_number, profile_photo)
-VALUES (5, false, 'Adresa2', false, 'pa@gmail.com', 'Bro', 'Da', '1234', '062134412', 'qwer');
+insert into users (type, active, address, blocked, email, last_name, name, password, phone_number, profile_photo)
+VALUES ('driver', true, 'Adresa1', false, 'pp@gmail.com', 'Peric', 'Pera', '1234', '0641212', 'qwer');
+insert into users (type, active, address, blocked, email, last_name, name, password, phone_number, profile_photo)
+VALUES ('driver', false, 'Adresa2', false, 'pr@gmail.com', 'Radovanovic', 'Pera', '1234', '06412', 'qwer');
+insert into users (type, active, address, blocked, email, last_name, name, password, phone_number, profile_photo)
+VALUES ('driver', false, 'Adresa2', false, 'pa@gmail.com', 'Bro', 'Da', '1234', '062134412', 'qwer');
 
 insert into working_hours (id, end_time, start_time, driver_id) VALUES (1, '2022-12-22T22:37:56.469083', '2022-12-22T17:37:56.469083', 3);
 
 insert into locations (id, longitude, latitude, address) VALUES (1, 13.54, 11.11, 'Dimitrija Avramovica 3');
 insert into locations (id, longitude, latitude, address) VALUES (2, 13.54, 11.11, 'NTP');
 
-insert into passengers_favourite_locations (passenger_id, favourite_locations_id) VALUES (1, 1);
+insert into users_favourite_locations (passenger_id, favourite_locations_id) VALUES (1, 1);
 
 insert into documents (id, name, photo, driver_id) VALUES (1, 'Vozacka', 'qwer123', 3);
 

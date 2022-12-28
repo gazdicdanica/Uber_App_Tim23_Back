@@ -15,12 +15,12 @@ import java.util.List;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Table(name = "users")
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 public abstract class User implements UserDetails {
-    @SequenceGenerator(name = "generatorUserId", sequenceName = "mySeqUser", initialValue = 1, allocationSize = 1)
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mySeqGenV1")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     protected Long id;
 

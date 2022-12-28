@@ -14,7 +14,8 @@ import java.util.Set;
 
 
 @Getter @Setter @NoArgsConstructor
-@Entity @Table(name = "passengers")
+@Entity
+@DiscriminatorValue("passenger")
 public class Passenger extends User{
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "ride_passengers", joinColumns = @JoinColumn(name = "passenger_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "ride_id", referencedColumnName = "id"))
