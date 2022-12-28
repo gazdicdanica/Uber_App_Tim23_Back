@@ -5,6 +5,7 @@ import com.uber.app.team23.AirRide.dto.UserDTO;
 import com.uber.app.team23.AirRide.dto.UserPaginatedDTO;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.service.PassengerService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -46,8 +47,9 @@ public class PassengerController {
 
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> createPassenger(@RequestBody Passenger passenger){
+    public ResponseEntity<UserDTO> createPassenger(@Valid @RequestBody Passenger passenger){
         Passenger newPassenger = passengerService.save(passenger);
+
         return new ResponseEntity<>(new UserDTO(newPassenger), HttpStatus.OK);
 
     }

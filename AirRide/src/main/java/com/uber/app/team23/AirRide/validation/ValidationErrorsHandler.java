@@ -18,13 +18,13 @@ public class ValidationErrorsHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ResponseEntity<String> handleConstraintViolationException(MethodArgumentNotValidException e) {
         List<ObjectError> errorList = e.getBindingResult().getAllErrors();
-        StringBuilder sb = new StringBuilder("Request finished with validation errors: \n");
+        StringBuilder sb = new StringBuilder("\"message\": ");
 
-        for (ObjectError error : errorList) {
+        for (ObjectError error : errorList ) {
             FieldError fe = (FieldError) error;
-            sb.append(fe.getField() + " - ");
-            sb.append(error.getDefaultMessage() + "\n\n");
+            sb.append("\"" + error.getDefaultMessage()+ "\"");
         }
+
         return new ResponseEntity<>(sb.toString(), HttpStatus.BAD_REQUEST);
     }
 }
