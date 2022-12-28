@@ -60,8 +60,9 @@ public class PassengerService {
         p.setAddress(u.getAddress());
         p.setBlocked(false);
         p.setActive(false);
-
-        p.setRole(new Role(1L, "ROLE_USER"));
+        List<Role> li = new ArrayList<>();
+        li.add(new Role(1L, "ROLE_USER"));
+        p.setRole(li);
         return this.passengerRepository.save(p);
     }
 }
