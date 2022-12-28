@@ -1,3 +1,6 @@
+insert into users(type, admin_username, password, name, last_name)
+VALUES ('admin', 'admin', '123', 'John', 'Doe');
+
 insert into users (type,active, address, blocked, profile_photo, name, last_name, phone_number, email, password)
 VALUES ('passenger', true, 'Dimitrija Avramovic 4', false, '123asdq', 'Danica', 'Gazdic', '0691852001', 'test@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
 insert into users (type, active, address, blocked, profile_photo, name, last_name, phone_number, email, password)
