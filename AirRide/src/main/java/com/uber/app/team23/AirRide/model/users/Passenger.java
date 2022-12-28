@@ -5,16 +5,18 @@ import com.uber.app.team23.AirRide.model.rideData.Ride;
 import jakarta.persistence.*;
 
 import jakarta.persistence.Entity;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
 @Getter @Setter @NoArgsConstructor
-@Entity
+@Entity @AllArgsConstructor
 @DiscriminatorValue("passenger")
 public class Passenger extends User{
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -23,12 +25,12 @@ public class Passenger extends User{
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Set<Location> favouriteLocations = new HashSet<>();
 
-    public Passenger(Long id, String name, String lastName, String profilePhoto, String phoneNumber, String email,
-                     String address, String password, boolean blocked, boolean active, Set<Ride> rides,
-                     Set<Location> favouriteLocations, Role role) {
-        super(id, name, lastName, profilePhoto, phoneNumber, email, address, password, blocked, active, role);
-        this.rides = rides;
-        this.favouriteLocations = favouriteLocations;
-    }
+//    public Passenger(Long id, String name, String lastName, String profilePhoto, String phoneNumber, String email,
+//                     String address, String password, boolean blocked, boolean active, Set<Ride> rides,
+//                     Set<Location> favouriteLocations, List<Role> role, String jwt) {
+//        super(id,name, lastName, profilePhoto, phoneNumber, email, address, password, blocked, active, jwt, role);
+//        this.rides = rides;
+//        this.favouriteLocations = favouriteLocations;
+//    }
 }
 

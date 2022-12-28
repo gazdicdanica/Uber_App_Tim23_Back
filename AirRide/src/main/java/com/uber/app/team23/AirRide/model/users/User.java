@@ -1,7 +1,10 @@
 package com.uber.app.team23.AirRide.model.users;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,15 +31,17 @@ public abstract class User implements UserDetails {
     protected String name;
 
     @Column(name = "last_name")
-    protected String lastName;
+    protected String surname;
 
-    @Column(name = "profile_photo")
-    protected String profilePhoto;
+    @Column(name = "profile_picture")
+    protected String profilePicture;
 
-    @Column(name = "phone_number", unique = true)
-    protected String phoneNumber;
+    @Column(name = "telephone_number", unique = true)
+    protected String telephoneNumber;
 
     @Column(name = "email", unique = true)
+    @Email(message = "Email Not Valid", regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$")
+    @NotEmpty(message = "Email cannot be empty")
     protected String email;
 
     @Column(name = "address")
@@ -51,18 +56,24 @@ public abstract class User implements UserDetails {
     @Column(name = "active")
     protected boolean active;
 
+    @Transient
+    private String jwt;
+
 //    @ManyToMany(fetch = FetchType.EAGER)
 //    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
 //            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
 //    private List<Role> roles;
-    @OneToOne
-    protected Role role;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    protected List<Role> role;
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return this.role;
     }
-
     @Override
     public String getUsername() {
         return this.getEmail();

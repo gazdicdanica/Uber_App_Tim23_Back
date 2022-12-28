@@ -7,8 +7,7 @@ import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.WorkingHours;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
 import com.uber.app.team23.AirRide.service.DriverService;
-import jakarta.persistence.Id;
-import org.hibernate.annotations.NotFound;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,19 +28,15 @@ public class DriverController {
     private DriverService driverService;
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> createDriver(@RequestBody UserDTO userDTO) {
-        Driver driver = new Driver();
-        driver.setId((long)123);
-        driver.setPassword("123adq");
-        driver.setName(userDTO.getName());
-        driver.setLastName(userDTO.getSurname());
-        driver.setProfilePhoto(userDTO.getProfilePicture());
-        driver.setPhoneNumber(userDTO.getTelephoneNumber());
-        driver.setEmail(userDTO.getEmail());
-        driver.setAddress(userDTO.getAddress());
+    public ResponseEntity<UserDTO> createDriver(@RequestBody Driver driver) {
 
-        driver = driverService.save(driver);
-        return new ResponseEntity<>(new UserDTO(driver), HttpStatus.OK);
+        try {
+            Driver newDriver = driverService.save(driver);
+            return new ResponseEntity<>(new UserDTO(driverService.findByEmail(driver.getEmail()).getId(), driver), HttpStatus.OK);
+        } catch (Exception e) {
+
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -74,9 +68,9 @@ public class DriverController {
         Driver driver = new Driver();
         driver.setId((long) id);
         driver.setName(driverDTO.getName());
-        driver.setLastName(driverDTO.getSurname());
-        driver.setProfilePhoto(driverDTO.getProfilePicture());
-        driver.setPhoneNumber(driverDTO.getTelephoneNumber());
+        driver.setSurname(driverDTO.getSurname());
+        driver.setProfilePicture(driverDTO.getProfilePicture());
+        driver.setTelephoneNumber(driverDTO.getTelephoneNumber());
         driver.setEmail(driverDTO.getEmail());
         driver.setAddress(driverDTO.getAddress());
 
