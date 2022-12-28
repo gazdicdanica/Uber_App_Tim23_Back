@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 
 @RestController @RequestMapping("api/passenger")
@@ -22,7 +23,12 @@ public class PassengerController {
 
     @GetMapping(value ={"/{id}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> getPassenger(@PathVariable("id") Long id){
-        return new ResponseEntity<>(new UserDTO(passengerService.getMockPassenger()), HttpStatus.OK);
+        try {
+            Passenger p = passengerService.findById(id);
+            return new ResponseEntity<>(new UserDTO(p), HttpStatus.OK);
+        } catch (AccessDeniedException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -38,8 +44,8 @@ public class PassengerController {
         return new ResponseEntity<>(new RidePaginatedDTO(new ArrayList<>()), HttpStatus.OK);
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> createPassenger(@RequestBody Passenger passenger){
         Passenger newPassenger = passengerService.save(passenger);
         return new ResponseEntity<>(new UserDTO(newPassenger), HttpStatus.OK);
