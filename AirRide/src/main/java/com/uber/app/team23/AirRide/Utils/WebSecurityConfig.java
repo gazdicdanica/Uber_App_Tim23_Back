@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -22,7 +23,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+@EnableMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
@@ -52,24 +53,18 @@ public class WebSecurityConfig {
     @Autowired
     private TokenUtils tokenUtils;
 
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint);
-        http.authorizeRequests().requestMatchers("/api/login").permitAll().requestMatchers("/api/signup").permitAll()
-                .requestMatchers("/h2-console/**").permitAll().anyRequest().authenticated().and().cors().and()
-                .addFilterBefore(new TokenAuthenticationFilter(tokenUtils, userDetailsService()), BasicAuthenticationFilter.class);
-
-        http.csrf().disable();
+        http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.addFilterBefore(new TokenAuthenticationFilter(tokenUtils, userDetailsService()), BasicAuthenticationFilter.class);
         http.headers().frameOptions().disable();
-        http.authenticationProvider(authenticationProvider());
-
         return http.build();
     }
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers(HttpMethod.POST, "/api/login")
-                .requestMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "favicon.ico", "/**/*.html",
-                        "/**/*.css", "/**/*.js");
+                .requestMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "favicon.ico",
+                        "/*/*.html", "/*/*.css", "/*/*.js");
     }
 }
