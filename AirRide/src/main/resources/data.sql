@@ -62,4 +62,4 @@ insert into rides_route (ride_id, route_id) VALUES (1, 1);
 
 
 insert into user_activations (activation_id, creation_date_time, lifespan, user_id)
-VALUES (1, '2022-12-22T17:37:56.469083', '2022-12-22T17:37:56.469083', 2);
+VALUES (1, '2022-12-22T17:37:56.469083', '2022-12-22T17:37:56.469083', 3);
