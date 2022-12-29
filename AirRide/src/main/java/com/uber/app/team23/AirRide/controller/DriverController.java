@@ -9,7 +9,6 @@ import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnu
 import com.uber.app.team23.AirRide.service.DriverService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -30,6 +28,7 @@ public class DriverController {
 
     @Autowired
     private DriverService driverService;
+
 
     @PostMapping
     public ResponseEntity<UserDTO> createDriver(@Valid @RequestBody Driver driver) throws ConstraintViolationException {
@@ -52,18 +51,13 @@ public class DriverController {
         return driverService.resolveResponse(driver, "Wrong Field Format In Request");
     }
 
-    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}")
-    public ResponseEntity<UserDTO> updateDriver(@RequestBody UserDTO driverDTO, @PathVariable Integer id) {
-        Driver driver = new Driver();
-        driver.setId((long) id);
-        driver.setName(driverDTO.getName());
-        driver.setSurname(driverDTO.getSurname());
-        driver.setProfilePicture(driverDTO.getProfilePicture());
-        driver.setTelephoneNumber(driverDTO.getTelephoneNumber());
-        driver.setEmail(driverDTO.getEmail());
-        driver.setAddress(driverDTO.getAddress());
-
-        return new ResponseEntity<>(new UserDTO(driver), HttpStatus.OK);
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<Object> updateDriver(@Valid @RequestBody Driver driverDTO, @PathVariable Integer id) {
+        if (!driverService.driverExists((long) id)) {
+            return driverService.resolveResponse(null, "Driver With This ID Does Not Exist");
+        }
+        Driver driver = driverService.changeDriverData(driverService.findById((long) id), driverDTO);
+        return new ResponseEntity<>(new UserDTO(driverService.update(driver)), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}/documents")
