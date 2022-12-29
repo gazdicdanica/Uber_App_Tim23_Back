@@ -31,7 +31,7 @@ insert into locations (id, longitude, latitude, address) VALUES (2, 13.54, 11.11
 
 insert into users_favourite_locations (passenger_id, favourite_locations_id) VALUES (1, 1);
 
-insert into documents (id, name, photo, driver_id) VALUES (1, 'Vozacka', 'qwer123', 3);
+insert into documents (id, name, photo, driver_id) VALUES (1, 'Vozacka', 'qwer123', 4);
 
 insert into vehicle_type (id, price, type) VALUES (1, 300, 1);
 

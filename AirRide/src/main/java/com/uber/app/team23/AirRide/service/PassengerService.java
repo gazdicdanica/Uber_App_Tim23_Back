@@ -1,5 +1,6 @@
 package com.uber.app.team23.AirRide.service;
 
+import com.uber.app.team23.AirRide.exceptions.EmailTakenException;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.Role;
 import com.uber.app.team23.AirRide.model.users.User;
@@ -38,18 +39,24 @@ public class PassengerService {
     }
 
     public Passenger findByEmail(String email) throws UsernameNotFoundException {
-        return passengerRepository.findByEmail(email);
-    }
-
-    public Passenger findById(Long id) throws AccessDeniedException {
-        return passengerRepository.findById(id).orElseGet(null);
+        return passengerRepository.findByEmail(email).orElse(null);
     }
 
     public List<Passenger> findAll() throws AccessDeniedException {
         return passengerRepository.findAll();
     }
 
+    public Passenger findOne(Long id) {
+        return passengerRepository.findById(id).orElse(null);
+    }
+
     public Passenger save(User u) {
+
+        Passenger existingPassenger = passengerRepository.findByEmail(u.getEmail()).orElse(null);
+        if(existingPassenger != null){
+            throw new EmailTakenException("User with that email already exists");
+        }
+
         Passenger p = new Passenger();
         p.setEmail(u.getEmail());
         p.setPassword(passwordEncoder.encode(u.getPassword()));

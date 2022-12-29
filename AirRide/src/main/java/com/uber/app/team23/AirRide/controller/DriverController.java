@@ -33,7 +33,7 @@ public class DriverController {
     @PostMapping
     public ResponseEntity<UserDTO> createDriver(@Valid @RequestBody Driver driver) throws ConstraintViolationException {
         Driver newDriver = driverService.save(driver);
-        return new ResponseEntity<>(new UserDTO(driverService.findByEmail(driver.getEmail()).getId(), newDriver), HttpStatus.OK);
+        return new ResponseEntity<>(new UserDTO(newDriver), HttpStatus.OK);
     }
 
     @GetMapping
@@ -46,29 +46,22 @@ public class DriverController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Object> getDriver(@PathVariable Long id) {
+    public ResponseEntity<UserDTO> getDriver(@PathVariable Long id) {
         Driver driver = driverService.findOne(id);
-        return driverService.resolveResponse(driver, "Wrong Field Format In Request");
+        return new ResponseEntity<>(new UserDTO(driver), HttpStatus.OK);
     }
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<Object> updateDriver(@Valid @RequestBody Driver driverDTO, @PathVariable Integer id) {
-        if (!driverService.driverExists((long) id)) {
-            return driverService.resolveResponse(null, "Driver With This ID Does Not Exist");
-        }
         Driver driver = driverService.changeDriverData(driverService.findById((long) id), driverDTO);
         return new ResponseEntity<>(new UserDTO(driverService.update(driver)), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}/documents")
     public ResponseEntity<DriverDocumentsDTO> getDriverDocuments(@PathVariable Integer id) {
-        Driver driver = new Driver();
-        driver.setId((long)10);
-
-        DriverDocumentsDTO documentsDTO = new DriverDocumentsDTO((long)123, "Vozačka dozvola",
-                "U3dhZ2dlciByb2Nrcw=", driver.getId());
-
-        return new ResponseEntity<>(documentsDTO, HttpStatus.OK);
+        Driver driver = driverService.findById((long) id);
+        DriverDocumentsDTO driverDocumentsDTO = driverService.getDocuments(driver);
+        return new ResponseEntity<>(driverDocumentsDTO, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/document/{id}")
