@@ -3,8 +3,10 @@ package com.uber.app.team23.AirRide.controller;
 import com.uber.app.team23.AirRide.dto.*;
 import com.uber.app.team23.AirRide.model.messageData.Panic;
 import com.uber.app.team23.AirRide.model.messageData.Rejection;
+import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.service.RideService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,30 +22,35 @@ public class RideController {
     RideService rideService;
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RideResponseDTO> createRide(@RequestBody RideDTO rideDTO){
-
-        return new ResponseEntity<>(rideService.getDTO(), HttpStatus.OK);
+    public ResponseEntity<RideResponseDTO> createRide(@Valid @RequestBody RideDTO rideDTO){
+        Ride ride = rideService.save(rideDTO);
+        //check if user has already pending ride
+        return new ResponseEntity<>(new RideResponseDTO(ride), HttpStatus.OK);
     }
 
     @GetMapping("/driver/{driverId}/active")
     public ResponseEntity<RideResponseDTO> getActiveRideDriver(@PathVariable Long driverId){
-        return new ResponseEntity<>(rideService.getDTO(), HttpStatus.OK);
+        return null;
+        //        return new ResponseEntity<>(rideService.getDTO(), HttpStatus.OK);
     }
 
     @GetMapping("/passenger/{passengerId}/active")
     public ResponseEntity<RideResponseDTO> getActiveRidePassenger(@PathVariable Long passengerId){
-        return new ResponseEntity<>(rideService.getDTO(), HttpStatus.OK);
+        return null;
+        //        return new ResponseEntity<>(rideService.getDTO(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<RideResponseDTO> getRide(@PathVariable Long id){
-        return new ResponseEntity<>(rideService.getDTO(), HttpStatus.OK);
+        return null;
+        //        return new ResponseEntity<>(rideService.getDTO(), HttpStatus.OK);
 
     }
 
     @PutMapping("/{id}/withdraw")
     public ResponseEntity<RideResponseDTO> cancelRide(@PathVariable Long id){
-        return new ResponseEntity<>(rideService.getDTO(), HttpStatus.OK);
+        return null;
+//        return new ResponseEntity<>(rideService.getDTO(), HttpStatus.OK);
 
     }
 
@@ -60,19 +67,22 @@ public class RideController {
 
     @PutMapping("/{id}/accept")
     public ResponseEntity<RideResponseDTO> acceptRide(@PathVariable Long id){
-        return new ResponseEntity<>(rideService.getDTO(), HttpStatus.OK);
+        return null;
+        //        return new ResponseEntity<>(rideService.getDTO(), HttpStatus.OK);
 
     }
 
     @PutMapping("/{id}/end")
     public ResponseEntity<RideResponseDTO> endRide(@PathVariable Long id){
-        return new ResponseEntity<>(rideService.getDTO(), HttpStatus.OK);
+        return null;
+        //        return new ResponseEntity<>(rideService.getDTO(), HttpStatus.OK);
 
     }
 
     @PutMapping("/{id}/cancel")
     public ResponseEntity<RideResponseDTO> cancelRide(@PathVariable Long id, @RequestBody Rejection rejection){
-        return new ResponseEntity<>(rideService.getDTO(), HttpStatus.OK);
+        return null;
+//        return new ResponseEntity<>(rideService.getDTO(), HttpStatus.OK);
 
     }
 }

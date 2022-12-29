@@ -28,7 +28,7 @@ public class PanicDTO {
         this(panic.id.intValue(), new UserDTO(panic.getUser()), null,
                 panic.getTime(), panic.getReason());
         Ride r = new Ride((long)1, LocalDateTime.now(), LocalDateTime.now().plusMinutes(10), 1234, null, 10, null, null,
-                RideStatus.ACTIVE, null, false, true, true, null, null);
+                RideStatus.ACTIVE, null, false, true, true, null, VehicleEnum.STANDARD,null);
         Driver d = new Driver();
         d.setId((long)1);
         d.setEmail("test@gmail.com");
@@ -36,10 +36,10 @@ public class PanicDTO {
         ArrayList<UserShortDTO> passengers= new ArrayList<>();
         passengers.add(new UserShortDTO(1, "email"));
         Vehicle v = new Vehicle();
-        v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARDNO, 123));
+        v.setVehicleType(new VehicleType((long)1, VehicleEnum.STANDARD, 123));
         r.setVehicle(v);
         ArrayList<Route> locations = new ArrayList<>();
         locations.add(new Route());
-        this.ride = new RideResponseDTO(r, locations, passengers);
+        this.ride = new RideResponseDTO(r);
     }
 }

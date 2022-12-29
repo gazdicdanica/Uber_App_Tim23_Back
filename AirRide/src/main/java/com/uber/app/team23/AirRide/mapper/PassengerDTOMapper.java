@@ -1,6 +1,7 @@
 package com.uber.app.team23.AirRide.mapper;
 
 import com.uber.app.team23.AirRide.dto.UserDTO;
+import com.uber.app.team23.AirRide.dto.UserShortDTO;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,4 +19,6 @@ public class PassengerDTOMapper {
     public static UserDTO fromPassengerToDTO(Passenger passenger){
         return modelMapper.map(passenger, UserDTO.class);
     }
+
+    public static Passenger fromShortDTOToPassenger(UserShortDTO dto){ return modelMapper.map(dto, Passenger.class);}
 }

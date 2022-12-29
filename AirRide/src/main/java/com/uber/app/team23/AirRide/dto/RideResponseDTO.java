@@ -4,6 +4,7 @@ import com.uber.app.team23.AirRide.model.messageData.Rejection;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.rideData.RideStatus;
 import com.uber.app.team23.AirRide.model.rideData.Route;
+import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,31 +30,24 @@ public class RideResponseDTO {
     private RideStatus status;
     private Rejection rejection;
 
-    public RideResponseDTO(Ride ride, ArrayList<Route> locations, ArrayList<UserShortDTO> passengers){
-        this(ride.getId(), ride.getStart(), ride.getEnd(), ride.getTotalPrice(),null, ride.getTimeEstimate(),
-                null, null, ride.getVehicle().getVehicleType().getType(), ride.isBabies(),
-                ride.isPets(), ride.getRideStatus(), ride.getRejection());
-        this.driver = new UserShortDTO(ride.getDriver().getId().intValue(), ride.getDriver().getEmail());
-        this.locations = locations;
-        this.passengers = passengers;
-
+    public RideResponseDTO(Ride ride){
+        this.id = ride.getId();
+        this.startTime = ride.getStart();
+        this.endTime = ride.getEnd();
+        this.totalCost = ride.getTotalPrice();
+        this.driver = new UserShortDTO(ride.getDriver());
+        this.estimatedTimeInMinutes = ride.getTimeEstimate();
+        this.locations = new ArrayList<>(ride.getRoute());
+        this.passengers = new ArrayList<>();
+        for(User u: ride.getPassengers()){
+            UserShortDTO dto = new UserShortDTO(u);
+            this.passengers.add(dto);
+        }
+        this.vehicleType = ride.getVehicleType();
+        this.babyTransport = ride.isBabies();
+        this.petTransport = ride.isPets();
+        this.status = ride.getRideStatus();
+        this.rejection = ride.getRejection();
     }
 
-    public RideResponseDTO(Long id, LocalDateTime startTime, LocalDateTime endTime, double totalCost, UserShortDTO driver,
-                           int estimatedTimeInMinutes, ArrayList<Route> locations, ArrayList<UserShortDTO> passengers,
-                           VehicleEnum vehicleType, boolean babyTransport, boolean petTransport, RideStatus status, Rejection rejection) {
-        this.id = id;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.totalCost = totalCost;
-        this.driver = driver;
-        this.estimatedTimeInMinutes = estimatedTimeInMinutes;
-        this.locations = locations;
-        this.passengers = passengers;
-        this.vehicleType = vehicleType;
-        this.babyTransport = babyTransport;
-        this.petTransport = petTransport;
-        this.status = status;
-        this.rejection = rejection;
-    }
 }

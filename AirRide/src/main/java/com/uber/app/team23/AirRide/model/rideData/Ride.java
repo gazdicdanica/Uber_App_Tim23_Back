@@ -4,6 +4,8 @@ import com.uber.app.team23.AirRide.model.messageData.Rejection;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
+import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
+import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,11 +21,11 @@ import java.util.Set;
 public class Ride {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "startTime")
+    @Column(name = "start_time")
     private LocalDateTime start;
-    @Column(name = "endTime")
+    @Column(name = "end_time")
     private LocalDateTime end;
-    @Column(name = "totalPrice")
+    @Column(name = "total_price")
     private double totalPrice;
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "ride_passengers", joinColumns = @JoinColumn(name = "ride_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "passenger_id", referencedColumnName = "id"))
@@ -34,7 +36,7 @@ public class Ride {
     public Set<Review> reviews = new HashSet<>();
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Set<Route> route = new HashSet<>();
-    @Column(name = "rideStatus")
+    @Column(name = "ride_status")
     public RideStatus rideStatus;
     @OneToOne(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Rejection rejection;
@@ -47,6 +49,8 @@ public class Ride {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "vehicle_id", referencedColumnName = "id")
     public Vehicle vehicle;
+    @Column(name = "vehicle_type")
+    public VehicleEnum vehicleType;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "driver_id", referencedColumnName = "id")
     private Driver driver;

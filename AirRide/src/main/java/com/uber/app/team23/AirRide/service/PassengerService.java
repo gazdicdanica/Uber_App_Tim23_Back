@@ -1,5 +1,6 @@
 package com.uber.app.team23.AirRide.service;
 
+import com.uber.app.team23.AirRide.dto.UserShortDTO;
 import com.uber.app.team23.AirRide.exceptions.BadRequestException;
 import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
 import com.uber.app.team23.AirRide.model.users.Passenger;
@@ -14,7 +15,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class PassengerService {

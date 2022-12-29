@@ -44,9 +44,9 @@ VALUES (2, true, '2022-12-21T16:48:49.439927', true, false, 5, '2022-12-21T16:48
 insert into rides (id, babies, end_time, panic, pets, ride_status, start_time, time_estimate, total_price, driver_id, vehicle_id)
 VALUES (3, false, '2022-12-22T17:26:00.093044', false, false, 3, '2022-12-22T17:26:00.093044', 3, 0, 3, 1);
 
-insert into ride_passengers (passenger_id, ride_id) VALUES (1, 1);
-insert into ride_passengers (passenger_id, ride_id) VALUES (1, 2);
-insert into ride_passengers (passenger_id, ride_id) VALUES (1, 3);
+insert into ride_passengers (passenger_id, ride_id) VALUES (3, 1);
+insert into ride_passengers (passenger_id, ride_id) VALUES (2, 2);
+insert into ride_passengers (passenger_id, ride_id) VALUES (2, 3);
 
 insert into messages (id, message, time_of_sending, message_type, receiver_id, ride_id, sender_id)
 VALUES (1, 'Pozdrav svima', '2022-12-21T16:48:49.439927', 2, 3, 1, 1);

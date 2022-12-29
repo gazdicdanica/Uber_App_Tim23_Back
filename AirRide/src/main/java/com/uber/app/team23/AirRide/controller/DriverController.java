@@ -100,7 +100,7 @@ public class DriverController {
         VehicleDTO vehicle = new VehicleDTO();
         vehicle.setId((long) 123);
         vehicle.setDriverId((long) id);
-        vehicle.setVehicleType(VehicleEnum.STANDARDNO);
+        vehicle.setVehicleType(VehicleEnum.STANDARD);
         vehicle.setModel("VW Golf 2");
         vehicle.setLicenseNumber("NS 123-AB");
         vehicle.setCurrentLocation(new Location((long) 1, 19.833549, 45.267136, "Bulevar oslobodjenja 46"));
