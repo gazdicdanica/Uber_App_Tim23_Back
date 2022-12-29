@@ -20,10 +20,9 @@ public class ValidationErrorsHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ResponseEntity<String> handleConstraintViolationException(MethodArgumentNotValidException e) throws JsonProcessingException {
         List<ObjectError> errorList = e.getBindingResult().getAllErrors();
-        StringBuilder sb = new StringBuilder("");
+        StringBuilder sb = new StringBuilder();
 
         for (ObjectError error : errorList ) {
-            FieldError fe = (FieldError) error;
             sb.append(error.getDefaultMessage());
         }
         JSONObject json = new JSONObject();
