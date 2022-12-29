@@ -1,15 +1,20 @@
 package com.uber.app.team23.AirRide.service;
 
+import com.uber.app.team23.AirRide.dto.UserDTO;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.repository.DriverRepository;
 import jakarta.validation.ConstraintViolationException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class DriverService {
@@ -44,6 +49,16 @@ public class DriverService {
         return driverRepository.findByEmail(email);
     }
     public Driver findOne(Long id) throws NullPointerException {
-        return driverRepository.findById(id).orElseGet(null);
+        return driverRepository.findById(id).orElse(null);
+    }
+
+    public ResponseEntity<Object> resolveResponse(Driver driver, String message) {
+        if(driver == null) {
+            JSONObject json = new JSONObject();
+            json.put("message", message);
+            return new ResponseEntity<>(json.toString(), HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(new UserDTO(driver), HttpStatus.OK);
+        }
     }
 }

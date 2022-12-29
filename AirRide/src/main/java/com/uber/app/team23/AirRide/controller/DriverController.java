@@ -1,8 +1,5 @@
 package com.uber.app.team23.AirRide.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.uber.app.team23.AirRide.dto.*;
 import com.uber.app.team23.AirRide.mapper.DriverDTOMapper;
 import com.uber.app.team23.AirRide.model.rideData.Location;
@@ -12,6 +9,7 @@ import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnu
 import com.uber.app.team23.AirRide.service.DriverService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,46 +20,36 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
-@RestController @RequestMapping("api/driver")
+@RestController
+@RequestMapping(value = "api/driver", produces = MediaType.APPLICATION_JSON_VALUE)
 public class DriverController {
 
     @Autowired
     private DriverService driverService;
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping
     public ResponseEntity<UserDTO> createDriver(@Valid @RequestBody Driver driver) throws ConstraintViolationException {
         Driver newDriver = driverService.save(driver);
-//            ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-//            String json = ow.writeValueAsString(new UserDTO(driverService.findByEmail(driver.getEmail()).getId(), newDriver));
         return new ResponseEntity<>(new UserDTO(driverService.findByEmail(driver.getEmail()).getId(), newDriver), HttpStatus.OK);
-
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping
     public ResponseEntity<UserPaginatedDTO> getPaginatedDrivers(Pageable page) {
         Page<Driver> drivers = driverService.findAll(page);
 
         List<UserDTO> users = drivers.stream().map(DriverDTOMapper::fromDriverToDTO).collect(Collectors.toList());
 
-        System.err.println(users.size());
-
         return new ResponseEntity<>(new UserPaginatedDTO(users), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<UserDTO> getDriver(@PathVariable Long id) {
-        try {
-            Driver driver = driverService.findOne(id);
-            if (driver != null) {
-                return new ResponseEntity<>(new UserDTO(driver), HttpStatus.OK);
-            }
-        } catch (NullPointerException e){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<Object> getDriver(@PathVariable Long id) {
+        Driver driver = driverService.findOne(id);
+        return driverService.resolveResponse(driver, "Wrong Field Format In Request");
     }
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}")
