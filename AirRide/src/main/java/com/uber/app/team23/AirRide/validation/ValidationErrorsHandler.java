@@ -1,5 +1,7 @@
 package com.uber.app.team23.AirRide.validation;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -16,15 +18,17 @@ public class ValidationErrorsHandler {
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    protected ResponseEntity<String> handleConstraintViolationException(MethodArgumentNotValidException e) {
+    protected ResponseEntity<String> handleConstraintViolationException(MethodArgumentNotValidException e) throws JsonProcessingException {
         List<ObjectError> errorList = e.getBindingResult().getAllErrors();
-        StringBuilder sb = new StringBuilder("Request finished with validation errors: \n");
+        StringBuilder sb = new StringBuilder("Request finished with validation errors: ");
 
         for (ObjectError error : errorList) {
             FieldError fe = (FieldError) error;
             sb.append(fe.getField() + " - ");
-            sb.append(error.getDefaultMessage() + "\n\n");
+            sb.append(error.getDefaultMessage());
         }
-        return new ResponseEntity<>(sb.toString(), HttpStatus.BAD_REQUEST);
+        JSONObject json = new JSONObject();
+        json.put("message", sb.toString());
+        return new ResponseEntity<>(json.toString(), HttpStatus.BAD_REQUEST);
     }
 }
