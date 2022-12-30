@@ -1,5 +1,6 @@
 package com.uber.app.team23.AirRide.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.uber.app.team23.AirRide.model.messageData.Rejection;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.rideData.RideStatus;
@@ -17,7 +18,9 @@ import java.util.ArrayList;
 public class RideResponseDTO {
 
     private Long id;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTime;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
     private double totalCost;
     private UserShortDTO driver;
@@ -35,7 +38,9 @@ public class RideResponseDTO {
         this.startTime = ride.getStart();
         this.endTime = ride.getEnd();
         this.totalCost = ride.getTotalPrice();
-        this.driver = new UserShortDTO(ride.getDriver());
+        if(ride.getDriver() != null){
+            this.driver = new UserShortDTO(ride.getDriver());
+        }
         this.estimatedTimeInMinutes = ride.getTimeEstimate();
         this.locations = new ArrayList<>(ride.getRoute());
         this.passengers = new ArrayList<>();

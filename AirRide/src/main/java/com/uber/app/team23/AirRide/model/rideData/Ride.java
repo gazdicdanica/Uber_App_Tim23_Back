@@ -20,6 +20,7 @@ import java.util.Set;
 @Entity @Table(name = "rides")
 public class Ride {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
     @Column(name = "start_time")
     private LocalDateTime start;
