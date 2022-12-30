@@ -38,11 +38,11 @@ insert into vehicle_type (price, type) VALUES (300, 1);
 insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, vehicle_type_id) VALUES (true, true, 4, 'ns680hs', 'skoda fabia', 3, 1);
 
 insert into rides (babies, end_time, panic, pets, ride_status, start_time, time_estimate, total_price, driver_id, vehicle_id)
-VALUES (true, '2022-12-21T16:48:49.439927', false, false, 5, '2022-12-21T16:48:43.439927', 3, 350, 3, 1);
+VALUES (true, '2022-12-21T16:48:49.439927', false, false, 5, '2022-12-21T16:48:43.439927', 3, 350, 4, 1);
 insert into rides (babies, end_time, panic, pets, ride_status, start_time, time_estimate, total_price, driver_id, vehicle_id)
-VALUES (true, '2022-12-21T16:48:49.439927', true, false, 5, '2022-12-21T16:48:43.439927', 3, 350, 3, 1);
+VALUES (true, '2022-12-21T16:48:49.439927', true, false, 4, '2022-12-21T16:48:43.439927', 3, 350, 5, 1);
 insert into rides (babies, end_time, panic, pets, ride_status, start_time, time_estimate, total_price, driver_id, vehicle_id)
-VALUES (false, '2022-12-22T17:26:00.093044', false, false, 3, '2022-12-22T17:26:00.093044', 3, 0, 3, 1);
+VALUES (false, '2022-12-22T17:26:00.093044', false, false, 3, '2022-12-22T17:26:00.093044', 3, 0, 6, 1);
 
 insert into ride_passengers (passenger_id, ride_id) VALUES (3, 1);
 insert into ride_passengers (passenger_id, ride_id) VALUES (2, 2);
@@ -58,7 +58,7 @@ insert into rejections (reason, time, ride_id, user_id) VALUES ('Putnik se nije 
 insert into reviews (comment, grade, driver_id, passenger_id, ride_id) VALUES ('Svaka cst', 5, 3, 1, 1);
 
 insert into routes (distance, departure, destination) VALUES (4.2, 1, 2);
-insert into rides_route (ride_id, route_id) VALUES (1, 1);
+insert into rides_locations (ride_id, locations_id) VALUES (2, 1);
 
 
 insert into user_activations (creation_date_time, lifespan, user_id)

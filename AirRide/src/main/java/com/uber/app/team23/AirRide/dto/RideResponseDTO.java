@@ -42,7 +42,7 @@ public class RideResponseDTO {
             this.driver = new UserShortDTO(ride.getDriver());
         }
         this.estimatedTimeInMinutes = ride.getTimeEstimate();
-        this.locations = new ArrayList<>(ride.getRoute());
+        this.locations = new ArrayList<>(ride.getLocations());
         this.passengers = new ArrayList<>();
         for(User u: ride.getPassengers()){
             UserShortDTO dto = new UserShortDTO(u);

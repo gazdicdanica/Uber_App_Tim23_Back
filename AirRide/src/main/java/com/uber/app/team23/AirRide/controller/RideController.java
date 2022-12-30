@@ -26,14 +26,14 @@ public class RideController {
         Ride ride = rideService.save(rideDTO);
         ride = rideService.addPassengers(rideDTO, ride.getId());
         ride = rideService.addRoutes(rideDTO, ride.getId());
-        //TODO check if user has already pending ride
+        //TODO check if user has already pending ride (response status 400)
         return new ResponseEntity<>(new RideResponseDTO(ride), HttpStatus.OK);
     }
 
     @GetMapping("/driver/{driverId}/active")
     public ResponseEntity<RideResponseDTO> getActiveRideDriver(@PathVariable Long driverId){
-        return null;
-        //        return new ResponseEntity<>(rideService.getDTO(), HttpStatus.OK);
+        RideResponseDTO ride = rideService.findActiveByDriver(driverId);
+        return new ResponseEntity<>(ride, HttpStatus.OK);
     }
 
     @GetMapping("/passenger/{passengerId}/active")

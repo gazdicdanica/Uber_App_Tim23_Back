@@ -1,6 +1,7 @@
 package com.uber.app.team23.AirRide.service;
 
 import com.uber.app.team23.AirRide.dto.RideDTO;
+import com.uber.app.team23.AirRide.dto.RideResponseDTO;
 import com.uber.app.team23.AirRide.dto.UserShortDTO;
 import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
@@ -30,6 +31,10 @@ public class RideService {
         return rideRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Ride does not exist"));
     }
 
+    public RideResponseDTO findActiveByDriver(Long driverId){
+        return rideRepository.findActiveByDriver(driverId).orElseThrow(() -> new EntityNotFoundException("Active ride does not exist"));
+    }
+
     public Ride addPassengers(RideDTO rideDTO,Long id){
         Ride ride = this.findOne(id);
         ride.setPassengers(new HashSet<>());
@@ -42,13 +47,13 @@ public class RideService {
 
     public Ride addRoutes(RideDTO rideDTO, Long id){
         Ride ride = this.findOne(id);
-        ride.setRoute(new HashSet<>());
+        ride.setLocations(new HashSet<>());
         for(Route route: rideDTO.getLocations()){
             Route r = routeService.findByLocationAddress(route.getDeparture().getAddress(), route.getDestination().getAddress());
             if(r == null){
                 r = routeService.save(route);
             }
-            ride.getRoute().add(r);
+            ride.getLocations().add(r);
         }
         return rideRepository.save(ride);
     }
