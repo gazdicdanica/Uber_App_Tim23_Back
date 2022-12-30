@@ -35,6 +35,10 @@ public class RideService {
         return rideRepository.findActiveByDriver(driverId).orElseThrow(() -> new EntityNotFoundException("Active ride does not exist"));
     }
 
+    public RideResponseDTO findActiveByPassenger(Long passengerId){
+        return rideRepository.findActiveByPassenger(passengerId).orElseThrow(() -> new EntityNotFoundException("Active ride does not exist"));
+    }
+
     public Ride addPassengers(RideDTO rideDTO,Long id){
         Ride ride = this.findOne(id);
         ride.setPassengers(new HashSet<>());

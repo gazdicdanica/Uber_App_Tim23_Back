@@ -40,9 +40,9 @@ insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, 
 insert into rides (babies, end_time, panic, pets, ride_status, start_time, time_estimate, total_price, driver_id, vehicle_id)
 VALUES (true, '2022-12-21T16:48:49.439927', false, false, 5, '2022-12-21T16:48:43.439927', 3, 350, 4, 1);
 insert into rides (babies, end_time, panic, pets, ride_status, start_time, time_estimate, total_price, driver_id, vehicle_id)
-VALUES (true, '2022-12-21T16:48:49.439927', true, false, 4, '2022-12-21T16:48:43.439927', 3, 350, 5, 1);
+VALUES (true, '2022-12-21T16:48:49.439927', true, false, 3, '2022-12-21T16:48:43.439927', 3, 350, 5, 1);
 insert into rides (babies, end_time, panic, pets, ride_status, start_time, time_estimate, total_price, driver_id, vehicle_id)
-VALUES (false, '2022-12-22T17:26:00.093044', false, false, 3, '2022-12-22T17:26:00.093044', 3, 0, 6, 1);
+VALUES (false, '2022-12-22T17:26:00.093044', false, false, 2, '2022-12-22T17:26:00.093044', 3, 0, 6, 1);
 
 insert into ride_passengers (passenger_id, ride_id) VALUES (3, 1);
 insert into ride_passengers (passenger_id, ride_id) VALUES (2, 2);

@@ -38,8 +38,9 @@ public class RideController {
 
     @GetMapping("/passenger/{passengerId}/active")
     public ResponseEntity<RideResponseDTO> getActiveRidePassenger(@PathVariable Long passengerId){
-        return null;
-        //        return new ResponseEntity<>(rideService.getDTO(), HttpStatus.OK);
+        RideResponseDTO ride = rideService.findActiveByPassenger(passengerId);
+        System.err.println(ride.getPassengers().size());
+        return new ResponseEntity<>(ride, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
