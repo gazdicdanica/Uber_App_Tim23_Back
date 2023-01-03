@@ -10,6 +10,7 @@ import com.uber.app.team23.AirRide.service.FavoriteService;
 import com.uber.app.team23.AirRide.service.PanicService;
 import com.uber.app.team23.AirRide.service.RideService;
 import jakarta.validation.Valid;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -99,6 +100,7 @@ public class RideController {
 
     }
 
+    @Transactional
     @PostMapping("/favorites")
     public ResponseEntity<FavoriteDTO> setFavorite(@RequestBody FavoriteDTO favorite){
         Favorite newFavorite = favoriteService.save(favorite);
@@ -106,4 +108,13 @@ public class RideController {
         newFavorite = favoriteService.addPassengers(newFavorite.getId(), favorite.getPassengers());
         return new ResponseEntity<>(FavoriteDTOMapper.fromFavoriteToDTO(newFavorite), HttpStatus.OK);
     }
+
+    // TODO get favorite rides
+
+    @DeleteMapping("/favorites/{id}")
+    public ResponseEntity<Void> deleteFavorite(@PathVariable Long id){
+        favoriteService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }

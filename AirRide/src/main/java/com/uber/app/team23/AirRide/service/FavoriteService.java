@@ -2,6 +2,7 @@ package com.uber.app.team23.AirRide.service;
 
 import com.uber.app.team23.AirRide.dto.FavoriteDTO;
 import com.uber.app.team23.AirRide.dto.UserShortDTO;
+import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
 import com.uber.app.team23.AirRide.model.rideData.Favorite;
 import com.uber.app.team23.AirRide.model.rideData.Route;
 import com.uber.app.team23.AirRide.model.users.Passenger;
@@ -50,11 +51,21 @@ public class FavoriteService {
 
 //    @Transactional
     public Favorite save(FavoriteDTO favorite){
+        // TODO number of favorites cannot exceed 10
+
         Favorite newFavorite = new Favorite();
         newFavorite.setFavoriteName(favorite.getFavoriteName());
         newFavorite.setPetTransport(favorite.isPetTransport());
         newFavorite.setVehicleType(favorite.getVehicleType());
         newFavorite.setBabyTransport(favorite.isBabyTransport());
         return this.favoriteRepository.save(newFavorite);
+    }
+
+    public void delete(Long id){
+        Favorite fav = findOne(id);
+        if (fav == null){
+            throw new EntityNotFoundException("Favorite location does not exist!");
+        }
+        favoriteRepository.delete(fav);
     }
 }
