@@ -1,12 +1,19 @@
 package com.uber.app.team23.AirRide.service;
 
 import com.uber.app.team23.AirRide.dto.DriverDocumentsDTO;
+import com.uber.app.team23.AirRide.dto.VehicleDTO;
 import com.uber.app.team23.AirRide.exceptions.EmailTakenException;
+import com.uber.app.team23.AirRide.mapper.VehicleDTOMapper;
+import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.users.Role;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Document;
+import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
+import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleType;
 import com.uber.app.team23.AirRide.repository.DocumentRepository;
 import com.uber.app.team23.AirRide.repository.DriverRepository;
+import com.uber.app.team23.AirRide.repository.VehicleRepository;
+import com.uber.app.team23.AirRide.repository.VehicleTypeRepository;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,9 +33,12 @@ public class DriverService {
     private DriverRepository driverRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-
+    @Autowired
+    private VehicleRepository vehicleRepository;
     @Autowired
     private DocumentRepository documentRepository;
+    @Autowired
+    private VehicleTypeRepository vehicleTypeRepository;
 
     public Page<Driver> findAll(Pageable page) {
         return driverRepository.findAll(page);
@@ -102,7 +112,97 @@ public class DriverService {
     public DriverDocumentsDTO getDocuments(Driver driver) {
         Document document = documentRepository.findAllByDriverId(driver.getId());
 
-        DriverDocumentsDTO dto = new DriverDocumentsDTO(document.getId(), document.getName(), document.getPhoto(), document.getDriver().getId());
+        DriverDocumentsDTO dto = new DriverDocumentsDTO(document.getId(), document.getName(), document.getDocumentImage(), document.getDriver().getId());
         return dto;
+    }
+
+    public void deleteDocsForDriver(Driver driver) {
+        Document document = documentRepository.findAllByDriverId(driver.getId());
+        if (document == null) {
+            throw new EmailTakenException("Documents for this driver do not exist");
+        }
+        documentRepository.deleteById(document.getId());
+    }
+
+    public DriverDocumentsDTO saveDocsForDriver(Driver driver, DriverDocumentsDTO documentsDTO) {
+        Document document = new Document();
+        document.setDriver(driver);
+        document.setName(documentsDTO.getName());
+        document.setDocumentImage(documentsDTO.getDocumentImage());
+
+        document = documentRepository.save(document);
+
+        documentsDTO.setDriverId(driver.getId());
+        documentsDTO.setId(document.getId());
+        return documentsDTO;
+    }
+
+    public VehicleDTO getVehicleForDriver(Driver driver) {
+        Vehicle vehicle = vehicleRepository.findAllByDriverId(driver.getId());
+        if (vehicle == null) {
+            throw new EmailTakenException("Vehicle For This Driver Does Not Exist");
+        }
+        VehicleDTO vehicleDTO = new VehicleDTO();
+        vehicleDTO.setId(vehicle.getId());
+        vehicleDTO.setDriverId(driver.getId());
+        vehicleDTO.setVehicleType(vehicle.getVehicleType().getType());
+        vehicleDTO.setModel(vehicle.getVehicleModel());
+        vehicleDTO.setLicenseNumber(vehicle.getLicenseNumber());
+        vehicleDTO.setPassengerSeats(vehicleDTO.getPassengerSeats());
+        vehicleDTO.setBabyTransport(vehicle.isBabyTransport());
+        vehicleDTO.setPetTransport(vehicle.isPetTransport());
+
+        // TODO Add table VehicleLocation
+        vehicleDTO.setCurrentLocation(new Location());
+
+
+        return vehicleDTO;
+    }
+
+    public VehicleDTO saveVehicleForDriver(Long driverId, VehicleDTO vehicleDTO) {
+        Vehicle vehicle = vehicleRepository.findAllByDriverId(driverId);
+        if (vehicle != null) {
+            throw new EmailTakenException("Driver Already Has Vehicle");
+        }
+        Driver driver = driverRepository.findById(driverId).orElse(null);
+        Vehicle toSave = new Vehicle();
+        toSave.setDriver(driver);
+        toSave.setVehicleModel(vehicleDTO.getModel());
+        // TODO Razresiti Cenu za Vozilo
+        VehicleType vt = new VehicleType(null, vehicleDTO.getVehicleType(), 300);
+        vehicleTypeRepository.save(vt);
+        toSave.setVehicleType(vt);
+        toSave.setLicenseNumber(vehicleDTO.getLicenseNumber());
+        toSave.setCapacity(vehicleDTO.getPassengerSeats());
+        toSave.setBabyTransport(vehicleDTO.isBabyTransport());
+        toSave.setPetTransport(vehicleDTO.isPetTransport());
+        vehicle = vehicleRepository.save(toSave);
+
+        vehicleDTO.setDriverId(vehicle.getDriver().getId());
+        vehicleDTO.setId(vehicle.getId());
+        return vehicleDTO;
+    }
+
+    public VehicleDTO updateVehicleForDriver(long driverId, VehicleDTO vehicleDTO) {
+        Vehicle vehicle = vehicleRepository.findAllByDriverId(driverId);
+        if (vehicle == null) {
+            return saveVehicleForDriver(driverId, vehicleDTO);
+        } else {
+            vehicle.setVehicleModel(vehicleDTO.getModel());
+            vehicle.setLicenseNumber(vehicleDTO.getLicenseNumber());
+            vehicle.setCapacity(vehicleDTO.getPassengerSeats());
+            vehicle.setPetTransport(vehicleDTO.isPetTransport());
+            vehicle.setBabyTransport(vehicleDTO.isBabyTransport());
+            if (vehicle.getVehicleType().getType() != vehicleDTO.getVehicleType()){
+                VehicleType vt = new VehicleType();
+                vt.setType(vehicleDTO.getVehicleType());
+                vt.setPrice(400);
+                vehicleTypeRepository.save(vt);
+                // TODO price
+            }
+            vehicleRepository.save(vehicle);
+
+            return VehicleDTOMapper.fromVehicleToDTO(vehicle);
+        }
     }
 }

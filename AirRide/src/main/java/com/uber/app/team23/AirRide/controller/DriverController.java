@@ -5,10 +5,12 @@ import com.uber.app.team23.AirRide.mapper.DriverDTOMapper;
 import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.WorkingHours;
+import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Document;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
 import com.uber.app.team23.AirRide.service.DriverService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -64,76 +66,52 @@ public class DriverController {
         return new ResponseEntity<>(driverDocumentsDTO, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/document/{id}")
-    public ResponseEntity<DriverDocumentsDTO> deleteDriverDocuments(@PathVariable Integer id) {
-        DriverDocumentsDTO documentsDTO = new DriverDocumentsDTO();
-        documentsDTO.setId(id);
-        return new ResponseEntity<>(documentsDTO, HttpStatus.NO_CONTENT);
+    @DeleteMapping(value = "/{id}/documents")
+    public ResponseEntity<String> deleteDriverDocuments(@PathVariable Integer id) {
+        Driver driver = driverService.findById((long) id);
+        driverService.deleteDocsForDriver(driver);
+        JSONObject json = new JSONObject();
+        return new ResponseEntity<>(json.put("message", "Driver Deleted Successfully").toString(), HttpStatus.OK);
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/documents")
+    @PostMapping(value = "/{id}/documents")
     public ResponseEntity<DriverDocumentsDTO> addDriverDocuments(@RequestBody DriverDocumentsDTO documentsDTO, @PathVariable Integer id) {
-        DriverDocumentsDTO driverDocumentsDTO = new DriverDocumentsDTO();
-        driverDocumentsDTO.setId((long) 123);
-        driverDocumentsDTO.setName(documentsDTO.getName());
-        driverDocumentsDTO.setDocumentImage(documentsDTO.getDocumentImage());
-        driverDocumentsDTO.setDriverId((long) id);
-
-        return new ResponseEntity<>(driverDocumentsDTO, HttpStatus.OK);
+        Driver driver = driverService.findById((long) id);
+        DriverDocumentsDTO document = driverService.saveDocsForDriver(driver, documentsDTO);
+        // TODO validacija incoming dto objekata
+        return new ResponseEntity<>(document, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}/vehicle")
     public ResponseEntity<VehicleDTO> getVehicleForDriver(@PathVariable Integer id) {
-        VehicleDTO vehicle = new VehicleDTO();
-        vehicle.setId((long) 123);
-        vehicle.setDriverId((long) id);
-        vehicle.setVehicleType(VehicleEnum.STANDARDNO);
-        vehicle.setModel("VW Golf 2");
-        vehicle.setLicenseNumber("NS 123-AB");
-        vehicle.setCurrentLocation(new Location((long) 1, 19.833549, 45.267136, "Bulevar oslobodjenja 46"));
-        vehicle.setPassengerSeats(4);
-        vehicle.setBabyTransport(true);
-        vehicle.setPetTransport(true);
+        Driver driver = driverService.findById((long) id);
+        VehicleDTO vehicle = driverService.getVehicleForDriver(driver);
 
         return new ResponseEntity<>(vehicle, HttpStatus.OK);
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/vehicle")
+    @PostMapping(value = "/{id}/vehicle")
     public ResponseEntity<VehicleDTO> addVehicleToDriver(@PathVariable Integer id, @RequestBody VehicleDTO vehicleDTO) {
-        VehicleDTO vehicle = new VehicleDTO();
-        vehicle.setId((long) 12);
-        vehicle.setDriverId((long) id);
-        vehicle.setVehicleType(vehicleDTO.getVehicleType());
-        vehicle.setModel(vehicleDTO.getModel());
-        vehicle.setLicenseNumber(vehicleDTO.getLicenseNumber());
-        vehicle.setCurrentLocation(new Location((long) 1, 19.833549, 45.267136, "Bulevar oslobodjenja 46"));
-        vehicle.setPassengerSeats(vehicleDTO.getPassengerSeats());
-        vehicle.setBabyTransport(vehicleDTO.isBabyTransport());
-        vehicle.setPetTransport(vehicleDTO.isPetTransport());
+        driverService.findById((long) id);
+        VehicleDTO vehicle = driverService.saveVehicleForDriver((long) id, vehicleDTO);
+        // TODO Validacija Incoming DTO
 
         return new ResponseEntity<>(vehicle, HttpStatus.OK);
     }
 
-    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/vehicle")
+    @PutMapping(value = "/{id}/vehicle")
     public ResponseEntity<VehicleDTO> updateDriverVehicle(@PathVariable Integer id, @RequestBody VehicleDTO vehicleDTO) {
-        VehicleDTO vehicle = new VehicleDTO();
-        vehicle.setId((long) 12);
-        vehicle.setDriverId((long) id);
-        vehicle.setVehicleType(vehicleDTO.getVehicleType());
-        vehicle.setModel(vehicleDTO.getModel());
-        vehicle.setLicenseNumber(vehicleDTO.getLicenseNumber());
-        vehicle.setCurrentLocation(new Location((long) 1, 19.833549, 45.267136, "Bulevar oslobodjenja 46"));
-        vehicle.setPassengerSeats(vehicleDTO.getPassengerSeats());
-        vehicle.setBabyTransport(vehicleDTO.isBabyTransport());
-        vehicle.setPetTransport(vehicleDTO.isPetTransport());
-
+        driverService.findById((long) id);
+        VehicleDTO vehicle = driverService.updateVehicleForDriver((long) id, vehicleDTO);
+        // TODO Razresiti lokaciju za vozilo
         return new ResponseEntity<>(vehicle, HttpStatus.OK);
     }
 
+
+    // TODO SVE OSTALO ZAVRSITI
     @GetMapping(value = "/{id}/working-hour")
     public ResponseEntity<DriverWorkingHoursDTO> getTotalWorkHours(
-            @PathVariable Integer id, @RequestParam int page, @RequestParam int size, @RequestParam String from,
-            @RequestParam String to) {
+            @PathVariable Integer id, Pageable pageable) {
 
         Driver d = new Driver();
         WorkingHours wh1 = new WorkingHours(LocalDateTime.now(), LocalDateTime.now().plusHours(2), d, (long) 1);
@@ -159,8 +137,7 @@ public class DriverController {
 
     @GetMapping(value = "/{id}/ride", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DriverWorkingHoursDTO> getRidesSorted(
-            @PathVariable Integer id, @RequestParam int page, @RequestParam int size, @RequestParam String sort,
-            @RequestParam String from, @RequestParam String to){
+            @PathVariable Integer id, Pageable pageable){
 
         return new ResponseEntity<>(new DriverWorkingHoursDTO(), HttpStatus.OK);
     }
