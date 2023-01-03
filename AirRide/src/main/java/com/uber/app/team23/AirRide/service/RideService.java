@@ -68,7 +68,17 @@ public class RideService {
         return rideRepository.save(ride);
     }
 
+    public void checkPassengerPendingRide(Long passengerId){
+        Ride ride = rideRepository.findPendingByPassenger(passengerId).orElse(null);
+        if(ride != null){
+            throw new BadRequestException("Cannot create a ride while you have one already pending!");
+        }
+    }
+
     public Ride save(RideDTO rideDTO){
+        for(UserShortDTO u : rideDTO.getPassengers()){
+            this.checkPassengerPendingRide((long)u.getId());
+        }
         Ride ride = new Ride();
         ride.setStartTime(LocalDateTime.now());
         ride.setRideStatus(RideStatus.PENDING);

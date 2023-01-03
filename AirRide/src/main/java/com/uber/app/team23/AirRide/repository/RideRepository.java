@@ -10,6 +10,9 @@ import java.util.Optional;
 
 public interface RideRepository extends JpaRepository<Ride, Long> {
 
+    @Query(value = "select r from Ride r join r.passengers p where p.id=?1 and r.rideStatus=0")
+    public Optional<Ride> findPendingByPassenger(Long passengerId);
+
     @Query(value = "select new com.uber.app.team23.AirRide.dto.RideResponseDTO(r) from Ride r left join fetch r.driver d where d.id=?1 and r.rideStatus=3")
     public Optional<RideResponseDTO> findActiveByDriver(Long driverId);
 
