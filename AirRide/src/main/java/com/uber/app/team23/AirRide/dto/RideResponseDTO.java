@@ -10,7 +10,6 @@ import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnu
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -36,13 +35,13 @@ public class RideResponseDTO {
 
     public RideResponseDTO(Ride ride){
         this.id = ride.getId();
-        this.startTime = ride.getStart();
-        this.endTime = ride.getEnd();
-        this.totalCost = ride.getTotalPrice();
+        this.startTime = ride.getStartTime();
+        this.endTime = ride.getEndTime();
+        this.totalCost = ride.getTotalCost();
         if(ride.getDriver() != null){
             this.driver = new UserShortDTO(ride.getDriver());
         }
-        this.estimatedTimeInMinutes = ride.getTimeEstimate();
+        this.estimatedTimeInMinutes = ride.getEstimatedTimeInMinutes();
         this.locations = new ArrayList<>(ride.getLocations());
         this.passengers = new ArrayList<>();
         for(User u: ride.getPassengers()){
@@ -50,8 +49,8 @@ public class RideResponseDTO {
             this.passengers.add(dto);
         }
         this.vehicleType = ride.getVehicleType();
-        this.babyTransport = ride.isBabies();
-        this.petTransport = ride.isPets();
+        this.babyTransport = ride.isBabyTransport();
+        this.petTransport = ride.isPetTransport();
         this.status = ride.getRideStatus();
         this.rejection = ride.getRejection();
     }

@@ -67,21 +67,21 @@ public class PassengerService {
         passengerRepository.save(passenger);
     }
 
-    public Passenger save(User u) {
+    public Passenger save(Passenger passenger) {
 
-        Passenger existingPassenger = passengerRepository.findByEmail(u.getEmail()).orElse(null);
+        Passenger existingPassenger = passengerRepository.findByEmail(passenger.getEmail()).orElse(null);
         if(existingPassenger != null){
             throw new BadRequestException("User with that email already exists");
         }
 
         Passenger p = new Passenger();
-        p.setEmail(u.getEmail());
-        p.setPassword(passwordEncoder.encode(u.getPassword()));
-        p.setName(u.getName());
-        p.setSurname(u.getSurname());
-        p.setTelephoneNumber(u.getTelephoneNumber());
-        p.setProfilePicture(u.getProfilePicture());
-        p.setAddress(u.getAddress());
+        p.setEmail(passenger.getEmail());
+        p.setPassword(passwordEncoder.encode(passenger.getPassword()));
+        p.setName(passenger.getName());
+        p.setSurname(passenger.getSurname());
+        p.setTelephoneNumber(passenger.getTelephoneNumber());
+        p.setProfilePicture(passenger.getProfilePicture());
+        p.setAddress(passenger.getAddress());
         p.setBlocked(false);
         p.setActive(false);
         List<Role> li = new ArrayList<>();

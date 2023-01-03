@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -23,19 +22,19 @@ public class Ride {
     @Column(name = "id")
     private Long id;
     @Column(name = "start_time")
-    private LocalDateTime start;
+    private LocalDateTime startTime;
     @Column(name = "end_time")
-    private LocalDateTime end;
+    private LocalDateTime endTime;
     @Column(name = "total_price")
-    private double totalPrice;
+    private double totalCost;
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "ride_passengers", joinColumns = @JoinColumn(name = "ride_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "passenger_id", referencedColumnName = "id"))
     public Set<Passenger> passengers = new HashSet<>();
     @Column(name = "timeEstimate")
-    private int timeEstimate;
+    private int estimatedTimeInMinutes;
     @OneToMany(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Set<Review> reviews = new HashSet<>();
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Set<Route> locations = new HashSet<>();
     @Column(name = "ride_status")
     public RideStatus rideStatus;
@@ -44,9 +43,9 @@ public class Ride {
     @Column(name = "panic")
     private boolean panic;
     @Column(name = "babies")
-    private boolean babies;
+    private boolean babyTransport;
     @Column(name = "pets")
-    private boolean pets;
+    private boolean petTransport;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "vehicle_id", referencedColumnName = "id")
     public Vehicle vehicle;

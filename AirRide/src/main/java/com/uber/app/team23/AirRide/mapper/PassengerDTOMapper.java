@@ -20,5 +20,6 @@ public class PassengerDTOMapper {
         return modelMapper.map(passenger, UserDTO.class);
     }
 
-    public static Passenger fromShortDTOToPassenger(UserShortDTO dto){ return modelMapper.map(dto, Passenger.class);}
+    public static UserShortDTO fromPassengerToShortDTO(Passenger passenger) {return modelMapper.map(passenger, UserShortDTO.class);}
+
 }

@@ -29,8 +29,6 @@ insert into working_hours (end_time, start_time, driver_id) VALUES ('2022-12-22T
 insert into locations (longitude, latitude, address) VALUES (13.54, 11.11, 'Dimitrija Avramovica 3');
 insert into locations (longitude, latitude, address) VALUES (13.54, 11.11, 'NTP');
 
-insert into users_favourite_locations (passenger_id, favourite_locations_id) VALUES (1, 1);
-
 insert into documents (name, photo, driver_id) VALUES ('Vozacka', 'qwer123', 3);
 
 insert into vehicle_type (price, type) VALUES (300, 1);

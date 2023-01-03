@@ -1,10 +1,12 @@
 package com.uber.app.team23.AirRide.controller;
 
 import com.uber.app.team23.AirRide.dto.*;
+import com.uber.app.team23.AirRide.mapper.FavoriteDTOMapper;
 import com.uber.app.team23.AirRide.model.messageData.Panic;
 import com.uber.app.team23.AirRide.model.messageData.Rejection;
+import com.uber.app.team23.AirRide.model.rideData.Favorite;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
-import com.uber.app.team23.AirRide.model.users.Passenger;
+import com.uber.app.team23.AirRide.service.FavoriteService;
 import com.uber.app.team23.AirRide.service.PanicService;
 import com.uber.app.team23.AirRide.service.RideService;
 import jakarta.validation.Valid;
@@ -15,22 +17,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-
 @RestController @RequestMapping("/api/ride")
 public class RideController {
 
     @Autowired
     RideService rideService;
-
     @Autowired
     PanicService panicService;
+    @Autowired
+    FavoriteService favoriteService;
 
+    @Transactional
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RideResponseDTO> createRide(@Valid @RequestBody RideDTO rideDTO){
         Ride ride = rideService.save(rideDTO);
-        ride = rideService.addPassengers(rideDTO, ride.getId());
         ride = rideService.addRoutes(rideDTO, ride.getId());
+        ride = rideService.addPassengers(rideDTO, ride.getId());
         // TODO check if user has already pending ride (response status 400)
         return new ResponseEntity<>(new RideResponseDTO(ride), HttpStatus.OK);
     }
@@ -97,6 +99,11 @@ public class RideController {
 
     }
 
-//    @PostMapping("/favorites")
-//    public ResponseEntity<> setFavorite(@RequestBody )
+    @PostMapping("/favorites")
+    public ResponseEntity<FavoriteDTO> setFavorite(@RequestBody FavoriteDTO favorite){
+        Favorite newFavorite = favoriteService.save(favorite);
+        newFavorite = favoriteService.addLocations(newFavorite.getId(), favorite.getLocations());
+        newFavorite = favoriteService.addPassengers(newFavorite.getId(), favorite.getPassengers());
+        return new ResponseEntity<>(FavoriteDTOMapper.fromFavoriteToDTO(newFavorite), HttpStatus.OK);
+    }
 }
