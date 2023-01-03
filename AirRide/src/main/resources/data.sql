@@ -42,7 +42,7 @@ VALUES (true, '2022-12-21T16:48:49.439927', false, false, 5, '2022-12-21T16:48:4
 insert into rides (babies, end_time, panic, pets, ride_status, start_time, time_estimate, total_price, driver_id, vehicle_id)
 VALUES (true, '2022-12-21T16:48:49.439927', true, false, 3, '2022-12-21T16:48:43.439927', 3, 350, 5, 1);
 insert into rides (babies, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id)
-VALUES (false, false, false, 0, 3, 0, 6, 1);
+VALUES (false, false, false, 0, 3, 500, 6, 1);
 
 insert into ride_passengers (passenger_id, ride_id) VALUES (3, 1);
 insert into ride_passengers (passenger_id, ride_id) VALUES (2, 2);
@@ -53,7 +53,7 @@ VALUES ('Pozdrav svima', '2022-12-21T16:48:49.439927', 2, 3, 1, 1);
 
 insert into panic (reason, time, ride_id, user_id) VALUES ('Fatal crash', '2022-12-21T16:48:43.439927', 2, 1);
 
-insert into rejections (reason, time, ride_id, user_id) VALUES ('Putnik se nije pojavio', '2022-12-22T17:26:00.093044', 3, 1);
+insert into rejections (reason, time, ride_id, user_id) VALUES ('Putnik se nije pojavio', '2022-12-22T17:26:00.093044', 2, 1);
 
 insert into reviews (comment, grade, driver_id, passenger_id, ride_id) VALUES ('Svaka cst', 5, 3, 1, 1);
 

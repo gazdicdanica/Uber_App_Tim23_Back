@@ -96,4 +96,7 @@ public class RideController {
         return new ResponseEntity<>(ride, HttpStatus.OK);
 
     }
+
+//    @PostMapping("/favorites")
+//    public ResponseEntity<> setFavorite(@RequestBody )
 }

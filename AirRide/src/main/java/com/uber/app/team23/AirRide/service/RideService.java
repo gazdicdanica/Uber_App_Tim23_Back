@@ -128,6 +128,8 @@ public class RideService {
         }
         // Rejection repository?
         ride.setRideStatus(RideStatus.CANCELED);
+        rejection.setRide(ride);
+        rejection.setTime(LocalDateTime.now());
         ride.setRejection(rejection);
         return new RideResponseDTO(rideRepository.save(ride));
     }
