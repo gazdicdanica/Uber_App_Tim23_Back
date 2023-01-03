@@ -31,11 +31,9 @@ public class RideController {
     @Transactional
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RideResponseDTO> createRide(@Valid @RequestBody RideDTO rideDTO){
-
         Ride ride = rideService.save(rideDTO);
         ride = rideService.addRoutes(rideDTO, ride.getId());
         ride = rideService.addPassengers(rideDTO, ride.getId());
-        // TODO check if user has already pending ride (response status 400)
         return new ResponseEntity<>(new RideResponseDTO(ride), HttpStatus.OK);
     }
 

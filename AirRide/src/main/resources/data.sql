@@ -49,7 +49,7 @@ insert into ride_passengers (passenger_id, ride_id) VALUES (2, 3);
 insert into messages (message, time_of_sending, message_type, receiver_id, ride_id, sender_id)
 VALUES ('Pozdrav svima', '2022-12-21T16:48:49.439927', 2, 3, 1, 1);
 
-insert into panic (reason, time, ride_id, user_id) VALUES ('Fatal crash', '2022-12-21T16:48:43.439927', 2, 1);
+insert into panic (reason, time, ride_id, user_id) VALUES ('Fatal crash', '2022-12-21T16:48:43.439927', 2, 2);
 
 insert into rejections (reason, time, ride_id, user_id) VALUES ('Putnik se nije pojavio', '2022-12-22T17:26:00.093044', 2, 1);
 

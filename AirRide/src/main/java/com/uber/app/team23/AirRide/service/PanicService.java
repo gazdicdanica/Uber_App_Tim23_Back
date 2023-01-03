@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-
+import java.util.List;
+@Transactional
 @Service
 public class PanicService {
     @Autowired
@@ -22,5 +23,9 @@ public class PanicService {
         p.setTime(LocalDateTime.now());
         //TODO set user from token
         return new PanicDTO(panicRepository.save(p));
+    }
+
+    public List<PanicDTO> findAllDTO(){
+        return panicRepository.findAllDTO();
     }
 }

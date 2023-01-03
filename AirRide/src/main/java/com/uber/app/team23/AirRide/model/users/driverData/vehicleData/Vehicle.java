@@ -1,5 +1,6 @@
 package com.uber.app.team23.AirRide.model.users.driverData.vehicleData;
 
+import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import jakarta.persistence.*;
 
@@ -27,8 +28,9 @@ public class Vehicle {
     public String licenseNumber;
     @Column(name = "capacity")
     public int capacity;
-//        @Transient
-//    public Location currentLocation;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "current_location")
+    public Location currentLocation;
     @Column(name = "babies")
     public boolean babyTransport;
     @Column(name = "pets")
