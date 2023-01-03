@@ -3,6 +3,8 @@ package com.uber.app.team23.AirRide.repository;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface DriverRepository extends JpaRepository<Driver, Long> {
-    Driver findByEmail(String email);
+    Optional<Driver> findByEmail(String email);
 }

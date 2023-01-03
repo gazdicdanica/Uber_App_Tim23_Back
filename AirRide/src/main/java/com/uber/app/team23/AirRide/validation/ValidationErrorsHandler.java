@@ -22,7 +22,7 @@ public class ValidationErrorsHandler {
         List<ObjectError> errorList = e.getBindingResult().getAllErrors();
         StringBuilder sb = new StringBuilder();
 
-        for (ObjectError error : errorList ) {
+        for (ObjectError error : errorList) {
             sb.append(error.getDefaultMessage());
         }
         JSONObject json = new JSONObject();
