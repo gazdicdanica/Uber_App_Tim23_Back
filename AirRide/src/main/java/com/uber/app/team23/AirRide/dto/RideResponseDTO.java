@@ -10,6 +10,7 @@ import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnu
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
