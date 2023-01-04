@@ -68,7 +68,7 @@ public class PassengerService {
         p.setBlocked(false);
         p.setActive(false);
         List<Role> li = new ArrayList<>();
-        li.add(new Role(1L, "ROLE_USER"));
+        li.add(new Role(1L, "passenger"));
         p.setRole(li);
         return this.passengerRepository.save(p);
     }

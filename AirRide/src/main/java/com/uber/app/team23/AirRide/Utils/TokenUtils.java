@@ -7,9 +7,11 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.Date;
 
 @Component
@@ -32,13 +34,15 @@ public class TokenUtils {
     private static final String AUDIENCE_WEB = "web";
     private SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
 
-    public String generateToken(String email) {
+    public String generateToken(String email, Long id, Collection<? extends GrantedAuthority> authorities) {
         return Jwts.builder()
                 .setIssuer(APP_NAME)
                 .setSubject(email)
                 .setAudience(generateAudience())
                 .setIssuedAt(new Date())
                 .setExpiration(generateExpirationDate())
+                .claim("id", id)
+                .claim("role", authorities)
                 .signWith(SIGNATURE_ALGORITHM, SECRET).compact();
     }
 
@@ -88,7 +92,7 @@ public class TokenUtils {
         try {
             claims = Jwts.parser()
                     .setSigningKey(SECRET)
-                    .parseClaimsJws(token)
+                    .parseClaimsJws(token.replace("\"", ""))
                     .getBody();
         } catch (ExpiredJwtException ex) {
             throw  ex;

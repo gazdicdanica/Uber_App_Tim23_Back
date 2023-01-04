@@ -42,7 +42,7 @@ public class AuthenticationController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         User u = (User) authentication.getPrincipal();
-        String jwt = tokenUtils.generateToken(u.getEmail());
+        String jwt = tokenUtils.generateToken(u.getEmail(), u.getId(), u.getAuthorities());
         int expiresIn = tokenUtils.getExpiredIn();
 
         System.err.println("Ulogovan");
