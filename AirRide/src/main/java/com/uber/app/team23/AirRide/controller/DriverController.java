@@ -86,7 +86,6 @@ public class DriverController {
     public ResponseEntity<VehicleDTO> getVehicleForDriver(@PathVariable Integer id) {
         Driver driver = driverService.findById((long) id);
         VehicleDTO vehicle = driverService.getVehicleForDriver(driver);
-
         return new ResponseEntity<>(vehicle, HttpStatus.OK);
     }
 

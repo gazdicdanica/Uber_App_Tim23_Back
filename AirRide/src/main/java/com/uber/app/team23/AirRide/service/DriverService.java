@@ -2,7 +2,8 @@ package com.uber.app.team23.AirRide.service;
 
 import com.uber.app.team23.AirRide.dto.DriverDocumentsDTO;
 import com.uber.app.team23.AirRide.dto.VehicleDTO;
-import com.uber.app.team23.AirRide.exceptions.EmailTakenException;
+import com.uber.app.team23.AirRide.exceptions.BadRequestException;
+import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
 import com.uber.app.team23.AirRide.mapper.VehicleDTOMapper;
 import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.users.Role;
@@ -54,7 +55,7 @@ public class DriverService {
     public Driver save(Driver driver) throws ConstraintViolationException {
         Driver check = driverRepository.findByEmail(driver.getEmail()).orElse(null);
         if (check != null) {
-            throw new EmailTakenException(USER_ALREADY_EXISTS);
+            throw new BadRequestException(USER_ALREADY_EXISTS);
         }
 
         Driver newDriver = new Driver();
@@ -77,14 +78,14 @@ public class DriverService {
     public Driver findByEmail(String email) {
         Driver driver = driverRepository.findByEmail(email).orElse(null);
         if (driver == null) {
-            throw new EmailTakenException(USER_DOES_NOT_EXIST);
+            throw new EntityNotFoundException(USER_DOES_NOT_EXIST);
         }
         return driver;
     }
     public Driver findOne(Long id) throws NullPointerException {
         Driver driver = driverRepository.findById(id).orElse(null);
         if (driver == null) {
-            throw new EmailTakenException(USER_DOES_NOT_EXIST);
+            throw new EntityNotFoundException(USER_DOES_NOT_EXIST);
         }
         return driver;
     }
@@ -92,7 +93,7 @@ public class DriverService {
     public Driver findById(Long id) {
         Driver driver = driverRepository.findById(id).orElse(null);
         if (driver == null) {
-            throw new EmailTakenException(USER_DOES_NOT_EXIST);
+            throw new EntityNotFoundException(USER_DOES_NOT_EXIST);
         }
         return driver;
     }
@@ -119,7 +120,7 @@ public class DriverService {
     public void deleteDocsForDriver(Driver driver) {
         Document document = documentRepository.findAllByDriverId(driver.getId());
         if (document == null) {
-            throw new EmailTakenException("Documents for this driver do not exist");
+            throw new EntityNotFoundException("Documents for this driver do not exist");
         }
         documentRepository.deleteById(document.getId());
     }
@@ -140,7 +141,7 @@ public class DriverService {
     public VehicleDTO getVehicleForDriver(Driver driver) {
         Vehicle vehicle = vehicleRepository.findAllByDriverId(driver.getId());
         if (vehicle == null) {
-            throw new EmailTakenException("Vehicle For This Driver Does Not Exist");
+            throw new EntityNotFoundException("Vehicle For This Driver Does Not Exist");
         }
         VehicleDTO vehicleDTO = new VehicleDTO();
         vehicleDTO.setId(vehicle.getId());
@@ -162,7 +163,7 @@ public class DriverService {
     public VehicleDTO saveVehicleForDriver(Long driverId, VehicleDTO vehicleDTO) {
         Vehicle vehicle = vehicleRepository.findAllByDriverId(driverId);
         if (vehicle != null) {
-            throw new EmailTakenException("Driver Already Has Vehicle");
+            throw new BadRequestException("Driver Already Has Vehicle");
         }
         Driver driver = driverRepository.findById(driverId).orElse(null);
         Vehicle toSave = new Vehicle();
