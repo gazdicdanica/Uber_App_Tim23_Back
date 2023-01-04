@@ -72,7 +72,7 @@ public class PassengerService {
         details.setRecipient(email);
         details.setSubject("Activation for your AirRide account");
         details.setMessageBody("Hello!");
-        emailService.sendSimpleMail(details);
+        emailService.sendActivationMail(details);
     }
 
     public Passenger save(Passenger passenger) {
