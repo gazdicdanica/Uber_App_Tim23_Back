@@ -75,7 +75,11 @@ public class PassengerService {
         emailService.sendActivationMail(details);
     }
 
-    public Passenger save(Passenger passenger) {
+    public void addActivation(Passenger passenger){
+        this.userActivationService.create(passenger);
+    }
+
+    public Passenger createPassenger(Passenger passenger) {
 
         Passenger existingPassenger = passengerRepository.findByEmail(passenger.getEmail()).orElse(null);
         if(existingPassenger != null){
@@ -93,8 +97,9 @@ public class PassengerService {
         p.setBlocked(false);
         p.setActive(false);
         List<Role> li = new ArrayList<>();
-        li.add(new Role(1L, "ROLE_USER"));
+        li.add(new Role(1L, "passenger"));
         p.setRole(li);
+
         return this.passengerRepository.save(p);
     }
 }

@@ -28,7 +28,8 @@ public class PassengerController {
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> createPassenger(@Valid @RequestBody Passenger passenger) throws ConstraintViolationException {
-        Passenger newPassenger = passengerService.save(passenger);
+        Passenger newPassenger = passengerService.createPassenger(passenger);
+        passengerService.addActivation(newPassenger);
         passengerService.sendActivationEmail(newPassenger.getEmail());
         return new ResponseEntity<>(new UserDTO(newPassenger), HttpStatus.OK);
 

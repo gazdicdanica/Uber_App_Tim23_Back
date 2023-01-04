@@ -41,12 +41,6 @@ public class UserController {
 //        return new ResponseEntity<>(new UserPaginatedDTO(users), HttpStatus.OK);
 //    }
 
-//    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user/login")
-//    public ResponseEntity<TokensDTO> userLogin(@RequestBody LoginDTO loginParams){
-//        return new ResponseEntity<>(new TokensDTO( "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC"),
-//                HttpStatus.OK);
-//    }
-
     @GetMapping(value = "/user/{id}/message", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageDTO> getAllMessages(@PathVariable Integer id) {
         MessageDTO msgDTO = new MessageDTO();
