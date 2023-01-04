@@ -19,7 +19,7 @@ public class Document {
     @Column(name = "name")
     public String name;
     @Column(name = "photo")
-    public String photo;
+    public String documentImage;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "driver_id")
     public Driver driver;

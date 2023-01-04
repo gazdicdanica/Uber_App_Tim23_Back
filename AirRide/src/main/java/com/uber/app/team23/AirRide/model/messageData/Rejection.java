@@ -1,5 +1,6 @@
 package com.uber.app.team23.AirRide.model.messageData;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.users.User;
@@ -30,5 +31,6 @@ public class Rejection {
     @JsonIgnore
     public User user;
     @Column(name = "time")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     public LocalDateTime time;
 }

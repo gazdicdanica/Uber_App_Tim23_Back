@@ -16,7 +16,7 @@ import lombok.Setter;
 public class Vehicle {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "driver_id")
     public Driver driver;
     @Column(name = "vehicle_model")
@@ -25,14 +25,15 @@ public class Vehicle {
     @JoinColumn(name = "vehicle_type_id", referencedColumnName = "id")
     public VehicleType vehicleType;
     @Column(name = "plates")
-    public String plates;
+    public String licenseNumber;
     @Column(name = "capacity")
     public int capacity;
-    //    @Transient
-//    public Location currentLocation;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "current_location")
+    public Location currentLocation;
     @Column(name = "babies")
-    public boolean acceptBabies;
+    public boolean babyTransport;
     @Column(name = "pets")
-    public boolean acceptPets;
+    public boolean petTransport;
 
 }

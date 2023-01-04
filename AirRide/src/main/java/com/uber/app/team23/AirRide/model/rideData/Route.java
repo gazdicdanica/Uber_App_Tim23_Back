@@ -14,15 +14,15 @@ import lombok.Setter;
 public class Route {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
-    public Long id;
+    private Long id;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "departure", referencedColumnName = "id")
-    public Location departure;
+    private Location departure;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "destination", referencedColumnName = "id")
-    public Location destination;
+    private Location destination;
     @Column(name = "distance")
     @JsonIgnore
-    public double distance;
+    private double distance;
 
 }

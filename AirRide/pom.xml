@@ -105,6 +105,11 @@
 			<artifactId>modelmapper</artifactId>
 			<version>3.1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20180130</version>
+		</dependency>
 		<!-- zavosnosti za validaciju atributa-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

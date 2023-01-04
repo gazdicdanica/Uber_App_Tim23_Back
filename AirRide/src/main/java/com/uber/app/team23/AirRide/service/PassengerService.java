@@ -1,17 +1,23 @@
 package com.uber.app.team23.AirRide.service;
 
+import com.uber.app.team23.AirRide.dto.UserShortDTO;
+import com.uber.app.team23.AirRide.exceptions.BadRequestException;
+import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.Role;
 import com.uber.app.team23.AirRide.model.users.User;
+import com.uber.app.team23.AirRide.model.users.UserActivation;
 import com.uber.app.team23.AirRide.repository.PassengerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class PassengerService {
@@ -24,44 +30,63 @@ public class PassengerService {
     @Autowired
     private RoleService roleService;
 
-    public Passenger getMockPassenger(){
+    @Autowired
+    private UserActivationService userActivationService;
+
+    public Passenger findByEmail(String email) {
+        return passengerRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Passenger does not exist!"));
+    }
+
+    public Page<Passenger> findAll(Pageable pageable){
+        return passengerRepository.findAll(pageable);
+    }
+
+    public Passenger findOne(Long id) {
+        return passengerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Passenger does not exist!"));
+    }
+
+    public Passenger update(Passenger p, Long id){
+        Passenger passenger = this.findOne(id);
+        passenger.setName(p.getName());
+        passenger.setSurname(p.getSurname());
+        passenger.setProfilePicture(p.getProfilePicture());
+        passenger.setTelephoneNumber(p.getTelephoneNumber());
+        passenger.setAddress(p.getAddress());
+        return passengerRepository.save(passenger);
+    }
+
+    public void activatePassenger(Long activationId){
+        UserActivation activation = this.userActivationService.findOne(activationId);
+
+        if(userActivationService.isExpired(activation)){
+            throw new BadRequestException("Activation expired. Register again!");
+        }
+
+        Passenger passenger = this.findOne(activation.getUser().getId());
+        passenger.setActive(true);
+        passengerRepository.save(passenger);
+    }
+
+    public Passenger save(Passenger passenger) {
+
+        Passenger existingPassenger = passengerRepository.findByEmail(passenger.getEmail()).orElse(null);
+        if(existingPassenger != null){
+            throw new BadRequestException("User with that email already exists");
+        }
+
         Passenger p = new Passenger();
-        p.setId((long)1);
-        p.setName("Pera");
-        p.setLastName("Peric");
-        p.setPassword("sifra123");
-        p.setAddress("Bulevar Oslobodjenja 47");
-        p.setPhoneNumber("+381123123");
-        p.setProfilePhoto("profilna");
-        p.setEmail("test@email.com");
-        return p;
-    }
-
-    public Passenger findByEmail(String email) throws UsernameNotFoundException {
-        return passengerRepository.findByEmail(email);
-    }
-
-    public Passenger findById(Long id) throws AccessDeniedException {
-        return passengerRepository.findById(id).orElseGet(null);
-    }
-
-    public List<Passenger> findAll() throws AccessDeniedException {
-        return passengerRepository.findAll();
-    }
-
-    public Passenger save(User u) {
-        Passenger p = new Passenger();
-        p.setEmail(u.getEmail());
-        p.setPassword(passwordEncoder.encode(u.getPassword()));
-        p.setName(u.getName());
-        p.setLastName(u.getLastName());
-        p.setPhoneNumber(u.getPhoneNumber());
-        p.setProfilePhoto(u.getProfilePhoto());
-        p.setAddress(u.getAddress());
+        p.setEmail(passenger.getEmail());
+        p.setPassword(passwordEncoder.encode(passenger.getPassword()));
+        p.setName(passenger.getName());
+        p.setSurname(passenger.getSurname());
+        p.setTelephoneNumber(passenger.getTelephoneNumber());
+        p.setProfilePicture(passenger.getProfilePicture());
+        p.setAddress(passenger.getAddress());
         p.setBlocked(false);
         p.setActive(false);
-
-        p.setRole(new Role(1L, "ROLE_USER"));
+        List<Role> li = new ArrayList<>();
+        li.add(new Role(1L, "ROLE_USER"));
+        p.setRole(li);
         return this.passengerRepository.save(p);
     }
 }
