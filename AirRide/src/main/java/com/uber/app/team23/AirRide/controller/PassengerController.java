@@ -5,9 +5,11 @@ import com.uber.app.team23.AirRide.dto.UserDTO;
 import com.uber.app.team23.AirRide.dto.UserPaginatedDTO;
 import com.uber.app.team23.AirRide.mapper.PassengerDTOMapper;
 import com.uber.app.team23.AirRide.model.users.Passenger;
+import com.uber.app.team23.AirRide.model.users.UserActivation;
 import com.uber.app.team23.AirRide.service.PassengerService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,8 +31,9 @@ public class PassengerController {
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> createPassenger(@Valid @RequestBody Passenger passenger) throws ConstraintViolationException {
         Passenger newPassenger = passengerService.createPassenger(passenger);
-        passengerService.addActivation(newPassenger);
-        passengerService.sendActivationEmail(newPassenger.getEmail());
+        UserActivation activation = passengerService.addActivation(newPassenger);
+        System.err.println(activation.activationId);
+        passengerService.sendActivationEmail(newPassenger.getEmail(), activation.getActivationId());
         return new ResponseEntity<>(new UserDTO(newPassenger), HttpStatus.OK);
 
     }
@@ -60,9 +63,10 @@ public class PassengerController {
 
     @GetMapping("/activate/{activationId}")
     public ResponseEntity<String> activatePassengerAccount(@PathVariable Long activationId){
-
         passengerService.activatePassenger(activationId);
-        return new ResponseEntity<>("Successful account activation!",HttpStatus.OK);
+        JSONObject obj = new JSONObject();
+        obj.put("message", "Successful account activation!");
+        return new ResponseEntity<>(obj.toString(),HttpStatus.OK);
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

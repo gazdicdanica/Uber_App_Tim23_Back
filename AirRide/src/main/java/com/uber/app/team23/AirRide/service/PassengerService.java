@@ -67,16 +67,15 @@ public class PassengerService {
         passengerRepository.save(passenger);
     }
 
-    public void sendActivationEmail(String email){
+    public void sendActivationEmail(String email, Long activationId){
         EmailDetails details = new EmailDetails();
         details.setRecipient(email);
         details.setSubject("Activation for your AirRide account");
-        details.setMessageBody("Hello!");
-        emailService.sendActivationMail(details);
+        emailService.sendActivationMail(details, activationId);
     }
 
-    public void addActivation(Passenger passenger){
-        this.userActivationService.create(passenger);
+    public UserActivation addActivation(Passenger passenger){
+        return this.userActivationService.create(passenger);
     }
 
     public Passenger createPassenger(Passenger passenger) {

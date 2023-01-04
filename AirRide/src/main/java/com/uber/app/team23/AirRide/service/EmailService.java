@@ -17,13 +17,15 @@ public class EmailService {
     private JavaMailSender javaMailSender;
     @Value("${spring.mail.username}") private String sender;
 
-    public void sendActivationMail(EmailDetails details){
+    public void sendActivationMail(EmailDetails details, Long activationId){
         MimeMessage msg = javaMailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(msg, true);
             helper.setTo(details.getRecipient());
             helper.setSubject(details.getSubject());
-            helper.setText("<a href='http://localhost:4200/confirmation'>Click to confirm</a>", true);
+            System.err.println(activationId);
+            String link = "http://localhost:4200/confirmation?code=" + activationId.toString();
+            helper.setText("<a href='"+ link + "'>Click to confirm</a>", true);
             helper.setFrom(sender);
 
             javaMailSender.send(msg);
