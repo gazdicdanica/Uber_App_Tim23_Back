@@ -4,7 +4,6 @@ import com.uber.app.team23.AirRide.dto.RidePaginatedDTO;
 import com.uber.app.team23.AirRide.dto.UserDTO;
 import com.uber.app.team23.AirRide.dto.UserPaginatedDTO;
 import com.uber.app.team23.AirRide.mapper.PassengerDTOMapper;
-import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.service.PassengerService;
 import jakarta.validation.ConstraintViolationException;
@@ -17,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +29,7 @@ public class PassengerController {
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> createPassenger(@Valid @RequestBody Passenger passenger) throws ConstraintViolationException {
         Passenger newPassenger = passengerService.save(passenger);
-
+        passengerService.sendActivationEmail(newPassenger.getEmail());
         return new ResponseEntity<>(new UserDTO(newPassenger), HttpStatus.OK);
 
     }

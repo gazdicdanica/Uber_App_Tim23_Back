@@ -1,11 +1,10 @@
 package com.uber.app.team23.AirRide.service;
 
-import com.uber.app.team23.AirRide.dto.UserShortDTO;
 import com.uber.app.team23.AirRide.exceptions.BadRequestException;
 import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
+import com.uber.app.team23.AirRide.model.messageData.EmailDetails;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.Role;
-import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.UserActivation;
 import com.uber.app.team23.AirRide.repository.PassengerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class PassengerService {
@@ -32,6 +29,9 @@ public class PassengerService {
 
     @Autowired
     private UserActivationService userActivationService;
+
+    @Autowired
+    private EmailService emailService;
 
     public Passenger findByEmail(String email) {
         return passengerRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Passenger does not exist!"));
@@ -65,6 +65,14 @@ public class PassengerService {
         Passenger passenger = this.findOne(activation.getUser().getId());
         passenger.setActive(true);
         passengerRepository.save(passenger);
+    }
+
+    public void sendActivationEmail(String email){
+        EmailDetails details = new EmailDetails();
+        details.setRecipient(email);
+        details.setSubject("Activation for your AirRide account");
+        details.setMessageBody("Hello!");
+        emailService.sendSimpleMail(details);
     }
 
     public Passenger save(Passenger passenger) {

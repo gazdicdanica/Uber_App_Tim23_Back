@@ -40,7 +40,7 @@ public abstract class User implements UserDetails {
     protected String telephoneNumber;
 
     @Column(name = "email", unique = true)
-    @Email(message = "Email Not Valid", regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$")
+    @Email(message = "Email Not Valid", regexp = "^(.+)@(.+)$")
     @NotEmpty(message = "Email cannot be empty")
     protected String email;
 
