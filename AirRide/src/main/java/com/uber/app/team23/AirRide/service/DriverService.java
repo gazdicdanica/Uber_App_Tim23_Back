@@ -70,7 +70,7 @@ public class DriverService {
         newDriver.setActive(false);
 
         List<Role> li = new ArrayList<>();
-        li.add(new Role(1L, "ROLE_DRIVER"));
+        li.add(new Role(1L, "driver"));
         newDriver.setRole(li);
         return driverRepository.save(newDriver);
     }

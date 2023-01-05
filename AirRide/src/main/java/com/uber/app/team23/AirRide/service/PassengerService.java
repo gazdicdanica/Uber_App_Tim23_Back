@@ -1,11 +1,10 @@
 package com.uber.app.team23.AirRide.service;
 
-import com.uber.app.team23.AirRide.dto.UserShortDTO;
 import com.uber.app.team23.AirRide.exceptions.BadRequestException;
 import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
+import com.uber.app.team23.AirRide.model.messageData.EmailDetails;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.Role;
-import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.UserActivation;
 import com.uber.app.team23.AirRide.repository.PassengerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class PassengerService {
@@ -32,6 +29,9 @@ public class PassengerService {
 
     @Autowired
     private UserActivationService userActivationService;
+
+    @Autowired
+    private EmailService emailService;
 
     public Passenger findByEmail(String email) {
         return passengerRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Passenger does not exist!"));
@@ -67,7 +67,18 @@ public class PassengerService {
         passengerRepository.save(passenger);
     }
 
-    public Passenger save(Passenger passenger) {
+    public void sendActivationEmail(String email, Long activationId){
+        EmailDetails details = new EmailDetails();
+        details.setRecipient(email);
+        details.setSubject("Activation for your AirRide account");
+        emailService.sendActivationMail(details, activationId);
+    }
+
+    public UserActivation addActivation(Passenger passenger){
+        return this.userActivationService.create(passenger);
+    }
+
+    public Passenger createPassenger(Passenger passenger) {
 
         Passenger existingPassenger = passengerRepository.findByEmail(passenger.getEmail()).orElse(null);
         if(existingPassenger != null){
@@ -85,8 +96,9 @@ public class PassengerService {
         p.setBlocked(false);
         p.setActive(false);
         List<Role> li = new ArrayList<>();
-        li.add(new Role(1L, "ROLE_USER"));
+        li.add(new Role(1L, "passenger"));
         p.setRole(li);
+
         return this.passengerRepository.save(p);
     }
 }
