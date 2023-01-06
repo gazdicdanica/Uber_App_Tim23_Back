@@ -78,7 +78,6 @@ public abstract class User implements UserDetails {
     public String getUsername() {
         return this.getEmail();
     }
-
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -98,4 +97,5 @@ public abstract class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }

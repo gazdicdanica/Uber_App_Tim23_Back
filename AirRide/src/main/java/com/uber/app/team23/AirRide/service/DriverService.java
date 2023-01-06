@@ -98,14 +98,14 @@ public class DriverService {
         return driver;
     }
 
-    public Driver changeDriverData(Driver driver, Driver driverDTO) {
+    public Driver changeDriverData(Driver driver, Driver driverDTO, Long id) {
         driver.setName(driverDTO.getName());
         driver.setSurname(driverDTO.getSurname());
         driver.setProfilePicture(driverDTO.getProfilePicture());
         driver.setTelephoneNumber(driverDTO.getTelephoneNumber());
         driver.setEmail(driverDTO.getEmail());
         driver.setAddress(driverDTO.getAddress());
-        driver.setPassword(passwordEncoder.encode(driverDTO.getPassword()));
+        driver.setPassword(driverRepository.findPasswordById(id));
 
         return driver;
     }

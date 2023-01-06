@@ -34,7 +34,7 @@ public class TokenUtils {
     private static final String AUDIENCE_WEB = "web";
     private SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
 
-    public String generateToken(String email, Long id, Collection<?extends GrantedAuthority> authorities) {
+    public String generateToken(String email, Long id, Collection<? extends GrantedAuthority> authorities) {
         return Jwts.builder()
                 .setIssuer(APP_NAME)
                 .setSubject(email)
@@ -68,8 +68,8 @@ public class TokenUtils {
 
     public String getToken(HttpServletRequest request) {
         String authHeader = getAuthHeaderFromHeader(request);
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return authHeader.substring(7);
+        if (authHeader != null && authHeader.startsWith("X-Auth-Token ")) {
+            return authHeader.substring(13);
         }
         return null;
     }
@@ -92,7 +92,7 @@ public class TokenUtils {
         try {
             claims = Jwts.parser()
                     .setSigningKey(SECRET)
-                    .parseClaimsJws(token)
+                    .parseClaimsJws(token.replace("\"", ""))
                     .getBody();
         } catch (ExpiredJwtException ex) {
             throw  ex;
