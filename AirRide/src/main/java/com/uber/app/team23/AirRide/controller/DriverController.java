@@ -53,9 +53,9 @@ public class DriverController {
         return new ResponseEntity<>(new UserDTO(driver), HttpStatus.OK);
     }
 
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<Object> updateDriver(@Valid @RequestBody Driver driverDTO, @PathVariable Integer id) {
-        Driver driver = driverService.changeDriverData(driverService.findById((long) id), driverDTO);
+    @PostMapping(value = "/{id}")
+    public ResponseEntity<Object> updateDriver(@Valid @RequestBody Driver driverDTO, @PathVariable Long id) {
+        Driver driver = driverService.changeDriverData(driverService.findById(id), driverDTO, id);
         return new ResponseEntity<>(new UserDTO(driverService.update(driver)), HttpStatus.OK);
     }
 

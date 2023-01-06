@@ -1,6 +1,8 @@
 package com.uber.app.team23.AirRide.controller;
 
 import com.uber.app.team23.AirRide.dto.*;
+import com.uber.app.team23.AirRide.exceptions.BadRequestException;
+import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
 import com.uber.app.team23.AirRide.model.messageData.Message;
 import com.uber.app.team23.AirRide.model.messageData.MessageType;
 import com.uber.app.team23.AirRide.model.messageData.Note;
@@ -10,16 +12,15 @@ import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-@RestController @RequestMapping("/api")
+@RestController @RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
 
     @Autowired
@@ -33,19 +34,23 @@ public class UserController {
         return new ResponseEntity<>(new UserPaginatedDTO(), HttpStatus.OK);
     }
 
-//    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user")
-//    public ResponseEntity<UserPaginatedDTO> getUserPaginated(@RequestParam int page, @RequestParam int size) {
-//        Passenger p = new Passenger((long) 10, "Ime", "Prezime", "Phhoto", "123", "email", "adr", null, false, false, null, null);
-//        List<UserDTO> users = new ArrayList<>();
-//        users.add(new UserDTO(p));
-//        return new ResponseEntity<>(new UserPaginatedDTO(users), HttpStatus.OK);
-//    }
+    @GetMapping(value = "/user")
+    public ResponseEntity<UserPaginatedDTO> getUserPaginated(Pageable page) {
 
-//    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/user/login")
-//    public ResponseEntity<TokensDTO> userLogin(@RequestBody LoginDTO loginParams){
-//        return new ResponseEntity<>(new TokensDTO( "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC"),
-//                HttpStatus.OK);
-//    }
+        return new ResponseEntity<>(new UserPaginatedDTO(), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/user/{id}")
+    public ResponseEntity<UserDTO> getUserData(@PathVariable Long id){
+        System.err.println(id);
+
+        User u = userService.findById(id);
+        if (u == null) {
+            throw new EntityNotFoundException("User With This ID Does Not Exist");
+        } else {
+            return new ResponseEntity<>(new UserDTO(u), HttpStatus.OK);
+        }
+    }
 
     @GetMapping(value = "/user/{id}/message", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageDTO> getAllMessages(@PathVariable Integer id) {

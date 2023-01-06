@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestController @RequestMapping("api/passenger")
+@RestController @RequestMapping(value = "api/passenger", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PassengerController {
 
     @Autowired
@@ -66,7 +66,7 @@ public class PassengerController {
         return new ResponseEntity<>("Successful account activation!",HttpStatus.OK);
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> updatePassenger(@Valid @RequestBody Passenger passenger, @PathVariable Long id){
 
         Passenger updatedPassenger = passengerService.update(passenger, id);

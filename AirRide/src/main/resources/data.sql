@@ -11,7 +11,7 @@ VALUES ('driver', true, 'Adresa1', false, 'pp@gmail.com', 'Peric', 'Pera', '$2a$
 insert into users (type, active, address, blocked, email, last_name, name, password, telephone_number, profile_picture)
 VALUES ('driver', false, 'Adresa2', false, 'pr@gmail.com', 'Radovanovic', 'Pera', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '06412', 'qwer');
 insert into users (type, active, address, blocked, email, last_name, name, password, telephone_number, profile_picture)
-VALUES ('driver', false, 'Adresa2', false, 'pa@gmail.com', 'Bro', 'Da', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '062134412', 'qwer');
+VALUES ('driver', true, 'Adresa2', true, 'pa@gmail.com', 'Bro', 'Da', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '062134412', 'qwer');
 
 insert into role (name) VALUES ('passenger');
 insert into role (name) VALUES ('admin');

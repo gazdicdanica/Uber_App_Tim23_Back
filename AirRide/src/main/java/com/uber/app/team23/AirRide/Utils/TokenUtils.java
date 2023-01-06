@@ -68,8 +68,8 @@ public class TokenUtils {
 
     public String getToken(HttpServletRequest request) {
         String authHeader = getAuthHeaderFromHeader(request);
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return authHeader.substring(7);
+        if (authHeader != null && authHeader.startsWith("X-Auth-Token ")) {
+            return authHeader.substring(13);
         }
         return null;
     }
