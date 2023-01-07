@@ -149,7 +149,7 @@ public class DriverService {
         vehicleDTO.setVehicleType(vehicle.getVehicleType().getType());
         vehicleDTO.setModel(vehicle.getVehicleModel());
         vehicleDTO.setLicenseNumber(vehicle.getLicenseNumber());
-        vehicleDTO.setPassengerSeats(vehicleDTO.getPassengerSeats());
+        vehicleDTO.setPassengerSeats(vehicle.getPassengerSeats());
         vehicleDTO.setBabyTransport(vehicle.isBabyTransport());
         vehicleDTO.setPetTransport(vehicle.isPetTransport());
 
@@ -174,7 +174,7 @@ public class DriverService {
         vehicleTypeRepository.save(vt);
         toSave.setVehicleType(vt);
         toSave.setLicenseNumber(vehicleDTO.getLicenseNumber());
-        toSave.setCapacity(vehicleDTO.getPassengerSeats());
+        toSave.setPassengerSeats(vehicleDTO.getPassengerSeats());
         toSave.setBabyTransport(vehicleDTO.isBabyTransport());
         toSave.setPetTransport(vehicleDTO.isPetTransport());
         vehicle = vehicleRepository.save(toSave);
@@ -191,7 +191,7 @@ public class DriverService {
         } else {
             vehicle.setVehicleModel(vehicleDTO.getModel());
             vehicle.setLicenseNumber(vehicleDTO.getLicenseNumber());
-            vehicle.setCapacity(vehicleDTO.getPassengerSeats());
+            vehicle.setPassengerSeats(vehicleDTO.getPassengerSeats());
             vehicle.setPetTransport(vehicleDTO.isPetTransport());
             vehicle.setBabyTransport(vehicleDTO.isBabyTransport());
             if (vehicle.getVehicleType().getType() != vehicleDTO.getVehicleType()){

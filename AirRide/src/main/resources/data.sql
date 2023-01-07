@@ -33,7 +33,7 @@ insert into documents (name, photo, driver_id) VALUES ('Vozacka', 'qwer123', 3);
 
 insert into vehicle_type (price, type) VALUES (300, 1);
 
-insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, vehicle_type_id) VALUES (true, true, 4, 'ns680hs', 'skoda fabia', 3, 1);
+insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, vehicle_type_id) VALUES (true, true, 4, 'NS-680HS', 'Škoda Fabia', 4, 1);
 
 insert into rides (babies, end_time, panic, pets, ride_status, start_time, time_estimate, total_price, driver_id, vehicle_id)
 VALUES (true, '2022-12-21T16:48:49.439927', false, false, 5, '2022-12-21T16:48:43.439927', 3, 350, 4, 1);
