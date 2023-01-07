@@ -33,8 +33,9 @@ public abstract class User implements UserDetails {
     @Column(name = "last_name")
     protected String surname;
 
+    @Lob
     @Column(name = "profile_picture")
-    protected String profilePicture;
+    protected byte[] profilePicture;
 
     @Column(name = "telephone_number", unique = true)
     protected String telephoneNumber;
@@ -58,11 +59,7 @@ public abstract class User implements UserDetails {
 
     @Transient
     private String jwt;
-
-//    @ManyToMany(fetch = FetchType.EAGER)
-//    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-//            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-//    private List<Role> roles;
+    
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),

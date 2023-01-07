@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Base64;
 
 @RestController @RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
@@ -42,9 +43,10 @@ public class UserController {
 
     @GetMapping(value = "/user/{id}")
     public ResponseEntity<UserDTO> getUserData(@PathVariable Long id){
-        System.err.println(id);
-
         User u = userService.findById(id);
+
+        System.err.println("\n\nFROM REQUEST");
+        System.err.println(Base64.getEncoder().encodeToString(u.getProfilePicture()));
         if (u == null) {
             throw new EntityNotFoundException("User With This ID Does Not Exist");
         } else {
