@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,7 +68,7 @@ public class PassengerController {
     }
 
     @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> updatePassenger(@Valid @RequestBody Passenger passenger, @PathVariable Long id){
+    public ResponseEntity<UserDTO> updatePassenger(@Valid @RequestBody UserDTO passenger, @PathVariable Long id){
 
         Passenger updatedPassenger = passengerService.update(passenger, id);
         return new ResponseEntity<>(new UserDTO(updatedPassenger), HttpStatus.OK);

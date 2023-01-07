@@ -1,5 +1,6 @@
 package com.uber.app.team23.AirRide.service;
 
+import com.uber.app.team23.AirRide.dto.UserDTO;
 import com.uber.app.team23.AirRide.dto.UserShortDTO;
 import com.uber.app.team23.AirRide.exceptions.BadRequestException;
 import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
@@ -14,10 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class PassengerService {
@@ -45,11 +43,13 @@ public class PassengerService {
         return passengerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Passenger does not exist!"));
     }
 
-    public Passenger update(Passenger p, Long id){
+    public Passenger update(UserDTO p, Long id){
         Passenger passenger = this.findOne(id);
         passenger.setName(p.getName());
         passenger.setSurname(p.getSurname());
-        passenger.setProfilePicture(p.getProfilePicture());
+        System.err.println("\n\nFROM UPLOAD");
+        System.err.println(p.getProfilePicture());
+        passenger.setProfilePicture(Base64.getDecoder().decode(p.getProfilePicture()));
         passenger.setTelephoneNumber(p.getTelephoneNumber());
         passenger.setAddress(p.getAddress());
         return passengerRepository.save(passenger);

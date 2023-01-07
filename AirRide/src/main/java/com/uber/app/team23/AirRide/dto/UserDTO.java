@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class UserDTO {
     private Long id;
@@ -18,12 +21,12 @@ public class UserDTO {
     private String address;
 
     public UserDTO(User user){
-        this(user.getId(), user.getName(), user.getSurname(), user.getProfilePicture(),
+        this(user.getId(), user.getName(), user.getSurname(), Base64.getEncoder().encodeToString(user.getProfilePicture()),
                 user.getTelephoneNumber(), user.getEmail(), user.getAddress());
     }
 
     public UserDTO(Long id, Driver driver) {
-        this(id, driver.getName(), driver.getSurname(), driver.getProfilePicture(),
+        this(id, driver.getName(), driver.getSurname(), Base64.getEncoder().encodeToString(driver.getProfilePicture()),
                 driver.getTelephoneNumber(), driver.getEmail(), driver.getAddress());
     }
 }
