@@ -21,8 +21,11 @@ public class UserDTO {
     private String address;
 
     public UserDTO(User user){
-        this(user.getId(), user.getName(), user.getSurname(), Base64.getEncoder().encodeToString(user.getProfilePicture()),
+        this(user.getId(), user.getName(), user.getSurname(), null,
                 user.getTelephoneNumber(), user.getEmail(), user.getAddress());
+        if(user.getProfilePicture() != null){
+            this.setProfilePicture(Base64.getEncoder().encodeToString(user.getProfilePicture()));
+        }
     }
 
     public UserDTO(Long id, Driver driver) {

@@ -149,7 +149,7 @@ public class DriverService {
         vehicleDTO.setVehicleType(vehicle.getVehicleType().getType());
         vehicleDTO.setModel(vehicle.getVehicleModel());
         vehicleDTO.setLicenseNumber(vehicle.getLicenseNumber());
-        vehicleDTO.setPassengerSeats(vehicleDTO.getPassengerSeats());
+        vehicleDTO.setPassengerSeats(vehicle.getPassengerSeats());
         vehicleDTO.setBabyTransport(vehicle.isBabyTransport());
         vehicleDTO.setPetTransport(vehicle.isPetTransport());
 
@@ -169,12 +169,12 @@ public class DriverService {
         Vehicle toSave = new Vehicle();
         toSave.setDriver(driver);
         toSave.setVehicleModel(vehicleDTO.getModel());
-        // TODO Razresiti Cenu za Vozilo
-        VehicleType vt = new VehicleType(null, vehicleDTO.getVehicleType(), 300);
-        vehicleTypeRepository.save(vt);
+        System.err.println(vehicleDTO.getVehicleType());
+        VehicleType vt = vehicleTypeRepository.findByType(vehicleDTO.getVehicleType()).orElse(null);
+        System.err.println(vt);
         toSave.setVehicleType(vt);
         toSave.setLicenseNumber(vehicleDTO.getLicenseNumber());
-        toSave.setCapacity(vehicleDTO.getPassengerSeats());
+        toSave.setPassengerSeats(vehicleDTO.getPassengerSeats());
         toSave.setBabyTransport(vehicleDTO.isBabyTransport());
         toSave.setPetTransport(vehicleDTO.isPetTransport());
         vehicle = vehicleRepository.save(toSave);
@@ -191,7 +191,7 @@ public class DriverService {
         } else {
             vehicle.setVehicleModel(vehicleDTO.getModel());
             vehicle.setLicenseNumber(vehicleDTO.getLicenseNumber());
-            vehicle.setCapacity(vehicleDTO.getPassengerSeats());
+            vehicle.setPassengerSeats(vehicleDTO.getPassengerSeats());
             vehicle.setPetTransport(vehicleDTO.isPetTransport());
             vehicle.setBabyTransport(vehicleDTO.isBabyTransport());
             if (vehicle.getVehicleType().getType() != vehicleDTO.getVehicleType()){

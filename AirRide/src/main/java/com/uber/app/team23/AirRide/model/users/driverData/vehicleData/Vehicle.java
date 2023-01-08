@@ -27,7 +27,7 @@ public class Vehicle {
     @Column(name = "plates")
     public String licenseNumber;
     @Column(name = "capacity")
-    public int capacity;
+    public int passengerSeats;
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "current_location")
     public Location currentLocation;
