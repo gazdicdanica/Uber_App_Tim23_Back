@@ -9,7 +9,7 @@ VALUES ('passenger', false, 'Maksima Gorkog 55', false, '123qwerty', 'Milos', 'O
 insert into users (type, active, address, blocked, email, last_name, name, password, telephone_number, profile_picture)
 VALUES ('driver', true, 'Adresa1', false, 'pp@gmail.com', 'Peric', 'Pera', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0641212', 'qwer');
 insert into users (type, active, address, blocked, email, last_name, name, password, telephone_number, profile_picture)
-VALUES ('driver', false, 'Adresa2', false, 'pr@gmail.com', 'Radovanovic', 'Pera', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '06412', 'qwer');
+VALUES ('driver', true, 'Adresa2', false, 'pr@gmail.com', 'Radovanovic', 'Pera', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '06412', 'qwer');
 insert into users (type, active, address, blocked, email, last_name, name, password, telephone_number, profile_picture)
 VALUES ('driver', true, 'Adresa2', true, 'pa@gmail.com', 'Bro', 'Da', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '062134412', 'qwer');
 
@@ -31,7 +31,9 @@ insert into locations (longitude, latitude, address) VALUES (13.54, 11.11, 'NTP'
 
 insert into documents (name, photo, driver_id) VALUES ('Vozacka', 'qwer123', 3);
 
-insert into vehicle_type (price, type) VALUES (300, 1);
+insert into vehicle_type (price, type) VALUES (300, 0);
+insert into vehicle_type (price, type) VALUES (500, 1);
+insert into vehicle_type (price, type) VALUES (400, 2);
 
 insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, vehicle_type_id) VALUES (true, true, 4, 'NS-680HS', 'Škoda Fabia', 4, 1);
 
