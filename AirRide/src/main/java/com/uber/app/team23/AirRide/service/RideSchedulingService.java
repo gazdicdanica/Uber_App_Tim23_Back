@@ -4,16 +4,13 @@ import com.uber.app.team23.AirRide.dto.RideResponseDTO;
 import com.uber.app.team23.AirRide.exceptions.BadRequestException;
 import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
-import com.uber.app.team23.AirRide.model.rideData.Route;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
-import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
 import com.uber.app.team23.AirRide.repository.RideRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class RideSchedulingService {
@@ -26,13 +23,12 @@ public class RideSchedulingService {
     private RideRepository rideRepository;
 
     private List<Driver> findAvailableDrivers(List<Driver> onlineDrivers){
-        // Driver does not have pending nor active ride
+        // Driver does not have accepted nor active ride
         List<Driver> ret = new ArrayList<>();
         for(Driver onlineDriver : onlineDrivers){
             RideResponseDTO active = rideRepository.findActiveByDriver(onlineDriver.getId()).orElse(null);
-            RideResponseDTO pending = rideRepository.findPendingByDriver(onlineDriver.getId()).orElse(null);
 
-            if(active == null && pending == null){
+            if(active == null){
                 ret.add(onlineDriver);
             }
         }
@@ -70,6 +66,32 @@ public class RideSchedulingService {
         return closest;
     }
 
+    public boolean areAllDriversOccupied(List<Driver> drivers){
+        for(Driver d: drivers){
+            RideResponseDTO active = rideRepository.findActiveByDriver(d.getId()).orElse(null);
+            RideResponseDTO accepted = rideRepository.findAcceptedByDriver(d.getId()).orElse(null);
+            if(active == null || accepted == null){
+                return false;
+            }
+        }return true;
+    }
+
+    public Driver findClosestDriversWithNoScheduledRide(List<Driver> drivers){
+        Driver ret = drivers.get(0);
+        int minutes = 0;
+        for(Driver d: drivers){
+            RideResponseDTO active = rideRepository.findActiveByDriver(d.getId()).orElse(null);
+            RideResponseDTO pending = rideRepository.findAcceptedByDriver(d.getId()).orElse(null);
+            if(active != null && pending == null){
+                if(active.getEstimatedTimeInMinutes() < minutes){
+                    minutes = active.getEstimatedTimeInMinutes();
+                    ret = d;
+                }
+            }
+        }
+        return ret;
+    }
+
     public Driver findDriver(Ride ride){
         List<Driver> onlineDrivers = driverService.findOnlineDrivers();
         List<Driver> driversWithAppropriateVehicle = onlineDrivers.stream().filter(driver -> driver.getVehicle().getVehicleType().getType() == ride.getVehicleType())
@@ -80,14 +102,17 @@ public class RideSchedulingService {
             throw new BadRequestException("No drivers are online.");
         }if(driversWithAppropriateVehicle.isEmpty()){
             throw new BadRequestException("No driver is online with appropriate vehicle.");
+        }if(areAllDriversOccupied(onlineDrivers)){
+            // no drivers are available and all have scheduled rides
+            throw new BadRequestException("No driver is available at the moment.");
         }
-        // TODO obraditi slucaj - svi vozaci trenutno zauzeti i imaju zakazanu voznju
 
         List<Driver> availableDrivers = findAvailableDrivers(driversWithAppropriateVehicle);
         if(!availableDrivers.isEmpty()){
+            //TODO radno vreme > 8h
            return findClosestDriver(ride, availableDrivers);
         }
-
-        return null;
+        //not available with no scheduled ride
+        return findClosestDriversWithNoScheduledRide(driversWithAppropriateVehicle);
     }
 }
