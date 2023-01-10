@@ -1,5 +1,6 @@
 package com.uber.app.team23.AirRide.model.users.driverData;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 
 import com.uber.app.team23.AirRide.model.users.Role;
@@ -31,6 +32,7 @@ public class Driver extends User {
     public Set<Ride> rides = new HashSet<>();
     @OneToOne(mappedBy = "driver", fetch = FetchType.LAZY)
     public Vehicle vehicle;
+    @JsonIgnore
     @Column(name = "online")
     public boolean online;
 

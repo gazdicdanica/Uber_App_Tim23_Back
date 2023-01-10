@@ -128,6 +128,7 @@ public class DriverController {
         // Time generated when driver logged
         Driver d = driverService.findById(id);
         WorkingHours workingHours = workingHoursService.save(d);
+        driverService.changeDriverStatus(true, id);
 
         return new ResponseEntity<>(workingHours, HttpStatus.OK);
     }
@@ -148,6 +149,7 @@ public class DriverController {
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/working-hour/{working-hour-id}")
     public ResponseEntity<WorkingHours> updateWorkingHours(@PathVariable Long id) {
         WorkingHours workingHours = workingHoursService.update(id);
+        driverService.changeDriverStatus(false, workingHours.getDriver().getId());
         return new ResponseEntity<>(workingHours, HttpStatus.OK);
     }
 }

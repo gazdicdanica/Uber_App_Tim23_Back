@@ -3,9 +3,12 @@ package com.uber.app.team23.AirRide.service;
 import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
 import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
+import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
 import com.uber.app.team23.AirRide.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class VehicleService {
@@ -26,5 +29,9 @@ public class VehicleService {
         }
         vehicle.setCurrentLocation(l);
         vehicleRepository.save(vehicle);
+    }
+
+    public List<Vehicle> findVehicleByRideParameters(VehicleEnum vehicleEnum, boolean babyTransport, boolean petTransport){
+        return vehicleRepository.findVehicleByRideParameters(vehicleEnum, babyTransport, petTransport);
     }
 }
