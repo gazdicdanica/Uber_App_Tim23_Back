@@ -61,7 +61,7 @@ public class AuthenticationController {
             throw new BadRequestException("You Might Have Been Blocked By Administration");
         }
     }
-    @PostMapping("/user/{id}/changePassword")
+    @PutMapping("/user/{id}/changePassword")
     public ResponseEntity<?> changePassword(@PathVariable Long id, @RequestBody UpdatePasswordDTO dto){
         User u = userService.findById(id);
         if (u == null) {
