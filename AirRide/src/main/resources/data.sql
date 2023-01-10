@@ -6,12 +6,12 @@ VALUES ('passenger', true, 'Dimitrija Avramovic 4', false, '123asdq', 'Danica', 
 insert into users (type, active, address, blocked, profile_picture, name, last_name, telephone_number, email, password)
 VALUES ('passenger', false, 'Maksima Gorkog 55', false, '123qwerty', 'Milos', 'Obradovic', '12341234', 'test2@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
 
-insert into users (type, active, address, blocked, email, last_name, name, password, telephone_number, profile_picture)
-VALUES ('driver', true, 'Adresa1', false, 'pp@gmail.com', 'Peric', 'Pera', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0641212', 'qwer');
-insert into users (type, active, address, blocked, email, last_name, name, password, telephone_number, profile_picture)
-VALUES ('driver', true, 'Adresa2', false, 'pr@gmail.com', 'Radovanovic', 'Pera', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '06412', 'qwer');
-insert into users (type, active, address, blocked, email, last_name, name, password, telephone_number, profile_picture)
-VALUES ('driver', true, 'Adresa2', true, 'pa@gmail.com', 'Bro', 'Da', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '062134412', 'qwer');
+insert into users (type, active, address, blocked, email, last_name, name, password, telephone_number, profile_picture, online)
+VALUES ('driver', true, 'Adresa1', false, 'pp@gmail.com', 'Peric', 'Pera', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0641212', 'qwer', true);
+insert into users (type, active, address, blocked, email, last_name, name, password, telephone_number, profile_picture, online)
+VALUES ('driver', true, 'Adresa2', false, 'pr@gmail.com', 'Radovanovic', 'Pera', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '06412', 'qwer', true);
+insert into users (type, active, address, blocked, email, last_name, name, password, telephone_number, profile_picture, online)
+VALUES ('driver', true, 'Adresa2', true, 'pa@gmail.com', 'Bro', 'Da', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '062134412', 'qwer', true);
 
 insert into role (name) VALUES ('passenger');
 insert into role (name) VALUES ('admin');
@@ -41,12 +41,12 @@ insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, 
 insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, vehicle_type_id) VALUES (true, false, 3, 'BG-123AB' , 'Volkswagen golf', 5, 1);
 insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, vehicle_type_id) VALUES (false, false, 4, 'NS-555VV', 'BMW 530i', 6, 2);
 
-insert into rides (babies, end_time, panic, pets, ride_status, start_time, time_estimate, total_price, driver_id, vehicle_id)
-VALUES (true, '2022-12-21T16:48:49.439927', false, false, 5, '2022-12-21T16:48:43.439927', 3, 350, 4, 1);
-insert into rides (babies, end_time, panic, pets, ride_status, start_time, time_estimate, total_price, driver_id, vehicle_id)
-VALUES (true, '2022-12-21T16:48:49.439927', true, false, 3, '2022-12-21T16:48:43.439927', 3, 350, 5, 1);
-insert into rides (babies, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id)
-VALUES (false, false, false, 0, 3, 500, 6, 1);
+insert into rides (babies, end_time, panic, pets, ride_status, start_time, time_estimate, total_price, driver_id, vehicle_id, vehicle_type)
+VALUES (true, '2022-12-21T16:48:49.439927', false, false, 5, '2022-12-21T16:48:43.439927', 3, 350, 4, 1, 0);
+insert into rides (babies, end_time, panic, pets, ride_status, start_time, time_estimate, total_price, driver_id, vehicle_id, vehicle_type)
+VALUES (true, '2022-12-21T16:48:49.439927', true, false, 3, '2022-12-21T16:48:43.439927', 3, 350, 5, 1, 1);
+insert into rides (babies, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, vehicle_type)
+VALUES (false, false, false, 0, 3, 500, 6, 1, 0);
 
 insert into ride_passengers (passenger_id, ride_id) VALUES (3, 1);
 insert into ride_passengers (passenger_id, ride_id) VALUES (2, 2);

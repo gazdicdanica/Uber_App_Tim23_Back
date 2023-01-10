@@ -16,4 +16,5 @@ public interface DriverRepository extends JpaRepository<Driver, Long> {
 
     @Query(value = "select d from Driver d where d.online = true")
     List<Driver> findOnlineDrivers();
+
 }

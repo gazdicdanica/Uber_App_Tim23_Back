@@ -6,6 +6,8 @@ import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.WorkingHours;
 import com.uber.app.team23.AirRide.repository.WorkingHoursRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -43,5 +45,9 @@ public class WorkingHoursService {
         }
         workingHours.setEnd(LocalDateTime.now());
         return workingHoursRepository.save(workingHours);
+    }
+
+    public Page<WorkingHours> findAll(Pageable pageable) {
+        return workingHoursRepository.findAll(pageable);
     }
 }
