@@ -5,10 +5,14 @@ import com.uber.app.team23.AirRide.exceptions.BadRequestException;
 import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
+import com.uber.app.team23.AirRide.model.users.driverData.WorkingHours;
 import com.uber.app.team23.AirRide.repository.RideRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +25,8 @@ public class RideSchedulingService {
     private VehicleService vehicleService;
     @Autowired
     private RideRepository rideRepository;
+    @Autowired
+    private WorkingHoursService workingHoursService;
 
     private List<Driver> findAvailableDrivers(List<Driver> onlineDrivers){
         // Driver does not have accepted nor active ride
@@ -92,11 +98,27 @@ public class RideSchedulingService {
         return ret;
     }
 
+    public int calculateWorkingHours(Long id){
+        Driver driver = driverService.findById(id);
+        int hours = 0;
+        List<WorkingHours> workingHours = workingHoursService.findByDriverInLastDay(driver);
+        for(WorkingHours wh : workingHours){
+            if(wh.getEnd() != null){
+                hours += Math.abs(Duration.between(wh.getEnd(), wh.getStart()).toHours());
+            }
+        }
+        System.err.println(id + " hours: " + hours);
+        return hours;
+    }
+
     public Driver findDriver(Ride ride){
         List<Driver> onlineDrivers = driverService.findOnlineDrivers();
         List<Driver> driversWithAppropriateVehicle = onlineDrivers.stream().filter(driver -> driver.getVehicle().getVehicleType().getType() == ride.getVehicleType())
                 .filter(driver -> driver.getVehicle().babyTransport == ride.isBabyTransport())
                 .filter(driver -> driver.getVehicle().petTransport == ride.isPetTransport()).toList();
+
+        List<Driver> driversWorkHours = driversWithAppropriateVehicle.stream().filter(driver -> calculateWorkingHours(driver.getId()) < 8).toList();
+
 
         if(onlineDrivers.isEmpty()){
             throw new BadRequestException("No drivers are online.");
@@ -107,12 +129,13 @@ public class RideSchedulingService {
             throw new BadRequestException("No driver is available at the moment.");
         }
 
-        List<Driver> availableDrivers = findAvailableDrivers(driversWithAppropriateVehicle);
+        List<Driver> availableDrivers = findAvailableDrivers(driversWorkHours);
+
         if(!availableDrivers.isEmpty()){
             //TODO radno vreme > 8h
            return findClosestDriver(ride, availableDrivers);
         }
         //not available with no scheduled ride
-        return findClosestDriversWithNoScheduledRide(driversWithAppropriateVehicle);
+        return findClosestDriversWithNoScheduledRide(driversWorkHours);
     }
 }
