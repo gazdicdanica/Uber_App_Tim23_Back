@@ -49,6 +49,8 @@ public class DriverService {
         return driverRepository.findAll();
     }
 
+    public List<Driver> findOnlineDrivers() {return this.driverRepository.findOnlineDrivers();}
+
     public Driver update(Driver driver) {
         return driverRepository.save(driver);
     }
@@ -169,9 +171,7 @@ public class DriverService {
         Vehicle toSave = new Vehicle();
         toSave.setDriver(driver);
         toSave.setVehicleModel(vehicleDTO.getModel());
-        System.err.println(vehicleDTO.getVehicleType());
         VehicleType vt = vehicleTypeRepository.findByType(vehicleDTO.getVehicleType()).orElse(null);
-        System.err.println(vt);
         toSave.setVehicleType(vt);
         toSave.setLicenseNumber(vehicleDTO.getLicenseNumber());
         toSave.setPassengerSeats(vehicleDTO.getPassengerSeats());
@@ -205,5 +205,11 @@ public class DriverService {
 
             return VehicleDTOMapper.fromVehicleToDTO(vehicle);
         }
+    }
+
+    public void changeDriverStatus(boolean online, Long id){
+        Driver driver = driverRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Driver does not exist"));
+        driver.setOnline(online);
+        driverRepository.save(driver);
     }
 }

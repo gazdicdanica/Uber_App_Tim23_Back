@@ -12,14 +12,20 @@ import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.rideData.RideStatus;
 import com.uber.app.team23.AirRide.model.rideData.Route;
 import com.uber.app.team23.AirRide.model.users.Passenger;
+import com.uber.app.team23.AirRide.model.users.User;
+import com.uber.app.team23.AirRide.model.users.driverData.Driver;
+import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
 import com.uber.app.team23.AirRide.repository.RideRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 
 @Transactional
@@ -31,7 +37,11 @@ public class RideService {
     @Autowired
     private PassengerService passengerService;
     @Autowired
+    private UserService userService;
+    @Autowired
     private RouteService routeService;
+    @Autowired
+    private RideSchedulingService rideSchedulingService;
 
     public Ride findOne(Long id){
         return rideRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Ride does not exist"));
@@ -75,6 +85,10 @@ public class RideService {
         }
     }
 
+    public void potentialDriver(Ride ride){
+        System.err.println(this.rideSchedulingService.findDriver(ride).getId());
+    }
+
     public Ride save(RideDTO rideDTO){
         for(UserShortDTO u : rideDTO.getPassengers()){
             this.checkPassengerPendingRide((long)u.getId());
@@ -88,6 +102,8 @@ public class RideService {
         ride.setPetTransport(rideDTO.isPetTransport());
         return rideRepository.save(ride);
     }
+
+    
 
     public RideResponseDTO withdrawRide(Long id){
         Ride ride = this.findOne(id);
@@ -115,7 +131,11 @@ public class RideService {
             throw new BadRequestException("Cannot accept a ride that is not in status PENDING!");
         }
         ride.setRideStatus(RideStatus.ACCEPTED);
-        // TODO set driver from token
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(userService.isDriver(user)){
+            Driver d = (Driver) user;
+            ride.setDriver(d);
+        }
         return RideDTOMapper.fromRideToDTO(rideRepository.save(ride));
     }
 

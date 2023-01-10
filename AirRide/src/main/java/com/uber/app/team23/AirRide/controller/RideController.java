@@ -1,22 +1,29 @@
 package com.uber.app.team23.AirRide.controller;
 
 import com.uber.app.team23.AirRide.dto.*;
+import com.uber.app.team23.AirRide.exceptions.BadRequestException;
 import com.uber.app.team23.AirRide.mapper.FavoriteDTOMapper;
 import com.uber.app.team23.AirRide.model.messageData.Panic;
 import com.uber.app.team23.AirRide.model.messageData.Rejection;
 import com.uber.app.team23.AirRide.model.rideData.Favorite;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
+import com.uber.app.team23.AirRide.model.users.Passenger;
+import com.uber.app.team23.AirRide.model.users.User;
+import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.service.FavoriteService;
 import com.uber.app.team23.AirRide.service.PanicService;
 import com.uber.app.team23.AirRide.service.RideService;
+import com.uber.app.team23.AirRide.service.UserService;
 import jakarta.validation.Valid;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController @RequestMapping("/api/ride")
 public class RideController {
@@ -27,6 +34,8 @@ public class RideController {
     PanicService panicService;
     @Autowired
     FavoriteService favoriteService;
+    @Autowired
+    UserService userService;
 
     @Transactional
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -34,6 +43,7 @@ public class RideController {
         Ride ride = rideService.save(rideDTO);
         ride = rideService.addRoutes(rideDTO, ride.getId());
         ride = rideService.addPassengers(rideDTO, ride.getId());
+        rideService.potentialDriver(ride);
         return new ResponseEntity<>(new RideResponseDTO(ride), HttpStatus.OK);
     }
 
@@ -51,7 +61,9 @@ public class RideController {
 
     @GetMapping("/{id}")
     public ResponseEntity<RideResponseDTO> getRide(@PathVariable Long id){
-        // TODO response status 400 - bad id format???
+        if(id == null){
+            throw new BadRequestException("Bad id format");
+        }
         Ride ride = rideService.findOne(id);
         return new ResponseEntity<>(new RideResponseDTO(ride), HttpStatus.OK);
 
@@ -109,6 +121,20 @@ public class RideController {
     }
 
     // TODO get favorite rides
+
+    @GetMapping("/favorites")
+    public ResponseEntity<List<FavoriteDTO>> getFavorites(){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(!userService.isPassenger(user)){
+           // TODO throw permission denied
+        }
+        // TODO fix bug ???
+        Passenger p = (Passenger) user;
+        List<FavoriteDTO> favs = favoriteService.getPassengerFavorites(p);
+
+        return new ResponseEntity<>(favs, HttpStatus.OK);
+
+    }
 
     @DeleteMapping("/favorites/{id}")
     public ResponseEntity<Void> deleteFavorite(@PathVariable Long id){

@@ -10,7 +10,9 @@ import com.uber.app.team23.AirRide.repository.FavoriteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -24,6 +26,19 @@ public class FavoriteService {
 
     public Favorite findOne(Long id){
         return this.favoriteRepository.findById(id).orElse(null);
+    }
+
+    public List<FavoriteDTO> getPassengerFavorites(Passenger passenger){
+        List<FavoriteDTO> favorites = favoriteRepository.findAllDTO();
+        List<FavoriteDTO> ret = new ArrayList<>();
+        for(FavoriteDTO f : favorites){
+            for(UserShortDTO user : f.getPassengers()){
+                if (user.getId() == passenger.getId()){
+                    ret.add(f);
+                }
+            }
+        }
+        return ret;
     }
 
     public Favorite addPassengers(Long id, Set<UserShortDTO> passengers){
