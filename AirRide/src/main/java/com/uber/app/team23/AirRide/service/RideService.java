@@ -89,6 +89,8 @@ public class RideService {
         return rideRepository.save(ride);
     }
 
+    
+
     public RideResponseDTO withdrawRide(Long id){
         Ride ride = this.findOne(id);
         if(ride.getRideStatus() == RideStatus.ACCEPTED || ride.getRideStatus() == RideStatus.PENDING){

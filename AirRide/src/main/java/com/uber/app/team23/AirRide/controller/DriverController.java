@@ -2,12 +2,10 @@ package com.uber.app.team23.AirRide.controller;
 
 import com.uber.app.team23.AirRide.dto.*;
 import com.uber.app.team23.AirRide.mapper.DriverDTOMapper;
-import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.WorkingHours;
-import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Document;
-import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
 import com.uber.app.team23.AirRide.service.DriverService;
+import com.uber.app.team23.AirRide.service.WorkingHoursService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import org.json.JSONObject;
@@ -30,6 +28,9 @@ public class DriverController {
 
     @Autowired
     private DriverService driverService;
+
+    @Autowired
+    private WorkingHoursService workingHoursService;
 
 
     @PostMapping
@@ -123,15 +124,12 @@ public class DriverController {
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/working-hour")
-    public ResponseEntity<WorkingHours> updateDriverWorkingHours(@PathVariable Integer id) {
+    public ResponseEntity<WorkingHours> createDriverWorkingHours(@PathVariable Long id) {
         // Time generated when driver logged
-        LocalDateTime startShift = LocalDateTime.now().minusHours(3);
-        // Time generated when driver finished shift
-        LocalDateTime endShift = LocalDateTime.now();
-        Driver d = new Driver();
-        WorkingHours wh = new WorkingHours(startShift, endShift,d, (long) 1);
+        Driver d = driverService.findById(id);
+        WorkingHours workingHours = workingHoursService.save(d);
 
-        return new ResponseEntity<>(wh, HttpStatus.OK);
+        return new ResponseEntity<>(workingHours, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}/ride", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -142,14 +140,14 @@ public class DriverController {
     }
 
     @GetMapping(value = "/working-hour/{id}")
-    public ResponseEntity<WorkingHours> getOneWorkingHour(@PathVariable Integer id) {
-        return new ResponseEntity<>(new WorkingHours(LocalDateTime.now(), LocalDateTime.now().plusHours(2),new Driver(), (long) id), HttpStatus.OK);
+    public ResponseEntity<WorkingHours> getOneWorkingHour(@PathVariable Long id) {
+        WorkingHours workingHours = workingHoursService.findOne(id);
+        return new ResponseEntity<>(workingHours, HttpStatus.OK);
     }
 
-    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/working-hour/{id}")
-    public ResponseEntity<WorkingHours> updateWorkingHours(@PathVariable Integer id) {
-        WorkingHours wh = new WorkingHours(LocalDateTime.now().minusHours(4), LocalDateTime.now().minusHours(2),new Driver(), (long) id);
-        wh.setEnd(LocalDateTime.now());
-        return new ResponseEntity<>(wh, HttpStatus.OK);
+    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/working-hour/{working-hour-id}")
+    public ResponseEntity<WorkingHours> updateWorkingHours(@PathVariable Long id) {
+        WorkingHours workingHours = workingHoursService.update(id);
+        return new ResponseEntity<>(workingHours, HttpStatus.OK);
     }
 }

@@ -31,6 +31,8 @@ public class Driver extends User {
     public Set<Ride> rides = new HashSet<>();
     @OneToOne(mappedBy = "driver", fetch = FetchType.LAZY)
     public Vehicle vehicle;
+    @Column(name = "online")
+    public boolean online;
 
 //    public Driver(Long id, String name, String lastName, String profilePhoto, String phoneNumber, String email,
 //                  String address, String password, boolean blocked, boolean active, Set<Document> documents,
