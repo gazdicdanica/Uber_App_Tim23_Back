@@ -70,7 +70,7 @@ public class PassengerController {
         return new ResponseEntity<>(obj.toString(),HttpStatus.OK);
     }
 
-    @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> updatePassenger(@Valid @RequestBody UserDTO passenger, @PathVariable Long id){
 
         Passenger updatedPassenger = passengerService.update(passenger, id);
