@@ -24,9 +24,9 @@ insert into user_role (user_id, role_id) VALUES (4, 3);
 insert into user_role (user_id, role_id) VALUES (5, 3);
 insert into user_role (user_id, role_id) VALUES (6, 3);
 
-insert into working_hours (end_time, start_time, driver_id) VALUES ('2022-12-22T22:37:56.469083', '2022-12-22T17:37:56.469083', 4);
-insert into working_hours (end_time, start_time, driver_id) VALUES ('2023-01-10T10:00:00.123411', '2023-01-10T11:11:11.123411', 5);
-insert into working_hours (end_time, start_time, driver_id) VALUES ('2023-01-02T10:00:00.123411', '2023-01-10T11:11:11.123411', 6);
+insert into working_hours (end_time, start_time, driver_id) VALUES ('2023-01-10T10:00:00.469083', '2023-01-10T19:00:00.469083', 4);
+insert into working_hours (end_time, start_time, driver_id) VALUES ('2023-01-10T10:00:00.123411', '2023-01-10T18:11:11.123411', 5);
+insert into working_hours (end_time, start_time, driver_id) VALUES ('2023-01-02T10:00:00.123411', '2023-01-02T11:11:11.123411', 6);
 
 insert into locations (longitude, latitude, address) VALUES (45.258664, 19.835671, 'Dimitrija Avramovica 3');
 insert into locations (longitude, latitude, address) VALUES (45.244913, 19.847719, 'NTP');
