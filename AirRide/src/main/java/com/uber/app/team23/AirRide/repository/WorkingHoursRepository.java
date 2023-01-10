@@ -12,4 +12,5 @@ public interface WorkingHoursRepository extends JpaRepository<WorkingHours, Long
 
     @Query(value = "select wh from WorkingHours wh where wh.driver = ?1 and wh.start > ?2")
     List<WorkingHours> findByDriverInLastDay(Driver driver, LocalDateTime lastDay);
+
 }

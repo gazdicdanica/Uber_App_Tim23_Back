@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Period;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class RideSchedulingService {
     private RideRepository rideRepository;
     @Autowired
     private WorkingHoursService workingHoursService;
+
 
     private List<Driver> findAvailableDrivers(List<Driver> onlineDrivers){
         // Driver does not have accepted nor active ride
@@ -98,6 +100,7 @@ public class RideSchedulingService {
         return ret;
     }
 
+
     public int calculateWorkingHours(Long id){
         Driver driver = driverService.findById(id);
         int hours = 0;
@@ -119,7 +122,6 @@ public class RideSchedulingService {
 
         List<Driver> driversWorkHours = driversWithAppropriateVehicle.stream().filter(driver -> calculateWorkingHours(driver.getId()) < 8).toList();
 
-
         if(onlineDrivers.isEmpty()){
             throw new BadRequestException("No drivers are online.");
         }if(driversWithAppropriateVehicle.isEmpty()){
@@ -137,5 +139,6 @@ public class RideSchedulingService {
         }
         //not available with no scheduled ride
         return findClosestDriversWithNoScheduledRide(driversWorkHours);
+
     }
 }

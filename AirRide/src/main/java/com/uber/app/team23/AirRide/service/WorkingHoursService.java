@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 @Service
 public class WorkingHoursService {
     @Autowired
@@ -49,4 +50,5 @@ public class WorkingHoursService {
     public List<WorkingHours> findByDriverInLastDay(Driver driver){
         return this.workingHoursRepository.findByDriverInLastDay(driver, LocalDateTime.now().minusDays(1));
     }
+
 }
