@@ -6,15 +6,13 @@ import com.uber.app.team23.AirRide.exceptions.BadRequestException;
 import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
 import com.uber.app.team23.AirRide.mapper.VehicleDTOMapper;
 import com.uber.app.team23.AirRide.model.rideData.Location;
+import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.users.Role;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Document;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleType;
-import com.uber.app.team23.AirRide.repository.DocumentRepository;
-import com.uber.app.team23.AirRide.repository.DriverRepository;
-import com.uber.app.team23.AirRide.repository.VehicleRepository;
-import com.uber.app.team23.AirRide.repository.VehicleTypeRepository;
+import com.uber.app.team23.AirRide.repository.*;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -40,6 +38,9 @@ public class DriverService {
     private DocumentRepository documentRepository;
     @Autowired
     private VehicleTypeRepository vehicleTypeRepository;
+
+    @Autowired
+    private RideRepository rideRepository;
 
     public Page<Driver> findAll(Pageable page) {
         return driverRepository.findAll(page);
@@ -211,5 +212,9 @@ public class DriverService {
         Driver driver = driverRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Driver does not exist"));
         driver.setOnline(online);
         driverRepository.save(driver);
+    }
+
+    public Page<Ride> findAllRides(Driver byId, Pageable pageable) {
+        return rideRepository.findAllByDriver(byId, pageable);
     }
 }

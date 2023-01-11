@@ -1,5 +1,6 @@
 package com.uber.app.team23.AirRide.model.rideData;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.uber.app.team23.AirRide.model.messageData.Rejection;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
@@ -21,9 +22,9 @@ public class Ride {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "start_time")
+    @Column(name = "start_time") @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTime;
-    @Column(name = "end_time")
+    @Column(name = "end_time") @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
     @Column(name = "total_price")
     private double totalCost;

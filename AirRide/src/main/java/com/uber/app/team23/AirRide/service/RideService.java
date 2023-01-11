@@ -17,6 +17,8 @@ import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
 import com.uber.app.team23.AirRide.repository.RideRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -170,5 +172,9 @@ public class RideService {
         ride.setPanic(true);
         // Do we have to change ride status???
         return rideRepository.save(ride);
+    }
+
+    public Page<Ride> findAllByDriver(Driver byId, Pageable pageable) {
+        return rideRepository.findAllByDriver(byId, pageable);
     }
 }

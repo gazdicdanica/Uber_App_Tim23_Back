@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController @RequestMapping("/api/unregisteredUser/")
+@RestController @RequestMapping(value = "/api/unregisteredUser/", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UnregisteredController {
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping
     public ResponseEntity<EstimationDTO> getRideEstimation(@RequestBody UnregisteredRideRequestDTO request){
         return new ResponseEntity<>(new EstimationDTO(10, 450), HttpStatus.OK);
     }

@@ -1,5 +1,6 @@
 package com.uber.app.team23.AirRide.model.messageData;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.users.User;
 import jakarta.persistence.*;
@@ -23,7 +24,7 @@ public class Panic {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ride_id")
     public Ride currentRide;
-    @Column(name = "time")
+    @Column(name = "time") @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     public LocalDateTime time;
     @Column(name = "reason")
     public String reason;
