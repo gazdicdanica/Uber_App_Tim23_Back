@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 
 @Service
 public class WorkingHoursService {
@@ -50,4 +52,9 @@ public class WorkingHoursService {
     public Page<WorkingHours> findAll(Pageable pageable) {
         return workingHoursRepository.findAll(pageable);
     }
+
+    public List<WorkingHours> findByDriverInLastDay(Driver driver){
+        return this.workingHoursRepository.findByDriverInLastDay(driver, LocalDateTime.now().minusDays(1));
+    }
+
 }

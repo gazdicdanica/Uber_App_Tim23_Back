@@ -34,5 +34,4 @@ public class VehicleService {
     public List<Vehicle> findVehicleByRideParameters(VehicleEnum vehicleEnum, boolean babyTransport, boolean petTransport){
         return vehicleRepository.findVehicleByRideParameters(vehicleEnum, babyTransport, petTransport);
     }
-
 }
