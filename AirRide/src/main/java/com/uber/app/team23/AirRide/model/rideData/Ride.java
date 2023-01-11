@@ -54,6 +54,8 @@ public class Ride {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "driver_id", referencedColumnName = "id")
     private Driver driver;
+    @Column(name = "delay_in_minutes")
+    private int delayInMinutes;
 
     public void addReview(Review review){
         this.reviews.add(review);
