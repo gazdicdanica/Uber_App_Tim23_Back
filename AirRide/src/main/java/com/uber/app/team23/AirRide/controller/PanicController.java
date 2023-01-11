@@ -26,6 +26,6 @@ public class PanicController {
     @GetMapping
     public ResponseEntity<PanicPaginatedDTO> getAll(){
         List<PanicDTO> panics = panicService.findAllDTO();
-        return(new ResponseEntity<>(new PanicPaginatedDTO(panics), HttpStatus.OK));
+        return new ResponseEntity<>(new PanicPaginatedDTO(panics), HttpStatus.OK);
     }
 }
