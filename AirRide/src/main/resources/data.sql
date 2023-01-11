@@ -63,7 +63,10 @@ insert into panic (reason, time, ride_id, user_id) VALUES ('Fatal crash', '2022-
 
 insert into rejections (reason, time, ride_id, user_id) VALUES ('Putnik se nije pojavio', '2022-12-22T17:26:00.093044', 2, 1);
 
-insert into reviews (comment, grade, driver_id, passenger_id, ride_id) VALUES ('Svaka cst', 5, 3, 1, 1);
+insert into reviews (comment, grade, driver_id, passenger_id, ride_id, vehicle) VALUES ('Svaka cst', 5, 3, 2, 1, true);
+insert into reviews (comment, grade, driver_id, passenger_id, ride_id, vehicle) VALUES ('Svaka ti', 5, 4, 3, 1, true);
+insert into reviews (comment, grade, driver_id, passenger_id, ride_id, vehicle) VALUES ('Svaka bajo', 5, 5, 2, 1, false);
+insert into reviews (comment, grade, driver_id, passenger_id, ride_id, vehicle) VALUES ('Svaka moj', 5, 4, 2, 1, false);
 
 insert into routes (distance, departure, destination) VALUES (4.2, 1, 2);
 insert into rides_locations (ride_id, locations_id) VALUES (3, 1);

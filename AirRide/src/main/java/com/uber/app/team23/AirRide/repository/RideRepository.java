@@ -2,6 +2,9 @@ package com.uber.app.team23.AirRide.repository;
 
 import com.uber.app.team23.AirRide.dto.RideResponseDTO;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
+import com.uber.app.team23.AirRide.model.users.driverData.Driver;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -20,4 +23,6 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
 
     @Query(value = "select new com.uber.app.team23.AirRide.dto.RideResponseDTO(r) from Ride r join r.passengers p where p.id=?1 and r.rideStatus=3")
     public Optional<RideResponseDTO> findActiveByPassenger(Long passengerId);
+
+    public Page<Ride> findAllByDriver(Driver byId, Pageable pageable);
 }

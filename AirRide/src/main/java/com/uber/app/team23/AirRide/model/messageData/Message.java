@@ -1,5 +1,6 @@
 package com.uber.app.team23.AirRide.model.messageData;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.users.User;
 import jakarta.persistence.*;
@@ -25,7 +26,7 @@ public class Message {
     public User receiver;
     @Column(name = "message", nullable = false)
     public String message;
-    @Column(name = "time_of_sending")
+    @Column(name = "time_of_sending") @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     public LocalDateTime timeOfSending;
     @Column(name = "message_type")
     public MessageType type;
