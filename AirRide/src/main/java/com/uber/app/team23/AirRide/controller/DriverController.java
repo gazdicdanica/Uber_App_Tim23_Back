@@ -138,18 +138,11 @@ public class DriverController {
         return new ResponseEntity<>(new WorkHoursDTO(wh.getStart(), wh.getEnd(), wh.getId()), HttpStatus.OK);
     }
 
-<<<<<<< Updated upstream
-    @PutMapping(value = "/working-hour/{id}")
-    public ResponseEntity<WorkingHours> updateWorkingHours(@PathVariable Long id) {
-        WorkingHours workingHours = workingHoursService.update(id);
-        driverService.changeDriverStatus(false, workingHours.getDriver().getId());
-        return new ResponseEntity<>(workingHours, HttpStatus.OK);
-=======
+
     @PutMapping(value = "/working-hour/{working-hour-id}")
     public ResponseEntity<WorkHoursDTO> updateWorkingHours(@PathVariable("working-hour-id") Long id) {
         WorkingHours wh = workingHoursService.update(id);
         driverService.changeDriverStatus(false, wh.getDriver().getId());
         return new ResponseEntity<>(new WorkHoursDTO(wh.getStart(), wh.getEnd(), wh.getId()), HttpStatus.OK);
->>>>>>> Stashed changes
     }
 }
