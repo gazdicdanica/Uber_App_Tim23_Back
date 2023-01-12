@@ -103,6 +103,13 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/user/{id}/ride-messages")
+    public ResponseEntity<RideMessages> getMessagesForRides(@PathVariable Long id){
+        return null;
+    }
+
+
+
     @PutMapping(value = "/user/{id}/block")
     public ResponseEntity<String > blockUser(@PathVariable Long id) {
         User u = userService.findById(id);
