@@ -88,6 +88,7 @@ public class RideService {
     }
 
     public void potentialDriver(Ride ride){
+        // TODO send notification to driver
         System.err.println(this.rideSchedulingService.findDriver(ride).getId());
     }
 
@@ -96,12 +97,14 @@ public class RideService {
             this.checkPassengerPendingRide((long)u.getId());
         }
         Ride ride = new Ride();
-        ride.setStartTime(LocalDateTime.now());
+        // potential start of ride
+        ride.setStartTime(LocalDateTime.now().plusMinutes(rideDTO.getDelayInMinutes()));
         ride.setRideStatus(RideStatus.PENDING);
         ride.setPanic(false);
         ride.setVehicleType(rideDTO.getVehicleType());
         ride.setBabyTransport(rideDTO.isBabyTransport());
         ride.setPetTransport(rideDTO.isPetTransport());
+        ride.setDelayInMinutes(rideDTO.getDelayInMinutes());
         return rideRepository.save(ride);
     }
 

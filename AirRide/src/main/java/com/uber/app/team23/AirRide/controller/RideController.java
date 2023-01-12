@@ -59,6 +59,7 @@ public class RideController {
         return new ResponseEntity<>(ride, HttpStatus.OK);
     }
 
+    @Transactional
     @GetMapping("/{id}")
     public ResponseEntity<RideResponseDTO> getRide(@PathVariable Long id){
         if(id == null){
@@ -119,8 +120,6 @@ public class RideController {
         newFavorite = favoriteService.addPassengers(newFavorite.getId(), favorite.getPassengers());
         return new ResponseEntity<>(FavoriteDTOMapper.fromFavoriteToDTO(newFavorite), HttpStatus.OK);
     }
-
-    // TODO get favorite rides
 
     @GetMapping("/favorites")
     public ResponseEntity<List<FavoriteDTO>> getFavorites(){
