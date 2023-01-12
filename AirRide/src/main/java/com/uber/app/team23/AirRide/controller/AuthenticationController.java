@@ -78,11 +78,9 @@ public class AuthenticationController {
         if (u == null) {
             throw new EntityNotFoundException("User With This ID Does Not Exist");
         } else if (!passwordEncoder.matches(dto.getOld_password(), u.getPassword())) {
-            throw new EntityNotFoundException("Current password is not matching!");
+            throw new BadRequestException("Current password is not matching!");
         } else {
-            System.err.println(u.getPassword());
             u.setPassword(passwordEncoder.encode(dto.getNew_password()));
-            System.err.println(u.getPassword());
             userService.updateUserPassword(u);
         }
         return new ResponseEntity<>("Password successfully changed!", HttpStatus.NO_CONTENT);
