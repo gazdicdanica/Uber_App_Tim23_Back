@@ -173,9 +173,7 @@ public class DriverService {
         Vehicle toSave = new Vehicle();
         toSave.setDriver(driver);
         toSave.setVehicleModel(vehicleDTO.getModel());
-        System.err.println(vehicleDTO.getVehicleType());
         VehicleType vt = vehicleTypeRepository.findByType(vehicleDTO.getVehicleType()).orElse(null);
-        System.err.println(vt);
         toSave.setVehicleType(vt);
         toSave.setLicenseNumber(vehicleDTO.getLicenseNumber());
         toSave.setPassengerSeats(vehicleDTO.getPassengerSeats());
@@ -216,8 +214,7 @@ public class DriverService {
         driver.setOnline(online);
         driverRepository.save(driver);
     }
-
-
+    
     public Page<Ride> findAllRides(User byId, Pageable pageable) {
         return rideRepository.findAllByDriver(byId, pageable);
     }

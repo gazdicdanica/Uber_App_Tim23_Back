@@ -29,8 +29,6 @@ public class DriverController {
     @Autowired
     private WorkingHoursService workingHoursService;
 
-
-
     @PostMapping
     public ResponseEntity<UserDTO> createDriver(@Valid @RequestBody Driver driver) throws ConstraintViolationException {
         Driver newDriver = driverService.save(driver);
@@ -137,7 +135,6 @@ public class DriverController {
         WorkingHours wh = workingHoursService.findOne(id);
         return new ResponseEntity<>(new WorkHoursDTO(wh.getStart(), wh.getEnd(), wh.getId()), HttpStatus.OK);
     }
-
 
     @PutMapping(value = "/working-hour/{working-hour-id}")
     public ResponseEntity<WorkHoursDTO> updateWorkingHours(@PathVariable("working-hour-id") Long id) {
