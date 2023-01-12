@@ -136,8 +136,8 @@ public class DriverController {
     }
 
     @PutMapping(value = "/working-hour/{working-hour-id}")
-    public ResponseEntity<WorkingHours> updateWorkingHours(@PathVariable Long working-hour-id) {
-        WorkingHours workingHours = workingHoursService.update(working-hour-id);
+    public ResponseEntity<WorkingHours> updateWorkingHours(@PathVariable Long id) {
+        WorkingHours workingHours = workingHoursService.update(id);
         driverService.changeDriverStatus(false, workingHours.getDriver().getId());
         return new ResponseEntity<>(workingHours, HttpStatus.OK);
     }

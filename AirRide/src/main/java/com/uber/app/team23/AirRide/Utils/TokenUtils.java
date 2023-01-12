@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class TokenUtils {
@@ -34,7 +35,7 @@ public class TokenUtils {
     private static final String AUDIENCE_WEB = "web";
     private SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
 
-    public String generateToken(String email, Long id, Collection<? extends GrantedAuthority> authorities) {
+    public String generateToken(String email, Long id, List<String> authorities) {
         return Jwts.builder()
                 .setIssuer(APP_NAME)
                 .setSubject(email)
