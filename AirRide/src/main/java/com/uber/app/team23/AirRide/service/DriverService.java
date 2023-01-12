@@ -8,6 +8,7 @@ import com.uber.app.team23.AirRide.mapper.VehicleDTOMapper;
 import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.users.Role;
+import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Document;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
@@ -217,7 +218,11 @@ public class DriverService {
     }
 
 
-    public Page<Ride> findAllRides(Driver byId, Pageable pageable) {
+    public Page<Ride> findAllRides(User byId, Pageable pageable) {
         return rideRepository.findAllByDriver(byId, pageable);
+    }
+
+    public Ride findRideById(Long rideId) {
+        return rideRepository.findById(rideId).orElse(null);
     }
 }

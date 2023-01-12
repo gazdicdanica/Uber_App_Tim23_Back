@@ -13,8 +13,12 @@ import java.util.List;
 public class MessageDTO {
     private int totalCount;
     private List<Message> results = new ArrayList<>();
-
     public void addMessageToList(Message msg) {
         this.results.add(msg);
+    }
+
+    public MessageDTO(List<Message> messages) {
+        this.results = messages;
+        this.totalCount = messages.size();
     }
 }

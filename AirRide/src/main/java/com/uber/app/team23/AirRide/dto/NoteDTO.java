@@ -17,4 +17,9 @@ public class NoteDTO {
     public void addNote(Note note) {
         this.results.add(note);
     }
+
+    public NoteDTO(List<Note> notes){
+        this.results = notes;
+        this.totalCount = notes.size();
+    }
 }

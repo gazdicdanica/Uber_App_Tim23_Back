@@ -1,17 +1,30 @@
 package com.uber.app.team23.AirRide.model.messageData;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Setter @Getter @NoArgsConstructor @AllArgsConstructor
+@Data @NoArgsConstructor @AllArgsConstructor
+@Entity @Table(name = "notes")
 public class Note {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "user_Id")
+    private Long userId;
+
+    @Column(name = "creation_date")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime date;
+
+    @Column(name = "message")
     private String message;
+
+    public Note(AdminNoteDTO dto, Long userId){
+        this.message = dto.getMessage();
+        this.date = LocalDateTime.now();
+        this.userId = userId;
+    }
 }

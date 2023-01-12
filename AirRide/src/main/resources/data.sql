@@ -1,5 +1,5 @@
-insert into users(type, admin_username, password, name, last_name)
-VALUES ('admin', 'admin', '123', 'John', 'Doe');
+insert into users(type, active, blocked, admin_username, password, name, last_name)
+VALUES ('admin', true, true, 'admin', '123', 'John', 'Doe');
 
 insert into users (type, active, address, blocked, profile_picture, name, last_name, telephone_number, email, password)
 VALUES ('passenger', true, 'Dimitrija Avramovic 4', false, '123asdq', 'Danica', 'Gazdic', '0691852001', 'test@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
@@ -48,12 +48,12 @@ VALUES (true, '2022-12-21T16:48:49.439927', true, false, 3, '2022-12-21T16:48:43
 insert into rides (babies, end_time, panic, pets, ride_status, start_time, time_estimate, total_price, driver_id, vehicle_id, vehicle_type)
 VALUES (false, '2022-12-22T16:48:49.439927', false, false, 0, '2022-12-21T16:48:43.439927', 3, 500, 6, 1, 0);
 
-insert into ride_passengers (passenger_id, ride_id) VALUES (3, 1);
+insert into ride_passengers (passenger_id, ride_id) VALUES (2, 1);
 insert into ride_passengers (passenger_id, ride_id) VALUES (2, 2);
-insert into ride_passengers (passenger_id, ride_id) VALUES (2, 3);
+insert into ride_passengers (passenger_id, ride_id) VALUES (3, 3);
 
 insert into messages (message, time_of_sending, message_type, receiver_id, ride_id, sender_id)
-VALUES ('Pozdrav svima', '2022-12-21T16:48:49.439927', 2, 3, 1, 1);
+VALUES ('Pozdrav svima', '2022-12-21T16:48:49.439927', 2, 3, 1, 6);
 
 insert into panic (reason, time, ride_id, user_id) VALUES ('Fatal crash', '2022-12-21T16:48:43.439927', 2, 2);
 
@@ -67,6 +67,8 @@ insert into reviews (comment, grade, driver_id, passenger_id, ride_id, vehicle) 
 insert into routes (distance, departure, destination) VALUES (4.2, 1, 2);
 insert into rides_locations (ride_id, locations_id) VALUES (3, 1);
 
+insert into notes (user_id, creation_date, message) VALUES (5, '2022-12-21T16:48:49.439927', 'Daj radi vise');
 
 insert into user_activations (creation_date_time, lifespan, user_id)
 VALUES ('2022-12-22T17:37:56.469083', '2022-12-22T17:37:56.469083', 3);
+

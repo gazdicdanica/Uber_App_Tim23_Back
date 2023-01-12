@@ -28,7 +28,7 @@ public class Ride {
     private LocalDateTime endTime;
     @Column(name = "total_price")
     private double totalCost;
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "ride_passengers", joinColumns = @JoinColumn(name = "ride_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "passenger_id", referencedColumnName = "id"))
     public Set<Passenger> passengers = new HashSet<>();
     @Column(name = "timeEstimate")
