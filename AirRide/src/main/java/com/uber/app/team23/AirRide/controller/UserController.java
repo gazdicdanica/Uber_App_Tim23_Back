@@ -84,6 +84,11 @@ public class UserController {
         }
     }
 
+    @GetMapping(value = "/user/{id}/ride-messages")
+    public ResponseEntity<RideMessages> getMessagesForRides(@PathVariable Long id){
+        return null;
+    }
+
     @Transactional
     @PostMapping(value = "/user/{id}/message")
     public ResponseEntity<MessageResponseDTO> sendMessage(@PathVariable Long id, @RequestBody SendMessageDTO dto) {
@@ -102,13 +107,6 @@ public class UserController {
         MessageResponseDTO response = new MessageResponseDTO(msg);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-    @GetMapping(value = "/user/{id}/ride-messages")
-    public ResponseEntity<RideMessages> getMessagesForRides(@PathVariable Long id){
-        return null;
-    }
-
-
 
     @PutMapping(value = "/user/{id}/block")
     public ResponseEntity<String > blockUser(@PathVariable Long id) {

@@ -57,4 +57,10 @@ public class WorkingHoursService {
         return this.workingHoursRepository.findByDriverInLastDay(driver, LocalDateTime.now().minusDays(1));
     }
 
+    public WorkingHours endWorkingHours(Driver driver){
+        WorkingHours workingHours = workingHoursRepository.findShiftInProgress(driver).orElseThrow(() -> new BadRequestException("No shift is ongoing"));
+        workingHours.setEnd(LocalDateTime.now());
+        return workingHoursRepository.save(workingHours);
+    }
+
 }

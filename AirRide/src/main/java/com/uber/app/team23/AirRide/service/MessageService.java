@@ -1,5 +1,6 @@
 package com.uber.app.team23.AirRide.service;
 
+import com.uber.app.team23.AirRide.dto.RideMessages;
 import com.uber.app.team23.AirRide.model.messageData.Message;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.repository.MessageRepository;
