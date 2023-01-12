@@ -28,7 +28,7 @@ public class Message {
     @Column(name = "message", nullable = false)
     public String message;
     @Column(name = "time_of_sending")
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     public LocalDateTime timeOfSending;
     @Column(name = "message_type")
     public MessageType type;

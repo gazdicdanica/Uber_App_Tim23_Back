@@ -22,8 +22,8 @@ public class UserActivation {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     public User user;
-    @Column(name = "creation_date_time") @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "creation_date_time") @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     public LocalDateTime creationDT;
-    @Column(name = "lifespan") @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "lifespan") @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     public LocalDateTime lifespan;
 }

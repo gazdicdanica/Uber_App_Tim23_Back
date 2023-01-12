@@ -22,9 +22,9 @@ public class Ride {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "start_time") @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "start_time") @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime startTime;
-    @Column(name = "end_time") @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "end_time") @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime endTime;
     @Column(name = "total_price")
     private double totalCost;
