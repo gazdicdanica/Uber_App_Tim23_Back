@@ -112,13 +112,12 @@ public class DriverController {
         return new ResponseEntity<>(new DriverWorkingHoursDTO(dto), HttpStatus.OK);
     }
 
-    @Transactional
     @PostMapping(value = "/{id}/working-hour")
     public ResponseEntity<WorkHoursDTO> createDriverWorkingHours(@PathVariable Long id, @RequestBody WorkHoursDTO workHoursDTO) {
         // Time generated when driver logged
         // TODO cannot start shift 400
         Driver d = driverService.findById(id);
-        WorkingHours workingHours = workingHoursService.save(d);
+        WorkingHours workingHours = workingHoursService.save(d, workHoursDTO);
         driverService.changeDriverStatus(true, id);
 
         WorkHoursDTO dto = new WorkHoursDTO(workingHours.getStart(),null, id);
@@ -144,6 +143,16 @@ public class DriverController {
         WorkingHours wh = workingHoursService.update(id);
         driverService.changeDriverStatus(false, wh.getDriver().getId());
         return new ResponseEntity<>(new WorkHoursDTO(wh.getStart(), wh.getEnd(), wh.getId()), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/{id}/working-hour/start")
+    public ResponseEntity<WorkHoursDTO> startWorkingHours(@PathVariable Long id) {
+        Driver d = driverService.findById(id);
+        WorkingHours workingHours = workingHoursService.save(d, null);
+        driverService.changeDriverStatus(true, id);
+
+        WorkHoursDTO dto = new WorkHoursDTO(workingHours.getStart(),null, id);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PutMapping(value = "/{id}/working-hour/end")

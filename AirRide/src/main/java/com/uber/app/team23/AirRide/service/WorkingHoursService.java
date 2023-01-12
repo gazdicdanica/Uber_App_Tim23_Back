@@ -1,5 +1,6 @@
 package com.uber.app.team23.AirRide.service;
 
+import com.uber.app.team23.AirRide.dto.WorkHoursDTO;
 import com.uber.app.team23.AirRide.exceptions.BadRequestException;
 import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
@@ -32,8 +33,13 @@ public class WorkingHoursService {
         return workingHoursRepository.findById(id).orElse(null);
     }
 
-    public WorkingHours save(Driver driver){
-        LocalDateTime startShift = LocalDateTime.now();
+    public WorkingHours save(Driver driver, WorkHoursDTO workHoursDTO){
+        LocalDateTime startShift;
+        if(workHoursDTO == null){
+            startShift = LocalDateTime.now();
+        }else{
+            startShift = workHoursDTO.getStart();
+        }
         WorkingHours workingHours = new WorkingHours();
         workingHours.setStart(startShift);
         workingHours.setDriver(driver);
