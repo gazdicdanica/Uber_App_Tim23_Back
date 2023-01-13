@@ -1,10 +1,12 @@
 package com.uber.app.team23.AirRide.controller;
 
 import com.uber.app.team23.AirRide.dto.*;
+import com.uber.app.team23.AirRide.exceptions.BadRequestException;
 import com.uber.app.team23.AirRide.mapper.*;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.WorkingHours;
+import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
 import com.uber.app.team23.AirRide.service.*;
 import jakarta.validation.*;
 import org.json.JSONObject;
@@ -117,6 +119,10 @@ public class DriverController {
         // Time generated when driver logged
         // TODO cannot start shift 400
         Driver d = driverService.findById(id);
+        VehicleDTO vehicle = driverService.getVehicleForDriver(d);
+        if(vehicle == null){
+            throw new BadRequestException("Cannot start shift because the vehicle is not defined!");
+        }
         WorkingHours workingHours = workingHoursService.save(d, workHoursDTO);
         driverService.changeDriverStatus(true, id);
 

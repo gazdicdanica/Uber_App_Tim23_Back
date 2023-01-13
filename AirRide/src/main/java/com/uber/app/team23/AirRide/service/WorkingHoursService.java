@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,6 +35,16 @@ public class WorkingHoursService {
     }
 
     public WorkingHours save(Driver driver, WorkHoursDTO workHoursDTO){
+
+        if(this.calculateWorkingHours(driver) > 8){
+            throw new BadRequestException("Cannot start shift because you exceeded the 8 hours limit in last 24 hours!");
+        }
+
+        WorkingHours ongoing = workingHoursRepository.findShiftInProgress(driver).orElse(null);
+        if(ongoing != null){
+            throw  new BadRequestException("Shifth already ongoing!");
+        }
+
         LocalDateTime startShift;
         if(workHoursDTO == null){
             startShift = LocalDateTime.now();
@@ -61,6 +72,19 @@ public class WorkingHoursService {
 
     public List<WorkingHours> findByDriverInLastDay(Driver driver){
         return this.workingHoursRepository.findByDriverInLastDay(driver, LocalDateTime.now().minusDays(1));
+    }
+
+    public int calculateWorkingHours(Driver driver){
+        int hours = 0;
+        List<WorkingHours> workingHours = findByDriverInLastDay(driver);
+        for(WorkingHours wh : workingHours){
+            if(wh.getEnd() != null){
+                hours += Math.abs(Duration.between(wh.getEnd(), wh.getStart()).toHours());
+            }else{
+                hours += Math.abs(Duration.between(wh.getStart(), LocalDateTime.now()).toHours());
+            }
+        }
+        return hours;
     }
 
     public WorkingHours endWorkingHours(Driver driver){
