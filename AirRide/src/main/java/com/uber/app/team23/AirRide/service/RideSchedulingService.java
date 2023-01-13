@@ -106,19 +106,19 @@ public class RideSchedulingService {
         return ret;
     }
 
-    public int calculateWorkingHours(Long id){
-        Driver driver = driverService.findById(id);
-        int hours = 0;
-        List<WorkingHours> workingHours = workingHoursService.findByDriverInLastDay(driver);
-        for(WorkingHours wh : workingHours){
-            if(wh.getEnd() != null){
-                hours += Math.abs(Duration.between(wh.getEnd(), wh.getStart()).toHours());
-            }else{
-                hours += Math.abs(Duration.between(wh.getStart(), LocalDateTime.now()).toHours());
-            }
-        }
-        return hours;
-    }
+//    public int calculateWorkingHours(Long id){
+//        Driver driver = driverService.findById(id);
+//        int hours = 0;
+//        List<WorkingHours> workingHours = workingHoursService.findByDriverInLastDay(driver);
+//        for(WorkingHours wh : workingHours){
+//            if(wh.getEnd() != null){
+//                hours += Math.abs(Duration.between(wh.getEnd(), wh.getStart()).toHours());
+//            }else{
+//                hours += Math.abs(Duration.between(wh.getStart(), LocalDateTime.now()).toHours());
+//            }
+//        }
+//        return hours;
+//    }
 
     public Driver findDriver(Ride ride){
         List<Driver> onlineDrivers = driverService.findOnlineDrivers();
@@ -126,7 +126,7 @@ public class RideSchedulingService {
                 .filter(driver -> driver.getVehicle().babyTransport == ride.isBabyTransport())
                 .filter(driver -> driver.getVehicle().petTransport == ride.isPetTransport()).toList();
 
-        List<Driver> driversWorkHours = driversWithAppropriateVehicle.stream().filter(driver -> calculateWorkingHours(driver.getId()) < 8).toList();
+        List<Driver> driversWorkHours = driversWithAppropriateVehicle.stream().filter(driver -> workingHoursService.calculateWorkingHours(driver) < 8).toList();
         if(onlineDrivers.isEmpty()){
             throw new BadRequestException("No drivers are online.");
         }if(driversWithAppropriateVehicle.isEmpty()){

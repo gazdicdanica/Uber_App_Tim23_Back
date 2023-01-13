@@ -16,7 +16,7 @@ public class Note {
     private Long userId;
 
     @Column(name = "creation_date")
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime date;
 
     @Column(name = "message")

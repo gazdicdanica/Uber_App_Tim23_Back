@@ -84,6 +84,11 @@ public class UserController {
         }
     }
 
+    @GetMapping(value = "/user/{id}/ride-messages")
+    public ResponseEntity<RideMessages> getMessagesForRides(@PathVariable Long id){
+        return null;
+    }
+
     @Transactional
     @PostMapping(value = "/user/{id}/message")
     public ResponseEntity<MessageResponseDTO> sendMessage(@PathVariable Long id, @RequestBody SendMessageDTO dto) {

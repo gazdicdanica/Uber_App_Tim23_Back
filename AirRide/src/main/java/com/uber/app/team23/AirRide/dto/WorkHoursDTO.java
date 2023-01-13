@@ -9,9 +9,9 @@ import java.time.LocalDateTime;
 
 @Data @AllArgsConstructor @NoArgsConstructor
 public class WorkHoursDTO {
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime start;
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime end;
     private Long id;
 }
