@@ -115,14 +115,14 @@ public class DriverService {
     }
 
     public DriverDocumentsDTO getDocuments(Driver driver) {
-        Document document = documentRepository.findAllByDriverId(driver.getId());
+        Document document = documentRepository.findAllByDriver(driver);
 
         DriverDocumentsDTO dto = new DriverDocumentsDTO(document.getId(), document.getName(), document.getDocumentImage(), document.getDriver().getId());
         return dto;
     }
 
     public void deleteDocsForDriver(Driver driver) {
-        Document document = documentRepository.findAllByDriverId(driver.getId());
+        Document document = documentRepository.findAllByDriver(driver);
         if (document == null) {
             throw new EntityNotFoundException("Documents for this driver do not exist");
         }

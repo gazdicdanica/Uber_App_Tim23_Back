@@ -1,9 +1,12 @@
 package com.uber.app.team23.AirRide.controller;
 
 import com.uber.app.team23.AirRide.dto.RidePaginatedDTO;
+import com.uber.app.team23.AirRide.dto.RideResponseDTO;
 import com.uber.app.team23.AirRide.dto.UserDTO;
 import com.uber.app.team23.AirRide.dto.UserPaginatedDTO;
 import com.uber.app.team23.AirRide.mapper.PassengerDTOMapper;
+import com.uber.app.team23.AirRide.mapper.RideDTOMapper;
+import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.UserActivation;
 import com.uber.app.team23.AirRide.service.PassengerService;
@@ -54,13 +57,13 @@ public class PassengerController {
     }
 
     // TODO
-    @GetMapping("/{id}/ride")
-    public ResponseEntity<RidePaginatedDTO> getPassengerRidesPage(@PathVariable Long id,  @RequestParam int page, @RequestParam int size,
-                                                                  @RequestParam String sort, @RequestParam String from, @RequestParam String to)
-    {
-//        Page<Ride> ridePage =
-        return new ResponseEntity<>(new RidePaginatedDTO(new ArrayList<>()), HttpStatus.OK);
-    }
+//    @GetMapping("/{id}/ride")
+//    public ResponseEntity<RidePaginatedDTO> getPassengerRidesPage(@PathVariable Long id,  Pageable pageable)
+//    {
+//        Page<Ride> rides = passengerService.findAllRides(id, pageable);
+//        List<RideResponseDTO> dto = rides.stream().map(RideDTOMapper::fromRideToDTO).toList();
+//        return new ResponseEntity<>(new RidePaginatedDTO(new ArrayList<>()), HttpStatus.OK);
+//    }
 
     @GetMapping("/activate/{activationId}")
     public ResponseEntity<String> activatePassengerAccount(@PathVariable Long activationId){

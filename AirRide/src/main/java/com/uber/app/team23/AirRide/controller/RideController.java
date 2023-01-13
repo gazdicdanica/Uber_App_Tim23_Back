@@ -43,7 +43,8 @@ public class RideController {
         Ride ride = rideService.save(rideDTO);
         ride = rideService.addRoutes(rideDTO, ride.getId());
         ride = rideService.addPassengers(rideDTO, ride.getId());
-        rideService.potentialDriver(ride);
+        Driver potential = rideService.findPotentialDriver(ride);
+        ride = rideService.addDriver(ride, potential);
         return new ResponseEntity<>(new RideResponseDTO(ride), HttpStatus.OK);
     }
 

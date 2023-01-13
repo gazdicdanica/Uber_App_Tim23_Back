@@ -27,8 +27,8 @@ public class PassengerService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private RoleService roleService;
+//    @Autowired
+//    private RideService rideService;
 
     @Autowired
     private UserActivationService userActivationService;
@@ -106,4 +106,9 @@ public class PassengerService {
 
         return this.passengerRepository.save(p);
     }
+
+//    public Page<Ride> findAllRides(Long id, Pageable pageable){
+//        Passenger p = findOne(id);
+//        return rideService.findAllByPassenger(p, pageable);
+//    }
 }
