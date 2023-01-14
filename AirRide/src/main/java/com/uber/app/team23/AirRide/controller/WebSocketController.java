@@ -19,7 +19,7 @@ import java.util.Map;
 public class WebSocketController {
 
     @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
+    public SimpMessagingTemplate simpMessagingTemplate;
 
 //    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = "/sendMessageRest")
@@ -41,12 +41,10 @@ public class WebSocketController {
         if (messageConverted != null) {
             if (messageConverted.containsKey("toId") && messageConverted.get("toId") != null
                     && !messageConverted.get("toId").equals("")) {
-                this.simpMessagingTemplate.convertAndSend("/socket-publisher/" + messageConverted.get("toId"),
-                        messageConverted);
-                this.simpMessagingTemplate.convertAndSend("/socket-publisher/" + messageConverted.get("fromId"),
+                this.simpMessagingTemplate.convertAndSend("/ride/" + messageConverted.get("toId"),
                         messageConverted);
             } else {
-                this.simpMessagingTemplate.convertAndSend("/socket-publisher", messageConverted);
+                this.simpMessagingTemplate.convertAndSend("/ride", messageConverted);
             }
         }
 
