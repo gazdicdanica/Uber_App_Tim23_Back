@@ -37,6 +37,9 @@ public class RideController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    WebSocketController webSocketController;
+
     @Transactional
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RideResponseDTO> createRide(@Valid @RequestBody RideDTO rideDTO){
@@ -45,7 +48,9 @@ public class RideController {
         ride = rideService.addPassengers(rideDTO, ride.getId());
         Driver potential = rideService.findPotentialDriver(ride);
         ride = rideService.addDriver(ride, potential);
-        return new ResponseEntity<>(new RideResponseDTO(ride), HttpStatus.OK);
+        RideResponseDTO dto = new RideResponseDTO(ride);
+        webSocketController.simpMessagingTemplate.convertAndSend("/ride", dto);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @GetMapping("/driver/{driverId}/active")
