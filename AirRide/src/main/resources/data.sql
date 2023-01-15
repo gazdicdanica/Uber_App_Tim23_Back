@@ -28,10 +28,10 @@ insert into working_hours (end_time, start_time, driver_id) VALUES ('2023-01-02T
 insert into working_hours (end_time, start_time, driver_id) VALUES ('2023-01-03T10:00:00.123411', '2023-01-03T18:11:11.123411', 5);
 insert into working_hours (end_time, start_time, driver_id) VALUES ('2023-01-02T10:00:00.123411', '2023-01-02T11:11:11.123411', 6);
 
-insert into locations (longitude, latitude, address) VALUES (45.258664, 19.835671, 'Dimitrija Avramovica 3');
-insert into locations (longitude, latitude, address) VALUES (45.244913, 19.847719, 'NTP');
-insert into locations (longitude, latitude, address) VALUES (45.252264, 19.854553, 'Maksima Gorkog 57');
-insert into locations (longitude, latitude, address) VALUES (45.244482, 19.842469, 'Promenada, Novi Sad');
+insert into locations (longitude, latitude, address) VALUES (19.835671, 45.258664, 'Dimitrija Avramovica 3');
+insert into locations (longitude, latitude, address) VALUES (19.847719, 45.244913, 'NTP');
+insert into locations (longitude, latitude, address) VALUES (19.854553, 45.252264, 'Maksima Gorkog 57');
+insert into locations (longitude, latitude, address) VALUES (19.842469, 45.244482, 'Promenada, Novi Sad');
 
 insert into documents (name, photo, driver_id) VALUES ('Vozacka', 'qwer123', 3);
 

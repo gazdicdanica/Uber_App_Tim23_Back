@@ -138,11 +138,6 @@ public class RideService {
             throw new BadRequestException("Cannot accept a ride that is not in status PENDING!");
         }
         ride.setRideStatus(RideStatus.ACCEPTED);
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(userService.isDriver(user)){
-            Driver d = (Driver) user;
-            ride.setDriver(d);
-        }
         return RideDTOMapper.fromRideToDTO(rideRepository.save(ride));
     }
 
@@ -165,7 +160,9 @@ public class RideService {
         ride.setRideStatus(RideStatus.CANCELED);
         rejection.setRide(ride);
         rejection.setTime(LocalDateTime.now());
+        // TODO rejection.setUser
         ride.setRejection(rejection);
+
         return RideDTOMapper.fromRideToDTO(rideRepository.save(ride));
     }
 
