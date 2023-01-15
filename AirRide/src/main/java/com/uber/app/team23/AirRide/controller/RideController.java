@@ -87,7 +87,7 @@ public class RideController {
     @Transactional
     @PutMapping("/{id}/panic")
     public ResponseEntity<PanicDTO> panic(@PathVariable Long id, @RequestBody Panic panic){
-        Ride ride = rideService.setPanic(id, panic);
+        Ride ride = rideService.setPanic(id);
         PanicDTO p = panicService.save(panic, ride);
         return new ResponseEntity<>(p, HttpStatus.OK);
     }

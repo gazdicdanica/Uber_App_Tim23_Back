@@ -8,6 +8,7 @@ import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
 import com.uber.app.team23.AirRide.mapper.RideDTOMapper;
 import com.uber.app.team23.AirRide.model.messageData.Panic;
 import com.uber.app.team23.AirRide.model.messageData.Rejection;
+import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.rideData.RideStatus;
 import com.uber.app.team23.AirRide.model.rideData.Route;
@@ -73,6 +74,10 @@ public class RideService {
                 r = routeService.save(route);
             }
             ride.getLocations().add(r);
+//            Location departure = route.getDeparture();
+//            Location destination = route.getDestination();
+//             "http://router.project-osrm.org/route/v1/driving/{" + departure.getLongitude() + "},{" + departure.getLatitude() + "};{" + departure.getLongitude() + "},{" + departure.getLatitude() + "}?overview=false";
+
         }
         return rideRepository.save(ride);
     }
@@ -166,9 +171,10 @@ public class RideService {
         return RideDTOMapper.fromRideToDTO(rideRepository.save(ride));
     }
 
-    public Ride setPanic(Long id, Panic panic){
+    public Ride setPanic(Long id){
         Ride ride = this.findOne(id);
         ride.setPanic(true);
+        ride.setRideStatus(RideStatus.PANIC);
         // Do we have to change ride status???
         return rideRepository.save(ride);
     }
