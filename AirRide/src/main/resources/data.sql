@@ -60,7 +60,17 @@ insert into ride_passengers (passenger_id, ride_id) VALUES (2, 2);
 insert into ride_passengers (passenger_id, ride_id) VALUES (3, 3);
 
 insert into messages (message, time_of_sending, message_type, receiver_id, ride_id, sender_id)
-VALUES ('Pozdrav svima', '2022-12-21T16:48:49.439927', 2, 3, 1, 6);
+VALUES ('Cao', '2022-12-21T16:48:49.439927', 1, 2, 1, 4);
+insert into messages (message, time_of_sending, message_type, receiver_id, ride_id, sender_id)
+VALUES ('Pozz', '2022-12-21T17:48:49.439927', 1, 4, 1, 2);
+insert into messages (message, time_of_sending, message_type, receiver_id, ride_id, sender_id)
+VALUES ('Tu sam', '2023-01-10T16:48:49.439927', 1, 3, 2, 6);
+insert into messages (message, time_of_sending, message_type, receiver_id, ride_id, sender_id)
+VALUES (':))', '2023-01-11T11:48:49.439927', 1, 6, 2, 3);
+insert into messages (message, time_of_sending, message_type, receiver_id, ride_id, sender_id)
+VALUES (':((', '2023-01-01T16:48:49.439927', 1, 2, 3, 5);
+insert into messages (message, time_of_sending, message_type, receiver_id, ride_id, sender_id)
+VALUES ('Ok', '2023-01-01T16:49:49.439927', 1, 5, 3, 2);
 
 insert into panic (reason, time, ride_id, user_id) VALUES ('Fatal crash', '2022-12-21T16:48:43.439927', 2, 2);
 

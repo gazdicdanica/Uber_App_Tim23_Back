@@ -37,8 +37,6 @@ public class RideService {
     @Autowired
     private PassengerService passengerService;
     @Autowired
-    private UserService userService;
-    @Autowired
     private RouteService routeService;
     @Autowired
     private RideSchedulingService rideSchedulingService;
