@@ -98,6 +98,10 @@ public class RideService {
         ride.setStartTime(LocalDateTime.now().plusMinutes(rideDTO.getDelayInMinutes()));
         ride.setRideStatus(RideStatus.PENDING);
         ride.setPanic(false);
+        ride.setDelayInMinutes(rideDTO.getDelayInMinutes());
+        ride.setEndTime(ride.getStartTime().plusMinutes(rideDTO.getDelayInMinutes()));
+        ride.setEstimatedTimeInMinutes((int) rideDTO.getEstimatedTime());
+        ride.setTotalCost(rideDTO.getEstimatedPrice());
         ride.setVehicleType(rideDTO.getVehicleType());
         ride.setBabyTransport(rideDTO.isBabyTransport());
         ride.setPetTransport(rideDTO.isPetTransport());

@@ -1,4 +1,4 @@
-package com.uber.app.team23.AirRide.Utils;
+package com.uber.app.team23.AirRide.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

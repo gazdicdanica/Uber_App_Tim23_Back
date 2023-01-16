@@ -3,13 +3,11 @@ package com.uber.app.team23.AirRide.model.rideData;
 
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Data
+@NoArgsConstructor @AllArgsConstructor
 @Table(name = "routes")
 public class Route {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

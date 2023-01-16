@@ -11,9 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class TokenUtils {
@@ -26,8 +24,7 @@ public class TokenUtils {
     @Value("Dana.!.")
     public String SECRET;
 
-    @Value("1800")
-    private int EXPIRES_IN;
+    private int EXPIRES_IN = 18000000;
 
     @Value("Authorization")
     private String AUTH_HEADER;
@@ -35,16 +32,42 @@ public class TokenUtils {
     private static final String AUDIENCE_WEB = "web";
     private SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
 
-    public String generateToken(String email, Long id, List<String> authorities) {
-        return Jwts.builder()
-                .setIssuer(APP_NAME)
-                .setSubject(email)
-                .setAudience(generateAudience())
-                .setIssuedAt(new Date())
-                .setExpiration(generateExpirationDate())
-                .claim("id", id)
-                .claim("role", authorities)
-                .signWith(SIGNATURE_ALGORITHM, SECRET).compact();
+    public String generateToken(String email, Long id, List<String> authorities, boolean isRefresh) {
+        String jwt;
+        if (isRefresh) {
+             jwt = Jwts.builder()
+                    .setIssuer(APP_NAME)
+                    .setSubject(email)
+                    .setAudience(generateAudience())
+                    .setIssuedAt(new Date())
+                    .setExpiration(generateExpirationDateRefresh())
+                    .claim("id", id)
+                    .claim("role", authorities)
+                    .signWith(SIGNATURE_ALGORITHM, toBase64(SECRET)).compact();
+        } else {
+            jwt = Jwts.builder()
+                    .setIssuer(APP_NAME)
+                    .setSubject(email)
+                    .setAudience(generateAudience())
+                    .setIssuedAt(new Date())
+                    .setExpiration(generateExpirationDate())
+                    .claim("id", id)
+                    .claim("role", authorities)
+                    .signWith(SIGNATURE_ALGORITHM, toBase64(SECRET)).compact();
+        }
+        return jwt;
+    }
+
+    private String toBase64(String secret) {
+        return Base64.getEncoder().encodeToString(secret.getBytes());
+    }
+
+    private Date generateExpirationDateRefresh() {
+        Date date = generateExpirationDate();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DATE, 7);
+        return cal.getTime();
     }
 
     private String generateAudience() {
@@ -69,6 +92,7 @@ public class TokenUtils {
 
     public String getToken(HttpServletRequest request) {
         String authHeader = getAuthHeaderFromHeader(request);
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return authHeader.substring(7);
         }
@@ -92,8 +116,8 @@ public class TokenUtils {
         Claims claims;
         try {
             claims = Jwts.parser()
-                    .setSigningKey(SECRET)
-                    .parseClaimsJws(token.replace("\"", ""))
+                    .setSigningKey(toBase64(SECRET))
+                    .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException ex) {
             throw  ex;
