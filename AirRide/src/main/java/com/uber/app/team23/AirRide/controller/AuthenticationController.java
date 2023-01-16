@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/user", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthenticationController {
 
     @Autowired
@@ -45,6 +45,7 @@ public class AuthenticationController {
     public ResponseEntity<TokensDTO> createAuthenticationToken(
             @RequestBody LoginDTO authenticationRequest) {
 
+        System.err.println(authenticationRequest.getEmail()+" "+authenticationRequest.getPassword());
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 authenticationRequest.getEmail(), authenticationRequest.getPassword()));
 
@@ -52,17 +53,18 @@ public class AuthenticationController {
 
         User u = (User) authentication.getPrincipal();
         if (u.isActive() && !u.isBlocked()){
-
             List<String> roles = new ArrayList<>();
             for(Object r : u.getAuthorities()){
                 Role role = (Role) r;
                 roles.add(role.getAuthority());
+                System.err.println(role.getAuthority());
             }
 
-            String jwt = tokenUtils.generateToken(u.getEmail(), u.getId(), roles);
-            int expiresIn = tokenUtils.getExpiredIn();
-
-            return ResponseEntity.ok(new TokensDTO(jwt, (long) expiresIn));
+            String jwt = tokenUtils.generateToken(u.getEmail(), u.getId(), roles, false);
+            String refresh = tokenUtils.generateToken(u.getEmail(), u.getId(), roles, true);
+            System.err.println(jwt);
+            System.err.println(refresh);
+            return ResponseEntity.ok(new TokensDTO(jwt, refresh));
 
         } else if (!u.isActive()){
             throw new EntityNotFoundException("Your Account Might Not Be Activated");

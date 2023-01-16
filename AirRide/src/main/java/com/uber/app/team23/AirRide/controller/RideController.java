@@ -19,13 +19,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController @RequestMapping(value = "/api/ride", produces = MediaType.APPLICATION_JSON_VALUE)
+
+@RestController
+@RequestMapping(value = "/api/ride", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RideController {
 
     @Autowired
@@ -41,13 +44,13 @@ public class RideController {
     WebSocketController webSocketController;
 
     @Transactional
-    @PostMapping()
-    public ResponseEntity<RideResponseDTO> createRide(@RequestBody RideDTO rideDTO){
-        System.err.println(rideDTO.toString());
+    @PostMapping
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<RideResponseDTO> createRide(@Valid @RequestBody RideDTO rideDTO){
+        System.err.println("USAO");
         Ride ride = rideService.save(rideDTO);
         ride = rideService.addRoutes(rideDTO, ride.getId());
         ride = rideService.addPassengers(rideDTO, ride.getId());
-        System.err.println("RIDE "+ride.toString());
         Driver potential = rideService.findPotentialDriver(ride);
         ride = rideService.addDriver(ride, potential);
         RideResponseDTO dto = new RideResponseDTO(ride);
