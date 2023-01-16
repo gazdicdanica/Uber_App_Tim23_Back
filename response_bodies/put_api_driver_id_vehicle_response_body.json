@@ -1,0 +1,15 @@
+{
+  "id": 123,
+  "driverId": 123,
+  "vehicleType": "STANDARDNO",
+  "model": "VW Golf 2",
+  "licenseNumber": "NS 123-AB",
+  "currentLocation": {
+    "address": "Bulevar oslobodjenja 46",
+    "latitude": 45.267136,
+    "longitude": 19.833549
+  },
+  "passengerSeats": 4,
+  "babyTransport": true,
+  "petTransport": true
+}

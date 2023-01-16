@@ -1,5 +1,5 @@
-insert into users(type, active, blocked, admin_username, password, name, last_name)
-VALUES ('admin', true, true, 'admin', '123', 'John', 'Doe');
+insert into users(type, active, blocked, admin_username, email, password, name, last_name)
+VALUES ('admin', true, false, 'admin', 'admin@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', 'John', 'Doe');
 
 insert into users (type, active, address, blocked, profile_picture, name, last_name, telephone_number, email, password)
 VALUES ('passenger', true, 'Dimitrija Avramovic 4', false, '123asdq', 'Danica', 'Gazdic', '0691852001', 'test@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
@@ -11,11 +11,11 @@ VALUES ('driver', true, 'Adresa1', false, 'pp@gmail.com', 'Peric', 'Pera', '$2a$
 insert into users (type, active, address, blocked, email, last_name, name, password, telephone_number, profile_picture, online)
 VALUES ('driver', true, 'Adresa2', false, 'pr@gmail.com', 'Radovanovic', 'Pera', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '06412', 'qwer', true);
 insert into users (type, active, address, blocked, email, last_name, name, password, telephone_number, profile_picture, online)
-VALUES ('driver', true, 'Adresa2', true, 'pa@gmail.com', 'Bro', 'Da', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '062134412', 'qwer', true);
+VALUES ('driver', true, 'Adresa2', false, 'pa@gmail.com', 'Bro', 'Da', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '062134412', 'qwer', true);
 
-insert into role (name) VALUES ('passenger');
-insert into role (name) VALUES ('admin');
-insert into role (name) VALUES ('driver');
+insert into role (name) VALUES ('ROLE_USER');
+insert into role (name) VALUES ('ROLE_ADMIN');
+insert into role (name) VALUES ('ROLE_DRIVER');
 
 insert into user_role (user_id, role_id) VALUES (1, 2);
 insert into user_role (user_id, role_id) VALUES (2, 1);

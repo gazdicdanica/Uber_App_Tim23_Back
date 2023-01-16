@@ -1,0 +1,19 @@
+{
+  "locations": [
+    {
+      "departure": {
+        "address": "Bulevar oslobodjenja 46",
+        "latitude": 45.267136,
+        "longitude": 19.833549
+      },
+      "destination": {
+        "address": "Bulevar oslobodjenja 46",
+        "latitude": 45.267136,
+        "longitude": 19.833549
+      }
+    }
+  ],
+  "vehicleType": "STANDARDNO",
+  "babyTransport": true,
+  "petTransport": true
+}

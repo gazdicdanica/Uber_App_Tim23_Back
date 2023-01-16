@@ -3,12 +3,10 @@ package com.uber.app.team23.AirRide.model.rideData;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Data
+@NoArgsConstructor @AllArgsConstructor
 @Entity @Table(name = "locations")
 public class Location {
     @JsonIgnore

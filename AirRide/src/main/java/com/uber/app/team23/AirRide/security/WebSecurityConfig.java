@@ -1,5 +1,6 @@
-package com.uber.app.team23.AirRide.Utils;
+package com.uber.app.team23.AirRide.security;
 
+import com.uber.app.team23.AirRide.Utils.TokenUtils;
 import com.uber.app.team23.AirRide.security.RestAuthenticationEntryPoint;
 import com.uber.app.team23.AirRide.security.TokenAuthenticationFilter;
 import com.uber.app.team23.AirRide.service.auth.CustomUserDetailsService;
@@ -23,7 +24,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class WebSecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
@@ -55,9 +56,17 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.addFilterBefore(new TokenAuthenticationFilter(tokenUtils, userDetailsService()), BasicAuthenticationFilter.class);
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint);
+        http.authorizeHttpRequests().requestMatchers("/auth/**").permitAll()
+                .requestMatchers("api/ride").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/api/user/login").permitAll()
+                        .anyRequest().authenticated().and().cors().and()
+                        .addFilterBefore(new TokenAuthenticationFilter(tokenUtils, userDetailsService()), BasicAuthenticationFilter.class);
+        http.csrf().disable();
         http.headers().frameOptions().disable();
+        http.authenticationProvider(authenticationProvider());
         return http.build();
     }
 

@@ -34,5 +34,9 @@ public class Passenger extends User{
 //        this.rides = rides;
 //        this.favouriteLocations = favouriteLocations;
 //    }
+    public Passenger(Long id, String email) {
+        this.id = id;
+        this.email = email;
+    }
 }
 

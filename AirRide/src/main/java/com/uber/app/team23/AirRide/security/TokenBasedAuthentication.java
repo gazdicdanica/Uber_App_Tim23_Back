@@ -18,12 +18,17 @@ public class TokenBasedAuthentication extends AbstractAuthenticationToken {
     }
 
     @Override
+    public boolean isAuthenticated() {
+        return true;
+    }
+
+    @Override
     public Object getCredentials() {
         return token;
     }
 
     @Override
-    public Object getPrincipal() {
+    public UserDetails getPrincipal() {
         return principle;
     }
 }
