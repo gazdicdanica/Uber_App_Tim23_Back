@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController @RequestMapping("/api/ride")
+@RestController @RequestMapping(value = "/api/ride", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RideController {
 
     @Autowired
@@ -38,12 +38,14 @@ public class RideController {
     UserService userService;
 
     @Transactional
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RideResponseDTO> createRide(@Valid @RequestBody RideDTO rideDTO){
+    @PostMapping()
+    public ResponseEntity<RideResponseDTO> createRide(@RequestBody RideDTO rideDTO){
+        System.err.println(rideDTO.toString());
         Ride ride = rideService.save(rideDTO);
         ride = rideService.addRoutes(rideDTO, ride.getId());
         ride = rideService.addPassengers(rideDTO, ride.getId());
-        rideService.potentialDriver(ride);
+//        rideService.potentialDriver(ride);
+        System.err.println("RIDE "+ride.toString());
         return new ResponseEntity<>(new RideResponseDTO(ride), HttpStatus.OK);
     }
 

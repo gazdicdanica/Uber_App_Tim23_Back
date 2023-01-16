@@ -1,22 +1,21 @@
 package com.uber.app.team23.AirRide.model.rideData;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.uber.app.team23.AirRide.dto.RideDTO;
 import com.uber.app.team23.AirRide.model.messageData.Rejection;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Data
+@NoArgsConstructor @AllArgsConstructor
 @Entity @Table(name = "rides")
 public class Ride {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,4 +64,5 @@ public class Ride {
         this.reviews.remove(review);
         review.setRide(null);
     }
+
 }

@@ -91,14 +91,18 @@ public class RideService {
         System.err.println(this.rideSchedulingService.findDriver(ride).getId());
     }
 
-    public Ride save(RideDTO rideDTO){
-        for(UserShortDTO u : rideDTO.getPassengers()){
-            this.checkPassengerPendingRide((long)u.getId());
-        }
+    public Ridesave(RideDTO rideDTO){
+//        for(UserShortDTO u : rideDTO.getPassengers()){
+//            this.checkPassengerPendingRide((long)u.getId());
+//        }
         Ride ride = new Ride();
         ride.setStartTime(LocalDateTime.now());
         ride.setRideStatus(RideStatus.PENDING);
         ride.setPanic(false);
+        ride.setDelayInMinutes(rideDTO.getDelayInMinutes());
+        ride.setEndTime(ride.getStartTime().plusMinutes(rideDTO.getDelayInMinutes()));
+        ride.setEstimatedTimeInMinutes((int) rideDTO.getEstimatedTime());
+        ride.setTotalCost(rideDTO.getEstimatedPrice());
         ride.setVehicleType(rideDTO.getVehicleType());
         ride.setBabyTransport(rideDTO.isBabyTransport());
         ride.setPetTransport(rideDTO.isPetTransport());

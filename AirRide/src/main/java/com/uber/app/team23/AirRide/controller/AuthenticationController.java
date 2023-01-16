@@ -51,8 +51,6 @@ public class AuthenticationController {
             String jwt = tokenUtils.generateToken(u.getEmail(), u.getId(), u.getAuthorities());
             int expiresIn = tokenUtils.getExpiredIn();
 
-            System.err.println("Ulogovan");
-
             return ResponseEntity.ok(new TokensDTO(jwt, (long) expiresIn));
 
         } else if (!u.isActive()){
