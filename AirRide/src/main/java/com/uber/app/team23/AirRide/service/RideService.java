@@ -14,7 +14,6 @@ import com.uber.app.team23.AirRide.model.rideData.Route;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
-import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
 import com.uber.app.team23.AirRide.repository.RideRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,9 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 
 @Transactional
@@ -87,16 +84,18 @@ public class RideService {
         }
     }
 
-    public void potentialDriver(Ride ride){
-        System.err.println(this.rideSchedulingService.findDriver(ride).getId());
+    public Driver findPotentialDriver(Ride ride){
+        // TODO send notification to driver
+        return this.rideSchedulingService.findDriver(ride);
     }
 
-    public Ridesave(RideDTO rideDTO){
-//        for(UserShortDTO u : rideDTO.getPassengers()){
-//            this.checkPassengerPendingRide((long)u.getId());
-//        }
+    public Ride save(RideDTO rideDTO){
+        for(UserShortDTO u : rideDTO.getPassengers()){
+            this.checkPassengerPendingRide((long)u.getId());
+        }
         Ride ride = new Ride();
-        ride.setStartTime(LocalDateTime.now());
+        // potential start of ride
+        ride.setStartTime(LocalDateTime.now().plusMinutes(rideDTO.getDelayInMinutes()));
         ride.setRideStatus(RideStatus.PENDING);
         ride.setPanic(false);
         ride.setDelayInMinutes(rideDTO.getDelayInMinutes());
@@ -106,6 +105,7 @@ public class RideService {
         ride.setVehicleType(rideDTO.getVehicleType());
         ride.setBabyTransport(rideDTO.isBabyTransport());
         ride.setPetTransport(rideDTO.isPetTransport());
+        ride.setDelayInMinutes(rideDTO.getDelayInMinutes());
         return rideRepository.save(ride);
     }
 
@@ -119,6 +119,11 @@ public class RideService {
         ride.setRideStatus(RideStatus.CANCELED);
 
         return RideDTOMapper.fromRideToDTO(rideRepository.save(ride));
+    }
+
+    public Ride addDriver(Ride ride, Driver driver){
+        ride.setDriver(driver);
+        return rideRepository.save(ride);
     }
 
     public RideResponseDTO startRide(Long id){

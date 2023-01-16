@@ -23,7 +23,7 @@ public class PanicDTO {
     private int id;
     private UserDTO user;
     private RideResponseDTO ride;
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime time;
     private String reason;
 

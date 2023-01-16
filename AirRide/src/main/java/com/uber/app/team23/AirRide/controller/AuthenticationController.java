@@ -7,6 +7,7 @@ import com.uber.app.team23.AirRide.dto.TokensDTO;
 import com.uber.app.team23.AirRide.dto.UpdatePasswordDTO;
 import com.uber.app.team23.AirRide.exceptions.BadRequestException;
 import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
+import com.uber.app.team23.AirRide.model.users.Role;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,6 +21,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -48,7 +52,14 @@ public class AuthenticationController {
 
         User u = (User) authentication.getPrincipal();
         if (u.isActive() && !u.isBlocked()){
-            String jwt = tokenUtils.generateToken(u.getEmail(), u.getId(), u.getAuthorities());
+
+            List<String> roles = new ArrayList<>();
+            for(Object r : u.getAuthorities()){
+                Role role = (Role) r;
+                roles.add(role.getAuthority());
+            }
+
+            String jwt = tokenUtils.generateToken(u.getEmail(), u.getId(), roles);
             int expiresIn = tokenUtils.getExpiredIn();
 
             return ResponseEntity.ok(new TokensDTO(jwt, (long) expiresIn));

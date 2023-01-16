@@ -37,6 +37,9 @@ public class RideController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    WebSocketController webSocketController;
+
     @Transactional
     @PostMapping()
     public ResponseEntity<RideResponseDTO> createRide(@RequestBody RideDTO rideDTO){
@@ -44,9 +47,12 @@ public class RideController {
         Ride ride = rideService.save(rideDTO);
         ride = rideService.addRoutes(rideDTO, ride.getId());
         ride = rideService.addPassengers(rideDTO, ride.getId());
-//        rideService.potentialDriver(ride);
         System.err.println("RIDE "+ride.toString());
-        return new ResponseEntity<>(new RideResponseDTO(ride), HttpStatus.OK);
+        Driver potential = rideService.findPotentialDriver(ride);
+        ride = rideService.addDriver(ride, potential);
+        RideResponseDTO dto = new RideResponseDTO(ride);
+        webSocketController.simpMessagingTemplate.convertAndSend("/ride", dto);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @GetMapping("/driver/{driverId}/active")
@@ -61,6 +67,7 @@ public class RideController {
         return new ResponseEntity<>(ride, HttpStatus.OK);
     }
 
+    @Transactional
     @GetMapping("/{id}")
     public ResponseEntity<RideResponseDTO> getRide(@PathVariable Long id){
         if(id == null){
@@ -121,8 +128,6 @@ public class RideController {
         newFavorite = favoriteService.addPassengers(newFavorite.getId(), favorite.getPassengers());
         return new ResponseEntity<>(FavoriteDTOMapper.fromFavoriteToDTO(newFavorite), HttpStatus.OK);
     }
-
-    // TODO get favorite rides
 
     @GetMapping("/favorites")
     public ResponseEntity<List<FavoriteDTO>> getFavorites(){

@@ -24,7 +24,7 @@ public class Panic {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ride_id")
     public Ride currentRide;
-    @Column(name = "time") @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "time") @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     public LocalDateTime time;
     @Column(name = "reason")
     public String reason;
