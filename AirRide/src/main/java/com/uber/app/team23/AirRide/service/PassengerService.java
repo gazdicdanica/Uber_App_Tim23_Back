@@ -55,6 +55,8 @@ public class PassengerService {
     public Passenger update(UserDTO p, Long id){
         Passenger passenger = this.findOne(id);
         passenger.setName(p.getName());
+        passenger.setEmail(p.getEmail());
+        passenger.setUsername(p.getEmail());
         passenger.setSurname(p.getSurname());
         passenger.setProfilePicture(Base64.getDecoder().decode(p.getProfilePicture()));
         passenger.setTelephoneNumber(p.getTelephoneNumber());

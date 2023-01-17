@@ -43,21 +43,17 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 email = tokenUtils.getEmailFromToken(authToken);
 
                 if (email != null) {
-                    System.err.println("User details " + email);
 
                     // 3. Preuzimanje korisnika na osnovu username-a
                     UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-                    System.err.println(userDetails.getUsername());
                     // 4. Provera da li je prosledjeni token validan
                     if (tokenUtils.validateToken(authToken, userDetails)) {
                         // 5. Kreiraj autentifikaciju
-                        System.err.println("Valid token " + userDetails.getUsername());
                         TokenBasedAuthentication authentication = new TokenBasedAuthentication(userDetails);
                         authentication.setToken(authToken);
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                         for(Object r:  SecurityContextHolder.getContext().getAuthentication().getAuthorities()){
                             Role role = (Role) r;
-                            System.err.println(role.getAuthority());
                         }
                     }
                 }

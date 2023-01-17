@@ -172,8 +172,6 @@ public class TokenUtils {
         final String email = getEmailFromToken(token);
         final Date created = getIssuedAtDateFromToken(token);
 
-        System.err.println(email);
-        System.err.println(userDetails.getUsername());
         // Token je validan kada:
         return (email != null
                 && email.equals(userDetails.getUsername()));

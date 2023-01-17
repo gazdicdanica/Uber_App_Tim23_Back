@@ -29,12 +29,12 @@ public abstract class User implements UserDetails {
     protected Long id;
 
     @NotNull @NotEmpty
-    @Size(min = 3, max = 15)
+    @Size(min = 2, max = 20)
     @Column(name = "name")
     protected String name;
 
     @NotNull @NotEmpty
-    @Size(min = 3, max = 15)
+    @Size(min = 2, max = 30)
     @Column(name = "last_name")
     protected String surname;
 
@@ -50,7 +50,7 @@ public abstract class User implements UserDetails {
     protected String telephoneNumber;
 
     @Column(name = "email", unique = true)
-    @Size(min = 3, max = 25)
+//    @Size(min = 3, max = 25)
     @Email(message = "Email Not Valid", regexp = "^[a-zA-Z0-9_!#$%&amp;'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
     @NotEmpty(message = "Email cannot be empty")
     protected String email;
@@ -58,8 +58,6 @@ public abstract class User implements UserDetails {
     @Column(name = "username", unique = true)
     protected String username;
 
-    @NotNull @NotEmpty
-    @Size(min = 3, max = 30)
     @Column(name = "address")
     protected String address;
 
