@@ -1,17 +1,17 @@
-insert into users(type, active, address, blocked, profile_picture, telephone_number, admin_username, email, password, name, last_name)
-VALUES ('admin', true, 'AdresaAdmina', false, 'piaegrhfvpiae4h4', '064123412', 'admin', 'admin@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', 'John', 'Doe');
+insert into users(type, active, address, blocked, profile_picture, telephone_number, username, email, password, name, last_name)
+VALUES ('admin', true, 'AdresaAdmina', false, 'piaegrhfvpiae4h4', '064123412', 'admin@email.com' ,'admin@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', 'John', 'Doe');
 
-insert into users (type, active, address, blocked, profile_picture, name, last_name, telephone_number, email, password)
-VALUES ('passenger', true, 'Dimitrija Avramovic 4', false, '123asdq', 'Danica', 'Gazdic', '0691852001', 'test@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
-insert into users (type, active, address, blocked, profile_picture, name, last_name, telephone_number, email, password)
-VALUES ('passenger', false, 'Maksima Gorkog 55', false, '123qwerty', 'Milos', 'Obradovic', '12341234', 'test2@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
+insert into users (type, active, address, blocked, profile_picture, name, username, last_name, telephone_number, email, password)
+VALUES ('passenger', true, 'Dimitrija Avramovic 4', false, '123asdq', 'Danica','test@email.com', 'Gazdic', '0691852001', 'test@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
+insert into users (type, active, address, blocked, profile_picture, name, username, last_name, telephone_number, email, password)
+VALUES ('passenger', false, 'Maksima Gorkog 55', false, '123qwerty', 'Milos', 'test2@email.com','Obradovic', '12341234', 'test2@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
 
-insert into users (type, active, address, blocked, email, last_name, name, password, telephone_number, profile_picture, online)
-VALUES ('driver', true, 'Adresa1', false, 'pp@gmail.com', 'Peric', 'Pera', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0641212', 'qwer', true);
-insert into users (type, active, address, blocked, email, last_name, name, password, telephone_number, profile_picture, online)
-VALUES ('driver', true, 'Adresa2', false, 'pr@gmail.com', 'Radovanovic', 'Pera', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '06412', 'qwer', true);
-insert into users (type, active, address, blocked, email, last_name, name, password, telephone_number, profile_picture, online)
-VALUES ('driver', true, 'Adresa2', false, 'pa@gmail.com', 'Bro', 'Da', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '062134412', 'qwer', true);
+insert into users (type, active, address, blocked, email, last_name, name, username, password, telephone_number, profile_picture, online)
+VALUES ('driver', true, 'Adresa1', false, 'pp@gmail.com', 'Peric', 'Pera','pp@gmail.com' ,'$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0641212', 'qwer', true);
+insert into users (type, active, address, blocked, email, last_name, name, username ,password, telephone_number, profile_picture, online)
+VALUES ('driver', true, 'Adresa2', false, 'pr@gmail.com', 'Radovanovic', 'Pera', 'pr@gmail.com' , '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '06412', 'qwer', true);
+insert into users (type, active, address, blocked, email, last_name, name,username, password, telephone_number, profile_picture, online)
+VALUES ('driver', true, 'Adresa2', false, 'pa@gmail.com', 'Bro', 'Da', 'pa@gmail.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '062134412', 'qwer', true);
 
 insert into role (name) VALUES ('ROLE_USER');
 insert into role (name) VALUES ('ROLE_ADMIN');

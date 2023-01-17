@@ -55,6 +55,9 @@ public abstract class User implements UserDetails {
     @NotEmpty(message = "Email cannot be empty")
     protected String email;
 
+    @Column(name = "username", unique = true)
+    protected String username;
+
     @NotNull @NotEmpty
     @Size(min = 3, max = 30)
     @Column(name = "address")
@@ -87,7 +90,7 @@ public abstract class User implements UserDetails {
     @JsonIgnore
     @Override
     public String getUsername() {
-        return this.getEmail();
+        return this.username;
     }
     @JsonIgnore
     @Override

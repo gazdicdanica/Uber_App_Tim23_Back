@@ -56,11 +56,11 @@ public class AuthenticationController {
             for(Object r : u.getAuthorities()){
                 Role role = (Role) r;
                 roles.add(role.getAuthority());
-                System.err.println(role.getAuthority());
+//                System.err.println(role.getAuthority());
             }
 
-            String jwt = tokenUtils.generateToken(u.getEmail(), u.getId(), roles, false);
-            String refresh = tokenUtils.generateToken(u.getEmail(), u.getId(), roles, true);
+            String jwt = tokenUtils.generateToken(u.getUsername(), u.getId(), roles, false);
+            String refresh = tokenUtils.generateToken(u.getUsername(), u.getId(), roles, true);
             return ResponseEntity.ok(new TokensDTO(jwt, refresh));
 
         } else if (!u.isActive()){

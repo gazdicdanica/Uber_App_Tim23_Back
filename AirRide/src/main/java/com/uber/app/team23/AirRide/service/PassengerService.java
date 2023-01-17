@@ -94,6 +94,7 @@ public class PassengerService {
 
         Passenger p = new Passenger();
         p.setEmail(passenger.getEmail());
+        p.setUsername(passenger.getEmail());
         p.setPassword(passwordEncoder.encode(passenger.getPassword()));
         p.setName(passenger.getName());
         p.setSurname(passenger.getSurname());

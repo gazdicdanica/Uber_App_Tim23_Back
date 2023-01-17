@@ -60,16 +60,16 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//        http.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint);
-//        .accessDeniedHandler((request, response, accessDeniedException) -> response.sendError(HttpStatus.FORBIDDEN.value(), "Forbidden"))
-//                        .authenticationEntryPoint(restAuthenticationEntryPoint);
+        http.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint)
+        .accessDeniedHandler((request, response, accessDeniedException) -> response.sendError(HttpStatus.FORBIDDEN.value(), "Forbidden"))
+                        .authenticationEntryPoint(restAuthenticationEntryPoint);
         http.authorizeHttpRequests()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("api/ride").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers("/api/user/login").permitAll()
                 .requestMatchers(HttpMethod.POST,"/api/passenger").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/passenger").hasAuthority("ROLE_ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/passenger/activate/*").permitAll()
                 .anyRequest().authenticated().and().cors().and()
                 .addFilterBefore(new TokenAuthenticationFilter(tokenUtils, userDetailsService()), BasicAuthenticationFilter.class);
         http.csrf().disable();

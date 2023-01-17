@@ -49,7 +49,7 @@ public class PassengerController {
 
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping
     public ResponseEntity<UserPaginatedDTO> getPassengersPage(Pageable page){
         Page<Passenger> passengersPage = passengerService.findAll(page);
@@ -66,7 +66,6 @@ public class PassengerController {
         return new ResponseEntity<>(new RidePaginatedDTO(dto), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('USER')")
     @GetMapping("/activate/{activationId}")
     public ResponseEntity<String> activatePassengerAccount(@PathVariable Long activationId){
         passengerService.activatePassenger(activationId);

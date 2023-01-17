@@ -25,6 +25,7 @@ public class UserDTO {
                 user.getTelephoneNumber(), user.getEmail(), user.getAddress());
         if(user.getProfilePicture() != null){
             this.setProfilePicture(Base64.getEncoder().encodeToString(user.getProfilePicture()));
+
         }
     }
 
