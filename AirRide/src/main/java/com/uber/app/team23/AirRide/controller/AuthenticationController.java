@@ -44,8 +44,11 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<TokensDTO> createAuthenticationToken(
             @RequestBody LoginDTO authenticationRequest) {
+<<<<<<< Updated upstream
 
         System.err.println(authenticationRequest.getEmail()+" "+authenticationRequest.getPassword());
+=======
+>>>>>>> Stashed changes
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 authenticationRequest.getEmail(), authenticationRequest.getPassword()));
 
