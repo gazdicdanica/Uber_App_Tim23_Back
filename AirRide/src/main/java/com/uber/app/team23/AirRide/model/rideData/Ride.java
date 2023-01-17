@@ -1,7 +1,6 @@
 package com.uber.app.team23.AirRide.model.rideData;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.uber.app.team23.AirRide.dto.RideDTO;
 import com.uber.app.team23.AirRide.model.messageData.Rejection;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
@@ -37,7 +36,7 @@ public class Ride {
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Set<Route> locations = new HashSet<>();
     @Column(name = "ride_status")
-    public RideStatus rideStatus;
+    public RideStatus status;
     @OneToOne(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Rejection rejection;
     @Column(name = "panic")

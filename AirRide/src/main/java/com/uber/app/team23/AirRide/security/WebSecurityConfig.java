@@ -71,12 +71,13 @@ public class WebSecurityConfig {
                         .authenticationEntryPoint(restAuthenticationEntryPoint);
         http.authorizeHttpRequests()
                 .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("api/ride").permitAll()
+//                .requestMatchers("api/ride").permitAll()
                 .requestMatchers(toH2Console()).permitAll()
                 .requestMatchers("/api/user/login").permitAll()
                 .requestMatchers(HttpMethod.POST,"/api/passenger").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/passenger/activate/*").permitAll()
-                .anyRequest().authenticated().and().cors().and()
+                .requestMatchers("/**").permitAll().and()
+//                .anyRequest().authenticated().and().cors().and()
                 .addFilterBefore(new TokenAuthenticationFilter(tokenUtils, userDetailsService()), BasicAuthenticationFilter.class);
         http.csrf().ignoringRequestMatchers(toH2Console());
         http.csrf().disable();

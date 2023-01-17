@@ -28,7 +28,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestController @RequestMapping(value = "api/passenger", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController @RequestMapping(value = "/api/passenger", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PassengerController {
 
     @Autowired
@@ -43,7 +43,7 @@ public class PassengerController {
 
     }
 
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN', 'ROLE_DRIVER')")
     @GetMapping(value ={"/{id}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> getPassenger(@PathVariable("id") Long id){
         Passenger p = passengerService.findOne(id);

@@ -51,7 +51,7 @@ public class RideResponseDTO {
         this.vehicleType = ride.getVehicleType();
         this.babyTransport = ride.isBabyTransport();
         this.petTransport = ride.isPetTransport();
-        this.status = ride.getRideStatus();
+        this.status = ride.getStatus();
         this.rejection = ride.getRejection();
     }
 

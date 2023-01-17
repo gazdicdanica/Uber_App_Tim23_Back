@@ -14,6 +14,7 @@ import com.uber.app.team23.AirRide.service.FavoriteService;
 import com.uber.app.team23.AirRide.service.PanicService;
 import com.uber.app.team23.AirRide.service.RideService;
 import com.uber.app.team23.AirRide.service.UserService;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,10 +47,11 @@ public class RideController {
     @Transactional
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<RideResponseDTO> createRide(@Valid @RequestBody RideDTO rideDTO){
+    public ResponseEntity<RideResponseDTO> createRide(@Valid @RequestBody @Nullable RideDTO rideDTO){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Ride ride = rideService.save(rideDTO);
         ride = rideService.addRoutes(rideDTO, ride.getId());
-        ride = rideService.addPassengers(rideDTO, ride.getId());
+        ride = rideService.addPassengers(rideDTO, ride.getId(), user.getId());
         Driver potential = rideService.findPotentialDriver(ride);
         ride = rideService.addDriver(ride, potential);
         RideResponseDTO dto = new RideResponseDTO(ride);

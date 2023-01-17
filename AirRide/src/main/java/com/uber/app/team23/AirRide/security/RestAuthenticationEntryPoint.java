@@ -25,6 +25,7 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
         final Map<String, Object> body = new HashMap<>();
         body.put("code", HttpServletResponse.SC_UNAUTHORIZED);
         body.put("payload", "Access denied!");
+        body.put("error", authException.getStackTrace());
 
         final ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(response.getOutputStream(), body);
