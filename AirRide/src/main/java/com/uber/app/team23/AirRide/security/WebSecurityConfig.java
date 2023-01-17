@@ -4,26 +4,32 @@ import com.uber.app.team23.AirRide.Utils.TokenUtils;
 import com.uber.app.team23.AirRide.security.RestAuthenticationEntryPoint;
 import com.uber.app.team23.AirRide.security.TokenAuthenticationFilter;
 import com.uber.app.team23.AirRide.service.auth.CustomUserDetailsService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class WebSecurityConfig {
     @Bean
@@ -52,18 +58,28 @@ public class WebSecurityConfig {
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
     @Autowired
+    private AccessDeniedHandler accessDeniedHandler;
+
+    @Autowired
     private TokenUtils tokenUtils;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint);
-        http.authorizeHttpRequests().requestMatchers("/auth/**").permitAll()
-                .requestMatchers("api/ride").permitAll()
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/api/user/login").permitAll()
-                        .anyRequest().authenticated().and().cors().and()
-                        .addFilterBefore(new TokenAuthenticationFilter(tokenUtils, userDetailsService()), BasicAuthenticationFilter.class);
+        http.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and()
+            .exceptionHandling().accessDeniedHandler(accessDeniedHandler)
+                        .authenticationEntryPoint(restAuthenticationEntryPoint);
+        http.authorizeHttpRequests()
+                .requestMatchers("/auth/**").permitAll()
+//                .requestMatchers("api/ride").permitAll()
+                .requestMatchers(toH2Console()).permitAll()
+                .requestMatchers("/api/user/login").permitAll()
+                .requestMatchers(HttpMethod.POST,"/api/passenger").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/passenger/activate/*").permitAll()
+//                .requestMatchers("/**").permitAll().and()
+                .anyRequest().authenticated().and().cors().and()
+                .addFilterBefore(new TokenAuthenticationFilter(tokenUtils, userDetailsService()), BasicAuthenticationFilter.class);
+        http.csrf().ignoringRequestMatchers(toH2Console());
         http.csrf().disable();
         http.headers().frameOptions().disable();
         http.authenticationProvider(authenticationProvider());

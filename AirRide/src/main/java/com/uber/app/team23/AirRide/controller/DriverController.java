@@ -33,7 +33,7 @@ public class DriverController {
     private WorkingHoursService workingHoursService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<UserDTO> createDriver(@Valid @RequestBody Driver driver) throws ConstraintViolationException {
         Driver newDriver = driverService.save(driver);
         return new ResponseEntity<>(new UserDTO(newDriver), HttpStatus.OK);

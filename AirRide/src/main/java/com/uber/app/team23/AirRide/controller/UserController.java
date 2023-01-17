@@ -38,6 +38,8 @@ public class UserController {
     private MessageService messageService;
     @Autowired
     private DriverService driverService;
+    @Autowired
+    private RideService rideService;
 
     @Autowired
     private NoteService noteService;
@@ -84,6 +86,18 @@ public class UserController {
         }
     }
 
+    @Transactional
+    @GetMapping(value = "/user/{passengerId}/{driverId}/{rideId}/message")
+    public ResponseEntity<List<MessageResponseDTO>> getMessagesForUsersByRide(@PathVariable Long passengerId, @PathVariable Long driverId, @PathVariable Long rideId){
+        User u1 = userService.findById(passengerId);
+        User u2 = userService.findById(driverId);
+        Ride r = rideService.findOne(rideId);
+        if (u1 == null || u2 == null){
+            throw new EntityNotFoundException("User does not exist");
+        }
+        return new ResponseEntity<>(messageService.findAllByUsersForRide(u1, u2, r), HttpStatus.OK);
+    }
+
     @GetMapping(value = "/user/{id}/ride-messages")
     public ResponseEntity<RideMessages> getMessagesForRides(@PathVariable Long id){
         return null;
@@ -93,7 +107,7 @@ public class UserController {
     @PostMapping(value = "/user/{id}/message")
     public ResponseEntity<MessageResponseDTO> sendMessage(@PathVariable Long id, @RequestBody SendMessageDTO dto) {
         //TODO Take User From Token
-        User u1 = userService.findById(2L);
+        User u1 = userService.findById(4L);
         User u = userService.findById(id);
         if (u == null) {
             throw new EntityNotFoundException("User does not exist");

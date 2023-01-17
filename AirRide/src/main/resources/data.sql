@@ -1,17 +1,17 @@
-insert into users(type, active, blocked, admin_username, email, password, name, last_name)
-VALUES ('admin', true, false, 'admin', 'admin@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', 'John', 'Doe');
+insert into users(type, active, address, blocked, profile_picture, telephone_number, username, email, password, name, last_name)
+VALUES ('admin', true, 'AdresaAdmina', false, 'piaegrhfvpiae4h4', '064123412', 'admin@email.com' ,'admin@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', 'John', 'Doe');
 
-insert into users (type, active, address, blocked, profile_picture, name, last_name, telephone_number, email, password)
-VALUES ('passenger', true, 'Dimitrija Avramovic 4', false, '123asdq', 'Danica', 'Gazdic', '0691852001', 'test@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
-insert into users (type, active, address, blocked, profile_picture, name, last_name, telephone_number, email, password)
-VALUES ('passenger', false, 'Maksima Gorkog 55', false, '123qwerty', 'Milos', 'Obradovic', '12341234', 'test2@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
+insert into users (type, active, address, blocked, profile_picture, name, username, last_name, telephone_number, email, password)
+VALUES ('passenger', true, 'Dimitrija Avramovic 4', false, '123asdq', 'Danica','test@email.com', 'Gazdic', '0691852001', 'test@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
+insert into users (type, active, address, blocked, profile_picture, name, username, last_name, telephone_number, email, password)
+VALUES ('passenger', false, 'Maksima Gorkog 55', false, '123qwerty', 'Milos', 'test2@email.com','Obradovic', '12341234', 'test2@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
 
-insert into users (type, active, address, blocked, email, last_name, name, password, telephone_number, profile_picture, online)
-VALUES ('driver', true, 'Adresa1', false, 'pp@gmail.com', 'Peric', 'Pera', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0641212', 'qwer', true);
-insert into users (type, active, address, blocked, email, last_name, name, password, telephone_number, profile_picture, online)
-VALUES ('driver', true, 'Adresa2', false, 'pr@gmail.com', 'Radovanovic', 'Pera', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '06412', 'qwer', true);
-insert into users (type, active, address, blocked, email, last_name, name, password, telephone_number, profile_picture, online)
-VALUES ('driver', true, 'Adresa2', false, 'pa@gmail.com', 'Bro', 'Da', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '062134412', 'qwer', true);
+insert into users (type, active, address, blocked, email, last_name, name, username, password, telephone_number, profile_picture, online)
+VALUES ('driver', true, 'Adresa1', false, 'pp@gmail.com', 'Peric', 'Pera','pp@gmail.com' ,'$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0641212', 'qwer', true);
+insert into users (type, active, address, blocked, email, last_name, name, username ,password, telephone_number, profile_picture, online)
+VALUES ('driver', true, 'Adresa2', false, 'pr@gmail.com', 'Radovanovic', 'Pera', 'pr@gmail.com' , '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '06412', 'qwer', true);
+insert into users (type, active, address, blocked, email, last_name, name,username, password, telephone_number, profile_picture, online)
+VALUES ('driver', true, 'Adresa2', false, 'pa@gmail.com', 'Bro', 'Da', 'pa@gmail.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '062134412', 'qwer', true);
 
 insert into role (name) VALUES ('ROLE_USER');
 insert into role (name) VALUES ('ROLE_ADMIN');
@@ -45,17 +45,17 @@ insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, 
 
 
 
-insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, delay_in_minutes, vehicle_type)
-VALUES (true, '2023-01-11T17:43:49.439927', false, false, 3, 7, 350, 4, 1, 0, 1);
-insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, delay_in_minutes, vehicle_type)
-VALUES (true, '2023-01-11T17:43:49.439927', true, false, 3, 2, 350, 5, 1, 0, 2);
-insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, delay_in_minutes, vehicle_type)
-VALUES (true, '2023-01-11T18:00:49.439927', true, false, 1, 2, 350, 5, 1, 0, 0);
-insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, delay_in_minutes, vehicle_type)
-VALUES (false,'2023-01-11T17:43:49.439927', false, false, 3, 4, 500, 6, 1, 0, 1);
+insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id,  vehicle_type)
+VALUES (true, '2023-01-11T17:43:49.439927', false, false, 5, 7, 350, 4, 1, 1);
+insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, vehicle_type)
+VALUES (true, '2023-01-11T17:43:49.439927', true, false, 4, 2, 350, 5, 1, 2);
+insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, vehicle_type)
+VALUES (true, '2023-01-11T18:00:49.439927', true, false, 6, 2, 350, 5, 1, 0);
+insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, vehicle_type)
+VALUES (false,'2023-01-11T17:43:49.439927', false, false, 4, 4, 500, 6, 1, 1);
 
 insert into ride_passengers (passenger_id, ride_id) VALUES (2, 1);
-insert into ride_passengers (passenger_id, ride_id) VALUES (2, 2);
+insert into ride_passengers (passenger_id, ride_id) VALUES (3, 1);
 
 insert into ride_passengers (passenger_id, ride_id) VALUES (3, 3);
 
@@ -78,4 +78,3 @@ insert into notes (user_id, creation_date, message) VALUES (5, '2022-12-21T16:48
 
 insert into user_activations (creation_date_time, lifespan, user_id)
 VALUES ('2022-12-22T17:37:56.469083', '2022-12-22T17:37:56.469083', 3);
-

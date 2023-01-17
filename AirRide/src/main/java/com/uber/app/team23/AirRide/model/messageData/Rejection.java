@@ -32,5 +32,5 @@ public class Rejection {
     public User user;
     @Column(name = "time")
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-    public LocalDateTime time;
+    public LocalDateTime timeOfRejection;
 }

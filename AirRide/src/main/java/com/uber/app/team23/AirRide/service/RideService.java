@@ -6,19 +6,16 @@ import com.uber.app.team23.AirRide.dto.UserShortDTO;
 import com.uber.app.team23.AirRide.exceptions.BadRequestException;
 import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
 import com.uber.app.team23.AirRide.mapper.RideDTOMapper;
-import com.uber.app.team23.AirRide.model.messageData.Panic;
 import com.uber.app.team23.AirRide.model.messageData.Rejection;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.rideData.RideStatus;
 import com.uber.app.team23.AirRide.model.rideData.Route;
 import com.uber.app.team23.AirRide.model.users.Passenger;
-import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.repository.RideRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,8 +33,6 @@ public class RideService {
     @Autowired
     private PassengerService passengerService;
     @Autowired
-    private UserService userService;
-    @Autowired
     private RouteService routeService;
     @Autowired
     private RideSchedulingService rideSchedulingService;
@@ -54,13 +49,15 @@ public class RideService {
         return rideRepository.findActiveByPassenger(passengerId).orElseThrow(() -> new EntityNotFoundException("Active ride does not exist"));
     }
 
-    public Ride addPassengers(RideDTO rideDTO,Long id){
-        Ride ride = this.findOne(id);
+    public Ride addPassengers(RideDTO rideDTO, Long rideId, Long userId){
+        Ride ride = this.findOne(rideId);
         ride.setPassengers(new HashSet<>());
+        Passenger creator = passengerService.findOne(userId);
         for(UserShortDTO user: rideDTO.getPassengers()){
             Passenger p = passengerService.findOne((long) user.getId());
             ride.getPassengers().add(p);
         }
+        ride.getPassengers().add(creator);
         return rideRepository.save(ride);
     }
 
@@ -73,6 +70,10 @@ public class RideService {
                 r = routeService.save(route);
             }
             ride.getLocations().add(r);
+//            Location departure = route.getDeparture();
+//            Location destination = route.getDestination();
+//             "http://router.project-osrm.org/route/v1/driving/{" + departure.getLongitude() + "},{" + departure.getLatitude() + "};{" + departure.getLongitude() + "},{" + departure.getLatitude() + "}?overview=false";
+
         }
         return rideRepository.save(ride);
     }
@@ -95,17 +96,25 @@ public class RideService {
         }
         Ride ride = new Ride();
         // potential start of ride
-        ride.setStartTime(LocalDateTime.now().plusMinutes(rideDTO.getDelayInMinutes()));
-        ride.setRideStatus(RideStatus.PENDING);
+        if(rideDTO.getScheduledTime() != null){
+            ride.setStartTime(rideDTO.getScheduledTime());
+            ride.setScheduledTime(rideDTO.getScheduledTime());
+        }else{
+            ride.setStartTime(LocalDateTime.now());
+        }
+        ride.setStatus(RideStatus.PENDING);
         ride.setPanic(false);
-        ride.setDelayInMinutes(rideDTO.getDelayInMinutes());
-        ride.setEndTime(ride.getStartTime().plusMinutes(rideDTO.getDelayInMinutes()));
         ride.setEstimatedTimeInMinutes((int) rideDTO.getEstimatedTime());
         ride.setTotalCost(rideDTO.getEstimatedPrice());
         ride.setVehicleType(rideDTO.getVehicleType());
         ride.setBabyTransport(rideDTO.isBabyTransport());
         ride.setPetTransport(rideDTO.isPetTransport());
-        ride.setDelayInMinutes(rideDTO.getDelayInMinutes());
+        return rideRepository.save(ride);
+    }
+
+    public Ride addDriver(Ride ride, Driver driver){
+        ride.setDriver(driver);
+        ride.setVehicle(driver.getVehicle());
         return rideRepository.save(ride);
     }
 
@@ -113,23 +122,18 @@ public class RideService {
 
     public RideResponseDTO withdrawRide(Long id){
         Ride ride = this.findOne(id);
-        if(ride.getRideStatus() == RideStatus.ACCEPTED || ride.getRideStatus() == RideStatus.PENDING){
+        if(ride.getStatus() != RideStatus.ACCEPTED && ride.getStatus() != RideStatus.PENDING){
             throw new BadRequestException("Cannot cancel a ride that is not in status PENDING or ACCEPTED");
         }
-        ride.setRideStatus(RideStatus.CANCELED);
+        ride.setStatus(RideStatus.CANCELED);
 
         return RideDTOMapper.fromRideToDTO(rideRepository.save(ride));
     }
 
-    public Ride addDriver(Ride ride, Driver driver){
-        ride.setDriver(driver);
-        return rideRepository.save(ride);
-    }
-
     public RideResponseDTO startRide(Long id){
         Ride ride = this.findOne(id);
-        if(ride.getRideStatus() == RideStatus.ACCEPTED){
-            ride.setRideStatus(RideStatus.ACTIVE);
+        if(ride.getStatus() == RideStatus.ACCEPTED){
+            ride.setStatus(RideStatus.ACTIVE);
             ride.setStartTime(LocalDateTime.now());
             return RideDTOMapper.fromRideToDTO(rideRepository.save(ride));
         }
@@ -138,49 +142,54 @@ public class RideService {
 
     public RideResponseDTO acceptRide(Long id){
         Ride ride = this.findOne(id);
-        if(ride.getRideStatus() != RideStatus.PENDING){
+        if(ride.getStatus() != RideStatus.PENDING){
             throw new BadRequestException("Cannot accept a ride that is not in status PENDING!");
         }
-        ride.setRideStatus(RideStatus.ACCEPTED);
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(userService.isDriver(user)){
-            Driver d = (Driver) user;
-            ride.setDriver(d);
-        }
+        ride.setStatus(RideStatus.ACCEPTED);
         return RideDTOMapper.fromRideToDTO(rideRepository.save(ride));
     }
 
     public RideResponseDTO endRide(Long id){
         Ride ride = this.findOne(id);
-        if(ride.getRideStatus() != RideStatus.ACTIVE){
+        if(ride.getStatus() != RideStatus.ACTIVE){
             throw new BadRequestException("Cannot end a ride that is not in status ACTIVE!");
         }
-        ride.setRideStatus(RideStatus.FINISHED);
+        ride.setStatus(RideStatus.FINISHED);
         ride.setEndTime(LocalDateTime.now());
         return RideDTOMapper.fromRideToDTO(rideRepository.save(ride));
     }
 
     public RideResponseDTO cancelRide(Long id, Rejection rejection){
         Ride ride = this.findOne(id);
-        if(ride.getRideStatus() != RideStatus.PENDING){
-            throw new BadRequestException("Cannot cancel a ride that is not in status PENDING");
+        System.err.println(ride.getStatus());
+        if(ride.getStatus() != RideStatus.PENDING && ride.getStatus() != RideStatus.ACCEPTED){
+            throw new BadRequestException("Cannot cancel a ride that is not in status PENDING or ACCEPTED!");
         }
         // Rejection repository?
-        ride.setRideStatus(RideStatus.CANCELED);
-        rejection.setRide(ride);
-        rejection.setTime(LocalDateTime.now());
-        ride.setRejection(rejection);
+        ride.setStatus(RideStatus.REJECTED);
+        if(rejection!= null){
+            rejection.setRide(ride);
+            rejection.setTimeOfRejection(LocalDateTime.now());
+            // TODO rejection.setUser
+            ride.setRejection(rejection);
+        }
+
+
         return RideDTOMapper.fromRideToDTO(rideRepository.save(ride));
     }
 
-    public Ride setPanic(Long id, Panic panic){
+    public Ride setPanic(Long id){
         Ride ride = this.findOne(id);
         ride.setPanic(true);
-        // Do we have to change ride status???
+        ride.setStatus(RideStatus.PANIC);
         return rideRepository.save(ride);
     }
 
     public Page<Ride> findAllByDriver(Driver byId, Pageable pageable) {
         return rideRepository.findAllByDriver(byId, pageable);
     }
+
+//    public Page<Ride> findAllByPassenger(Passenger passenger, Pageable pageable){
+//        return rideRepository.findAllByPassengers(passenger, pageable);
+//    }
 }

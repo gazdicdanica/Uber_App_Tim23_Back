@@ -1,9 +1,12 @@
 package com.uber.app.team23.AirRide.controller;
 
 import com.uber.app.team23.AirRide.dto.RidePaginatedDTO;
+import com.uber.app.team23.AirRide.dto.RideResponseDTO;
 import com.uber.app.team23.AirRide.dto.UserDTO;
 import com.uber.app.team23.AirRide.dto.UserPaginatedDTO;
 import com.uber.app.team23.AirRide.mapper.PassengerDTOMapper;
+import com.uber.app.team23.AirRide.mapper.RideDTOMapper;
+import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.UserActivation;
 import com.uber.app.team23.AirRide.service.PassengerService;
@@ -16,6 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -23,7 +28,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestController @RequestMapping(value = "api/passenger", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController @RequestMapping(value = "/api/passenger", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PassengerController {
 
     @Autowired
@@ -33,12 +38,12 @@ public class PassengerController {
     public ResponseEntity<UserDTO> createPassenger(@Valid @RequestBody Passenger passenger) throws ConstraintViolationException {
         Passenger newPassenger = passengerService.createPassenger(passenger);
         UserActivation activation = passengerService.addActivation(newPassenger);
-        System.err.println(activation.activationId);
-        passengerService.sendActivationEmail(newPassenger.getEmail(), activation.getActivationId());
+//        passengerService.sendActivationEmail(newPassenger.getEmail(), activation.getActivationId());
         return new ResponseEntity<>(new UserDTO(newPassenger), HttpStatus.OK);
 
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN', 'ROLE_DRIVER')")
     @GetMapping(value ={"/{id}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> getPassenger(@PathVariable("id") Long id){
         Passenger p = passengerService.findOne(id);
@@ -46,6 +51,7 @@ public class PassengerController {
 
     }
 
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping
     public ResponseEntity<UserPaginatedDTO> getPassengersPage(Pageable page){
         Page<Passenger> passengersPage = passengerService.findAll(page);
@@ -53,13 +59,14 @@ public class PassengerController {
         return new ResponseEntity<>(new UserPaginatedDTO(users), HttpStatus.OK);
     }
 
-    // TODO
+    @Transactional
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/{id}/ride")
-    public ResponseEntity<RidePaginatedDTO> getPassengerRidesPage(@PathVariable Long id,  @RequestParam int page, @RequestParam int size,
-                                                                  @RequestParam String sort, @RequestParam String from, @RequestParam String to)
+    public ResponseEntity<RidePaginatedDTO> getPassengerRidesPage(@PathVariable Long id,  Pageable pageable)
     {
-//        Page<Ride> ridePage =
-        return new ResponseEntity<>(new RidePaginatedDTO(new ArrayList<>()), HttpStatus.OK);
+        Page<Ride> rides = passengerService.findAllRides(id, pageable);
+        List<RideResponseDTO> dto = rides.stream().map(RideDTOMapper::fromRideToDTO).toList();
+        return new ResponseEntity<>(new RidePaginatedDTO(dto), HttpStatus.OK);
     }
 
     @GetMapping("/activate/{activationId}")
@@ -70,6 +77,7 @@ public class PassengerController {
         return new ResponseEntity<>(obj.toString(),HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> updatePassenger(@Valid @RequestBody UserDTO passenger, @PathVariable Long id){
 

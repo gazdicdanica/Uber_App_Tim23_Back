@@ -33,7 +33,7 @@ public class RouteService {
         if(departure == null){
             departure = locationService.save(route.getDeparture());
         }
-        Location destination = locationService.findByAddress(route.getDeparture().getAddress());
+        Location destination = locationService.findByAddress(route.getDestination().getAddress());
         if (destination == null){
             destination = locationService.save(route.getDestination());
         }

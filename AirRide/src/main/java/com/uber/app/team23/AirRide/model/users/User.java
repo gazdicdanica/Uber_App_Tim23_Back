@@ -5,7 +5,10 @@ import jakarta.persistence.*;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.format.annotation.NumberFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -25,27 +28,40 @@ public abstract class User implements UserDetails {
     @Column(name = "id")
     protected Long id;
 
+    @NotNull @NotEmpty
+    @Size(min = 2, max = 20)
     @Column(name = "name")
     protected String name;
 
+    @NotNull @NotEmpty
+    @Size(min = 2, max = 30)
     @Column(name = "last_name")
     protected String surname;
 
     @Lob
+    @NotNull @NotEmpty
     @Column(name = "profile_picture")
     protected byte[] profilePicture;
 
     @Column(name = "telephone_number", unique = true)
+    @NotNull @NotEmpty
+    @NumberFormat
+    @Size(min = 3, max = 15)
     protected String telephoneNumber;
 
     @Column(name = "email", unique = true)
+//    @Size(min = 3, max = 25)
     @Email(message = "Email Not Valid", regexp = "^[a-zA-Z0-9_!#$%&amp;'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
     @NotEmpty(message = "Email cannot be empty")
     protected String email;
 
+    @Column(name = "username", unique = true)
+    protected String username;
+
     @Column(name = "address")
     protected String address;
 
+    @NotNull @NotEmpty
     @Column(name = "password")
     protected String password;
 
@@ -57,7 +73,7 @@ public abstract class User implements UserDetails {
 
     @Transient
     private String jwt;
-    
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -72,7 +88,7 @@ public abstract class User implements UserDetails {
     @JsonIgnore
     @Override
     public String getUsername() {
-        return this.getEmail();
+        return this.username;
     }
     @JsonIgnore
     @Override

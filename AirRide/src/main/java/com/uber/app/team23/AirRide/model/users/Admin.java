@@ -14,12 +14,12 @@ import lombok.Setter;
 @Entity
 @DiscriminatorValue("admin")
 public class Admin extends User{
-    @Column(name = "admin_username", unique = true)
-    public String username;
-////    @Column(name = "password", nullable = false)
+//    @Column(name = "admin_username", unique = true)
+//    public String username;
+//    @Column(name = "password", nullable = false)
 //    public String password;
-////    @Column(name = "name")
+//    @Column(name = "name")
 //    public String name;
-////    @Column(name = "lastName")
+//    @Column(name = "last_name")
 //    public String lastName;
 }

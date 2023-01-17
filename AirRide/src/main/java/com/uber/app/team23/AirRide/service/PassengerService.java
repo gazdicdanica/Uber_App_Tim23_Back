@@ -11,6 +11,7 @@ import com.uber.app.team23.AirRide.model.users.Role;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.UserActivation;
 import com.uber.app.team23.AirRide.repository.PassengerRepository;
+import com.uber.app.team23.AirRide.repository.RideRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,8 +28,11 @@ public class PassengerService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+//    @Autowired
+//    private RideService rideService;
+
     @Autowired
-    private RoleService roleService;
+    private RideRepository rideRepository;
 
     @Autowired
     private UserActivationService userActivationService;
@@ -51,9 +55,9 @@ public class PassengerService {
     public Passenger update(UserDTO p, Long id){
         Passenger passenger = this.findOne(id);
         passenger.setName(p.getName());
+        passenger.setEmail(p.getEmail());
+        passenger.setUsername(p.getEmail());
         passenger.setSurname(p.getSurname());
-        System.err.println("\n\nFROM UPLOAD");
-        System.err.println(p.getProfilePicture());
         passenger.setProfilePicture(Base64.getDecoder().decode(p.getProfilePicture()));
         passenger.setTelephoneNumber(p.getTelephoneNumber());
         passenger.setAddress(p.getAddress());
@@ -87,11 +91,12 @@ public class PassengerService {
 
         Passenger existingPassenger = passengerRepository.findByEmail(passenger.getEmail()).orElse(null);
         if(existingPassenger != null){
-            throw new BadRequestException("User with that email already exists");
+            throw new BadRequestException("User with that email already exists!");
         }
 
         Passenger p = new Passenger();
         p.setEmail(passenger.getEmail());
+        p.setUsername(passenger.getEmail());
         p.setPassword(passwordEncoder.encode(passenger.getPassword()));
         p.setName(passenger.getName());
         p.setSurname(passenger.getSurname());
@@ -105,5 +110,10 @@ public class PassengerService {
         p.setRole(li);
 
         return this.passengerRepository.save(p);
+    }
+
+    public Page<Ride> findAllRides(Long id, Pageable pageable){
+        Passenger p = findOne(id);
+        return rideRepository.findByPassengersContaining(p, pageable);
     }
 }

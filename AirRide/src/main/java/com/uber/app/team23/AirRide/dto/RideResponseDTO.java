@@ -32,6 +32,7 @@ public class RideResponseDTO {
     private boolean petTransport;
     private RideStatus status;
     private Rejection rejection;
+    private LocalDateTime scheduledTime;
 
     public RideResponseDTO(Ride ride){
         this.id = ride.getId();
@@ -51,8 +52,9 @@ public class RideResponseDTO {
         this.vehicleType = ride.getVehicleType();
         this.babyTransport = ride.isBabyTransport();
         this.petTransport = ride.isPetTransport();
-        this.status = ride.getRideStatus();
+        this.status = ride.getStatus();
         this.rejection = ride.getRejection();
+        this.scheduledTime = ride.getScheduledTime();
     }
 
 }

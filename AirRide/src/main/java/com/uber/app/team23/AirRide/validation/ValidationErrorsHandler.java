@@ -23,10 +23,12 @@ public class ValidationErrorsHandler {
         StringBuilder sb = new StringBuilder();
 
         for (ObjectError error : errorList) {
-            sb.append(error.getDefaultMessage());
+            sb.append(error.getDefaultMessage() + "\n");
         }
         JSONObject json = new JSONObject();
         json.put("message", sb.toString());
         return new ResponseEntity<>(json.toString(), HttpStatus.BAD_REQUEST);
     }
+
+
 }
