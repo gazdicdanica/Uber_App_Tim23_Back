@@ -4,10 +4,12 @@ import com.uber.app.team23.AirRide.Utils.TokenUtils;
 import com.uber.app.team23.AirRide.security.RestAuthenticationEntryPoint;
 import com.uber.app.team23.AirRide.security.TokenAuthenticationFilter;
 import com.uber.app.team23.AirRide.service.auth.CustomUserDetailsService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -24,6 +26,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class WebSecurityConfig {
     @Bean
@@ -57,13 +60,18 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint);
-        http.authorizeHttpRequests().requestMatchers("/auth/**").permitAll()
+//        http.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint);
+//        .accessDeniedHandler((request, response, accessDeniedException) -> response.sendError(HttpStatus.FORBIDDEN.value(), "Forbidden"))
+//                        .authenticationEntryPoint(restAuthenticationEntryPoint);
+        http.authorizeHttpRequests()
+                .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("api/ride").permitAll()
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/api/user/login").permitAll()
-                        .anyRequest().authenticated().and().cors().and()
-                        .addFilterBefore(new TokenAuthenticationFilter(tokenUtils, userDetailsService()), BasicAuthenticationFilter.class);
+                .requestMatchers("/h2-console/**").permitAll()
+                .requestMatchers("/api/user/login").permitAll()
+                .requestMatchers(HttpMethod.POST,"/api/passenger").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/passenger").hasAuthority("ROLE_ADMIN")
+                .anyRequest().authenticated().and().cors().and()
+                .addFilterBefore(new TokenAuthenticationFilter(tokenUtils, userDetailsService()), BasicAuthenticationFilter.class);
         http.csrf().disable();
         http.headers().frameOptions().disable();
         http.authenticationProvider(authenticationProvider());

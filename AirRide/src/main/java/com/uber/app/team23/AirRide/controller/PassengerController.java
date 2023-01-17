@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -36,7 +37,6 @@ public class PassengerController {
     public ResponseEntity<UserDTO> createPassenger(@Valid @RequestBody Passenger passenger) throws ConstraintViolationException {
         Passenger newPassenger = passengerService.createPassenger(passenger);
         UserActivation activation = passengerService.addActivation(newPassenger);
-        System.err.println(activation.activationId);
         passengerService.sendActivationEmail(newPassenger.getEmail(), activation.getActivationId());
         return new ResponseEntity<>(new UserDTO(newPassenger), HttpStatus.OK);
 
@@ -49,6 +49,7 @@ public class PassengerController {
 
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping
     public ResponseEntity<UserPaginatedDTO> getPassengersPage(Pageable page){
         Page<Passenger> passengersPage = passengerService.findAll(page);
@@ -57,14 +58,15 @@ public class PassengerController {
     }
 
     // TODO
-//    @GetMapping("/{id}/ride")
-//    public ResponseEntity<RidePaginatedDTO> getPassengerRidesPage(@PathVariable Long id,  Pageable pageable)
-//    {
-//        Page<Ride> rides = passengerService.findAllRides(id, pageable);
-//        List<RideResponseDTO> dto = rides.stream().map(RideDTOMapper::fromRideToDTO).toList();
-//        return new ResponseEntity<>(new RidePaginatedDTO(new ArrayList<>()), HttpStatus.OK);
-//    }
+    @GetMapping("/{id}/ride")
+    public ResponseEntity<RidePaginatedDTO> getPassengerRidesPage(@PathVariable Long id,  Pageable pageable)
+    {
+        Page<Ride> rides = passengerService.findAllRides(id, pageable);
+        List<RideResponseDTO> dto = rides.stream().map(RideDTOMapper::fromRideToDTO).toList();
+        return new ResponseEntity<>(new RidePaginatedDTO(dto), HttpStatus.OK);
+    }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/activate/{activationId}")
     public ResponseEntity<String> activatePassengerAccount(@PathVariable Long activationId){
         passengerService.activatePassenger(activationId);

@@ -45,9 +45,8 @@ public class RideController {
 
     @Transactional
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<RideResponseDTO> createRide(@Valid @RequestBody RideDTO rideDTO){
-        System.err.println("USAO");
         Ride ride = rideService.save(rideDTO);
         ride = rideService.addRoutes(rideDTO, ride.getId());
         ride = rideService.addPassengers(rideDTO, ride.getId());
@@ -77,7 +76,6 @@ public class RideController {
             throw new BadRequestException("Bad id format");
         }
         Ride ride = rideService.findOne(id);
-        System.err.println("successful");
         return new ResponseEntity<>(new RideResponseDTO(ride), HttpStatus.OK);
 
     }

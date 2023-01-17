@@ -9,14 +9,11 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class RestAuthenticationEntryPoint
-        implements AuthenticationEntryPoint {
+public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
-    public void commence(HttpServletRequest request,
-                         HttpServletResponse response,
-                         AuthenticationException authException) throws IOException {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
+        System.err.println(authException.getMessage());
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
-        System.err.println("JOOJ: "+authException.getMessage());
     }
 }

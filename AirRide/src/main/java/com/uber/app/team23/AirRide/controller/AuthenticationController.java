@@ -45,7 +45,6 @@ public class AuthenticationController {
     public ResponseEntity<TokensDTO> createAuthenticationToken(
             @RequestBody LoginDTO authenticationRequest) {
 
-        System.err.println(authenticationRequest.getEmail()+" "+authenticationRequest.getPassword());
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 authenticationRequest.getEmail(), authenticationRequest.getPassword()));
 
@@ -62,8 +61,6 @@ public class AuthenticationController {
 
             String jwt = tokenUtils.generateToken(u.getEmail(), u.getId(), roles, false);
             String refresh = tokenUtils.generateToken(u.getEmail(), u.getId(), roles, true);
-            System.err.println(jwt);
-            System.err.println(refresh);
             return ResponseEntity.ok(new TokensDTO(jwt, refresh));
 
         } else if (!u.isActive()){

@@ -1,5 +1,5 @@
-insert into users(type, active, blocked, admin_username, email, password, name, last_name)
-VALUES ('admin', true, false, 'admin', 'admin@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', 'John', 'Doe');
+insert into users(type, active, address, blocked, profile_picture, telephone_number, admin_username, email, password, name, last_name)
+VALUES ('admin', true, 'AdresaAdmina', false, 'piaegrhfvpiae4h4', '064123412', 'admin', 'admin@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', 'John', 'Doe');
 
 insert into users (type, active, address, blocked, profile_picture, name, last_name, telephone_number, email, password)
 VALUES ('passenger', true, 'Dimitrija Avramovic 4', false, '123asdq', 'Danica', 'Gazdic', '0691852001', 'test@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
@@ -28,10 +28,10 @@ insert into working_hours (end_time, start_time, driver_id) VALUES ('2023-01-02T
 insert into working_hours (end_time, start_time, driver_id) VALUES ('2023-01-03T10:00:00.123411', '2023-01-03T18:11:11.123411', 5);
 insert into working_hours (end_time, start_time, driver_id) VALUES ('2023-01-02T10:00:00.123411', '2023-01-02T11:11:11.123411', 6);
 
-insert into locations (longitude, latitude, address) VALUES (19.835671, 45.258664, 'Dimitrija Avramovica 3');
-insert into locations (longitude, latitude, address) VALUES (19.847719, 45.244913, 'NTP');
-insert into locations (longitude, latitude, address) VALUES (19.854553, 45.252264, 'Maksima Gorkog 57');
-insert into locations (longitude, latitude, address) VALUES (19.842469, 45.244482, 'Promenada, Novi Sad');
+insert into locations (longitude, latitude, address) VALUES (45.258664, 19.835671, 'Dimitrija Avramovica 3');
+insert into locations (longitude, latitude, address) VALUES (45.244913, 19.847719, 'NTP');
+insert into locations (longitude, latitude, address) VALUES (45.252264, 19.854553, 'Maksima Gorkog 57');
+insert into locations (longitude, latitude, address) VALUES (45.244482, 19.842469, 'Promenada, Novi Sad');
 
 insert into documents (name, photo, driver_id) VALUES ('Vozacka', 'qwer123', 3);
 
@@ -60,17 +60,7 @@ insert into ride_passengers (passenger_id, ride_id) VALUES (2, 2);
 insert into ride_passengers (passenger_id, ride_id) VALUES (3, 3);
 
 insert into messages (message, time_of_sending, message_type, receiver_id, ride_id, sender_id)
-VALUES ('Cao', '2022-12-21T16:48:49.439927', 1, 2, 1, 4);
-insert into messages (message, time_of_sending, message_type, receiver_id, ride_id, sender_id)
-VALUES ('Pozz', '2022-12-21T17:48:49.439927', 1, 4, 1, 2);
-insert into messages (message, time_of_sending, message_type, receiver_id, ride_id, sender_id)
-VALUES ('Tu sam', '2023-01-10T16:48:49.439927', 1, 3, 2, 6);
-insert into messages (message, time_of_sending, message_type, receiver_id, ride_id, sender_id)
-VALUES (':))', '2023-01-11T11:48:49.439927', 1, 6, 2, 3);
-insert into messages (message, time_of_sending, message_type, receiver_id, ride_id, sender_id)
-VALUES (':((', '2023-01-01T16:48:49.439927', 1, 2, 3, 5);
-insert into messages (message, time_of_sending, message_type, receiver_id, ride_id, sender_id)
-VALUES ('Ok', '2023-01-01T16:49:49.439927', 1, 5, 3, 2);
+VALUES ('Pozdrav svima', '2022-12-21T16:48:49.439927', 2, 3, 1, 6);
 
 insert into panic (reason, time, ride_id, user_id) VALUES ('Fatal crash', '2022-12-21T16:48:43.439927', 2, 2);
 
@@ -88,4 +78,3 @@ insert into notes (user_id, creation_date, message) VALUES (5, '2022-12-21T16:48
 
 insert into user_activations (creation_date_time, lifespan, user_id)
 VALUES ('2022-12-22T17:37:56.469083', '2022-12-22T17:37:56.469083', 3);
-

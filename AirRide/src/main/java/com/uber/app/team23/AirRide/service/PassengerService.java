@@ -11,6 +11,7 @@ import com.uber.app.team23.AirRide.model.users.Role;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.UserActivation;
 import com.uber.app.team23.AirRide.repository.PassengerRepository;
+import com.uber.app.team23.AirRide.repository.RideRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +30,9 @@ public class PassengerService {
 
 //    @Autowired
 //    private RideService rideService;
+
+    @Autowired
+    private RideRepository rideRepository;
 
     @Autowired
     private UserActivationService userActivationService;
@@ -52,8 +56,6 @@ public class PassengerService {
         Passenger passenger = this.findOne(id);
         passenger.setName(p.getName());
         passenger.setSurname(p.getSurname());
-        System.err.println("\n\nFROM UPLOAD");
-        System.err.println(p.getProfilePicture());
         passenger.setProfilePicture(Base64.getDecoder().decode(p.getProfilePicture()));
         passenger.setTelephoneNumber(p.getTelephoneNumber());
         passenger.setAddress(p.getAddress());
@@ -87,7 +89,7 @@ public class PassengerService {
 
         Passenger existingPassenger = passengerRepository.findByEmail(passenger.getEmail()).orElse(null);
         if(existingPassenger != null){
-            throw new BadRequestException("User with that email already exists");
+            throw new BadRequestException("User with that email already exists!");
         }
 
         Passenger p = new Passenger();
@@ -107,8 +109,8 @@ public class PassengerService {
         return this.passengerRepository.save(p);
     }
 
-//    public Page<Ride> findAllRides(Long id, Pageable pageable){
-//        Passenger p = findOne(id);
-//        return rideService.findAllByPassenger(p, pageable);
-//    }
+    public Page<Ride> findAllRides(Long id, Pageable pageable){
+        Passenger p = findOne(id);
+        return rideRepository.findByPassengersContaining(p, pageable);
+    }
 }

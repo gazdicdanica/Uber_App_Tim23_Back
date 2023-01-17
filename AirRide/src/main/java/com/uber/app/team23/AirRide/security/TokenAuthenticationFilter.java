@@ -34,20 +34,17 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         String email;
 
         String authToken = tokenUtils.getToken(request);
-        System.err.println("Token iz HEAD-a: " + authToken);
         try {
             if (authToken != null) {
 
                 // 2. Citanje korisnickog imena iz tokena
                 email = tokenUtils.getEmailFromToken(authToken);
-                System.err.println("EMAIL: "+email);
 
                 if (email != null) {
 
                     // 3. Preuzimanje korisnika na osnovu username-a
                     UserDetails userDetails = userDetailsService.loadUserByUsername(email);
                     // 4. Provera da li je prosledjeni token validan
-                    System.err.println("VALID: "+tokenUtils.validateToken(authToken, userDetails));
                     if (tokenUtils.validateToken(authToken, userDetails)) {
                         // 5. Kreiraj autentifikaciju
                         TokenBasedAuthentication authentication = new TokenBasedAuthentication(userDetails);
@@ -56,7 +53,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                     }
                 }
             } else {
-                System.err.println("Token NULL!");
             }
         } catch (ExpiredJwtException ex) {
             LOGGER.debug("Token expired");

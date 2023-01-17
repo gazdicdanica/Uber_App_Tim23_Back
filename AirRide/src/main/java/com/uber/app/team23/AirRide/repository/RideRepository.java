@@ -29,6 +29,5 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
 
     public Page<Ride> findAllByDriver(User byId, Pageable pageable);
 
-//    @Query(value = "select r from Ride r where ?1 in r.passengers")
-//    public Page<Ride> findAllByPassengers(Passenger passenger, Pageable pageable);
+    public Page<Ride> findByPassengersContaining(Passenger passenger, Pageable pageable);
 }
