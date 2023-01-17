@@ -37,11 +37,12 @@ public class PassengerController {
     public ResponseEntity<UserDTO> createPassenger(@Valid @RequestBody Passenger passenger) throws ConstraintViolationException {
         Passenger newPassenger = passengerService.createPassenger(passenger);
         UserActivation activation = passengerService.addActivation(newPassenger);
-        passengerService.sendActivationEmail(newPassenger.getEmail(), activation.getActivationId());
+//        passengerService.sendActivationEmail(newPassenger.getEmail(), activation.getActivationId());
         return new ResponseEntity<>(new UserDTO(newPassenger), HttpStatus.OK);
 
     }
 
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping(value ={"/{id}"}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> getPassenger(@PathVariable("id") Long id){
         Passenger p = passengerService.findOne(id);
@@ -57,7 +58,6 @@ public class PassengerController {
         return new ResponseEntity<>(new UserPaginatedDTO(users), HttpStatus.OK);
     }
 
-    // TODO
     @GetMapping("/{id}/ride")
     public ResponseEntity<RidePaginatedDTO> getPassengerRidesPage(@PathVariable Long id,  Pageable pageable)
     {
@@ -74,6 +74,7 @@ public class PassengerController {
         return new ResponseEntity<>(obj.toString(),HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> updatePassenger(@Valid @RequestBody UserDTO passenger, @PathVariable Long id){
 

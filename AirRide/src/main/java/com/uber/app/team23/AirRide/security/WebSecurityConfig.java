@@ -22,6 +22,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
@@ -55,13 +56,16 @@ public class WebSecurityConfig {
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
     @Autowired
+    private AccessDeniedHandler accessDeniedHandler;
+
+    @Autowired
     private TokenUtils tokenUtils;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint)
-        .accessDeniedHandler((request, response, accessDeniedException) -> response.sendError(HttpStatus.FORBIDDEN.value(), "Forbidden"))
+        http.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and()
+            .exceptionHandling().accessDeniedHandler(accessDeniedHandler)
                         .authenticationEntryPoint(restAuthenticationEntryPoint);
         http.authorizeHttpRequests()
                 .requestMatchers("/auth/**").permitAll()
