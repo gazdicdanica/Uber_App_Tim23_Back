@@ -45,17 +45,17 @@ insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, 
 
 
 
-insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, delay_in_minutes, vehicle_type)
-VALUES (true, '2023-01-11T17:43:49.439927', false, false, 3, 7, 350, 4, 1, 0, 1);
-insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, delay_in_minutes, vehicle_type)
-VALUES (true, '2023-01-11T17:43:49.439927', true, false, 3, 2, 350, 5, 1, 0, 2);
-insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, delay_in_minutes, vehicle_type)
-VALUES (true, '2023-01-11T18:00:49.439927', true, false, 1, 2, 350, 5, 1, 0, 0);
-insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, delay_in_minutes, vehicle_type)
-VALUES (false,'2023-01-11T17:43:49.439927', false, false, 3, 4, 500, 6, 1, 0, 1);
+insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id,  vehicle_type)
+VALUES (true, '2023-01-11T17:43:49.439927', false, false, 5, 7, 350, 4, 1, 1);
+insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, vehicle_type)
+VALUES (true, '2023-01-11T17:43:49.439927', true, false, 4, 2, 350, 5, 1, 2);
+insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, vehicle_type)
+VALUES (true, '2023-01-11T18:00:49.439927', true, false, 6, 2, 350, 5, 1, 0);
+insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, vehicle_type)
+VALUES (false,'2023-01-11T17:43:49.439927', false, false, 4, 4, 500, 6, 1, 1);
 
 insert into ride_passengers (passenger_id, ride_id) VALUES (2, 1);
-insert into ride_passengers (passenger_id, ride_id) VALUES (2, 2);
+insert into ride_passengers (passenger_id, ride_id) VALUES (3, 1);
 
 insert into ride_passengers (passenger_id, ride_id) VALUES (3, 3);
 

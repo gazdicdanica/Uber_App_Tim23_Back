@@ -9,6 +9,4 @@ import java.util.List;
 
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
-    @Query(value = "select new com.uber.app.team23.AirRide.dto.FavoriteDTO(f) from Favorite f left join Passenger p")
-    List<FavoriteDTO> findAllDTO();
 }

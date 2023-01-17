@@ -72,31 +72,30 @@ public class RideSchedulingService {
         return closest;
     }
 
-    public boolean hasDriverScheduledRideClose(List<RideResponseDTO> accepted, int delay){
-        LocalDateTime potentialStart = LocalDateTime.now().plusMinutes(delay);
+    public boolean hasDriverScheduledRideClose(List<RideResponseDTO> accepted, LocalDateTime scheduledTime){
         for(RideResponseDTO ride : accepted){
-            if(Duration.between(potentialStart, ride.getStartTime()).toMinutes() < 15) return true;
+            if(scheduledTime != null && Duration.between(scheduledTime, ride.getStartTime()).toMinutes() < 15) return true;
         }
         return false;
     }
 
-    public boolean areAllDriversOccupied(List<Driver> drivers, int delay){
+    public boolean areAllDriversOccupied(List<Driver> drivers, LocalDateTime scheduledTime){
         for(Driver d: drivers){
             RideResponseDTO active = rideRepository.findActiveByDriver(d.getId()).orElse(null);
             List<RideResponseDTO> accepted = rideRepository.findAcceptedByDriver(d.getId());
-            if(active == null || !hasDriverScheduledRideClose(accepted, delay)){
+            if(active == null || !hasDriverScheduledRideClose(accepted, scheduledTime)){
                 return false;
             }
         }return true;
     }
 
-    public Driver findFastestFinishingDriver(List<Driver> drivers, int delay){
+    public Driver findFastestFinishingDriver(List<Driver> drivers, LocalDateTime scheduledTime){
         Driver ret = null;
         int minutes = 1000000;
         for(Driver d: drivers){
             RideResponseDTO active = rideRepository.findActiveByDriver(d.getId()).orElse(null);
             List<RideResponseDTO> accepted = rideRepository.findAcceptedByDriver(d.getId());
-            if(active != null && !hasDriverScheduledRideClose(accepted, delay)){
+            if(active != null && !hasDriverScheduledRideClose(accepted, scheduledTime)){
                 if(active.getEstimatedTimeInMinutes() < minutes){
                     minutes = active.getEstimatedTimeInMinutes();
                     ret = d;
@@ -131,7 +130,7 @@ public class RideSchedulingService {
             throw new BadRequestException("No drivers are online.");
         }if(driversWithAppropriateVehicle.isEmpty()){
             throw new BadRequestException("No driver is online with appropriate vehicle.");
-        }if(areAllDriversOccupied(onlineDrivers, ride.getDelayInMinutes()) || driversWorkHours.isEmpty()){
+        }if(areAllDriversOccupied(onlineDrivers, ride.getScheduledTime()) || driversWorkHours.isEmpty()){
             // no drivers are available and all have scheduled rides
             throw new BadRequestException("No driver is available at the moment.");
         }
@@ -142,7 +141,7 @@ public class RideSchedulingService {
            return findClosestDriver(ride, availableDrivers);
         }
         //not available with no scheduled ride
-        return findFastestFinishingDriver(driversWorkHours, ride.getDelayInMinutes());
+        return findFastestFinishingDriver(driversWorkHours, ride.getScheduledTime());
 
     }
 }

@@ -6,14 +6,13 @@ import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
 import com.uber.app.team23.AirRide.model.rideData.Favorite;
 import com.uber.app.team23.AirRide.model.rideData.Route;
 import com.uber.app.team23.AirRide.model.users.Passenger;
+import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.repository.FavoriteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class FavoriteService {
@@ -28,13 +27,20 @@ public class FavoriteService {
         return this.favoriteRepository.findById(id).orElse(null);
     }
 
-    public List<FavoriteDTO> getPassengerFavorites(Passenger passenger){
-        List<FavoriteDTO> favorites = favoriteRepository.findAllDTO();
+    public List<FavoriteDTO> getPassengerFavorites(User user){
+
+        Passenger p = passengerService.findOne(user.getId());
+
+        List<Favorite> favorites = favoriteRepository.findAll();
         List<FavoriteDTO> ret = new ArrayList<>();
-        for(FavoriteDTO f : favorites){
-            for(UserShortDTO user : f.getPassengers()){
-                if (user.getId() == passenger.getId()){
-                    ret.add(f);
+        if(favorites.isEmpty()){
+            return new ArrayList<>();
+        }
+        for(Favorite f : favorites){
+            for(Passenger u: f.getPassengers()){
+                if (Objects.equals(u.getId(), p.getId())){
+                    System.err.println(u.getId() + " " + p.getId());
+                    ret.add(new FavoriteDTO(f));
                 }
             }
         }
@@ -44,10 +50,14 @@ public class FavoriteService {
     public Favorite addPassengers(Long id, Set<UserShortDTO> passengers){
         Favorite favorite = findOne(id);
         favorite.setPassengers(new HashSet<>());
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         for(UserShortDTO p : passengers){
             Passenger passenger = passengerService.findOne((long)p.getId());
             favorite.getPassengers().add(passenger);
         }
+        Passenger p = passengerService.findOne(user.getId());
+        favorite.getPassengers().add(p);
         return favoriteRepository.save(favorite);
     }
 

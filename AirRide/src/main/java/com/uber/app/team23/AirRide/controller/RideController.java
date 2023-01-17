@@ -25,6 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -59,18 +60,21 @@ public class RideController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/driver/{driverId}/active")
     public ResponseEntity<RideResponseDTO> getActiveRideDriver(@PathVariable Long driverId){
         RideResponseDTO ride = rideService.findActiveByDriver(driverId);
         return new ResponseEntity<>(ride, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/passenger/{passengerId}/active")
     public ResponseEntity<RideResponseDTO> getActiveRidePassenger(@PathVariable Long passengerId){
         RideResponseDTO ride = rideService.findActiveByPassenger(passengerId);
         return new ResponseEntity<>(ride, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER', 'ROLE_DRIVER')")
     @Transactional
     @GetMapping("/{id}")
     public ResponseEntity<RideResponseDTO> getRide(@PathVariable Long id){
@@ -82,27 +86,34 @@ public class RideController {
 
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     @PutMapping("/{id}/withdraw")
-    public ResponseEntity<RideResponseDTO> cancelRide(@PathVariable Long id){
+    public ResponseEntity<RideResponseDTO> withdrawRide(@PathVariable Long id){
         RideResponseDTO ride = rideService.withdrawRide(id);
         return new ResponseEntity<>(ride, HttpStatus.OK);
 
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_DRIVER', 'ROLE_USER')")
     @Transactional
     @PutMapping("/{id}/panic")
-    public ResponseEntity<PanicDTO> panic(@PathVariable Long id, @RequestBody Panic panic){
+    public ResponseEntity<PanicDTO> panic(@PathVariable Long id, @Nullable @RequestBody Panic panic){
         Ride ride = rideService.setPanic(id);
-        PanicDTO p = panicService.save(panic, ride);
-        return new ResponseEntity<>(p, HttpStatus.OK);
+        if(panic != null){
+            PanicDTO p = panicService.save(panic, ride);
+            return new ResponseEntity<>(p, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new PanicDTO(), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_DRIVER')")
     @PutMapping("/{id}/start")
     public ResponseEntity<RideResponseDTO> startRide(@PathVariable Long id){
         RideResponseDTO ride = rideService.startRide(id);
         return new ResponseEntity<>(ride, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_DRIVER')")
     @PutMapping("/{id}/accept")
     public ResponseEntity<RideResponseDTO> acceptRide(@PathVariable Long id){
         RideResponseDTO ride = rideService.acceptRide(id);
@@ -110,6 +121,7 @@ public class RideController {
 
     }
 
+    @PreAuthorize("hasAuthority('ROLE_DRIVER')")
     @PutMapping("/{id}/end")
     public ResponseEntity<RideResponseDTO> endRide(@PathVariable Long id){
         RideResponseDTO ride = rideService.endRide(id);
@@ -117,36 +129,38 @@ public class RideController {
 
     }
 
+    @PreAuthorize("hasAuthority('ROLE_DRIVER')")
     @PutMapping("/{id}/cancel")
-    public ResponseEntity<RideResponseDTO> cancelRide(@PathVariable Long id, @RequestBody Rejection rejection){
+    public ResponseEntity<RideResponseDTO> cancelRide(@PathVariable Long id, @Nullable @RequestBody Rejection rejection){
         RideResponseDTO ride = rideService.cancelRide(id, rejection);
         return new ResponseEntity<>(ride, HttpStatus.OK);
 
     }
 
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @Transactional
     @PostMapping("/favorites")
-    public ResponseEntity<FavoriteDTO> setFavorite(@RequestBody FavoriteDTO favorite){
+    public ResponseEntity<FavoriteDTO> setFavorite(@Valid @Nullable @RequestBody FavoriteDTO favorite){
+        if(favorite == null){
+            return new ResponseEntity<>(new FavoriteDTO(), HttpStatus.OK);
+        }
         Favorite newFavorite = favoriteService.save(favorite);
         newFavorite = favoriteService.addLocations(newFavorite.getId(), favorite.getLocations());
         newFavorite = favoriteService.addPassengers(newFavorite.getId(), favorite.getPassengers());
         return new ResponseEntity<>(FavoriteDTOMapper.fromFavoriteToDTO(newFavorite), HttpStatus.OK);
     }
 
+    @Transactional
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @GetMapping("/favorites")
     public ResponseEntity<List<FavoriteDTO>> getFavorites(){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(!userService.isPassenger(user)){
-           // TODO throw permission denied
-        }
-        // TODO fix bug ???
-        Passenger p = (Passenger) user;
-        List<FavoriteDTO> favs = favoriteService.getPassengerFavorites(p);
-
+        List<FavoriteDTO> favs = favoriteService.getPassengerFavorites(user);
         return new ResponseEntity<>(favs, HttpStatus.OK);
 
     }
 
+    @PreAuthorize("hasAuthority('USER_ROLE')")
     @DeleteMapping("/favorites/{id}")
     public ResponseEntity<Void> deleteFavorite(@PathVariable Long id){
         favoriteService.delete(id);

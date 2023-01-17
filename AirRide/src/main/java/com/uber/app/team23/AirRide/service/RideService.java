@@ -96,22 +96,25 @@ public class RideService {
         }
         Ride ride = new Ride();
         // potential start of ride
-        ride.setStartTime(LocalDateTime.now().plusMinutes(rideDTO.getDelayInMinutes()));
+        if(rideDTO.getScheduledTime() != null){
+            ride.setStartTime(rideDTO.getScheduledTime());
+            ride.setScheduledTime(rideDTO.getScheduledTime());
+        }else{
+            ride.setStartTime(LocalDateTime.now());
+        }
         ride.setStatus(RideStatus.PENDING);
         ride.setPanic(false);
-        ride.setDelayInMinutes(rideDTO.getDelayInMinutes());
-        ride.setEndTime(ride.getStartTime().plusMinutes(rideDTO.getDelayInMinutes()));
         ride.setEstimatedTimeInMinutes((int) rideDTO.getEstimatedTime());
         ride.setTotalCost(rideDTO.getEstimatedPrice());
         ride.setVehicleType(rideDTO.getVehicleType());
         ride.setBabyTransport(rideDTO.isBabyTransport());
         ride.setPetTransport(rideDTO.isPetTransport());
-        ride.setDelayInMinutes(rideDTO.getDelayInMinutes());
         return rideRepository.save(ride);
     }
 
     public Ride addDriver(Ride ride, Driver driver){
         ride.setDriver(driver);
+        ride.setVehicle(driver.getVehicle());
         return rideRepository.save(ride);
     }
 
@@ -119,7 +122,7 @@ public class RideService {
 
     public RideResponseDTO withdrawRide(Long id){
         Ride ride = this.findOne(id);
-        if(ride.getStatus() == RideStatus.ACCEPTED || ride.getStatus() == RideStatus.PENDING){
+        if(ride.getStatus() != RideStatus.ACCEPTED && ride.getStatus() != RideStatus.PENDING){
             throw new BadRequestException("Cannot cancel a ride that is not in status PENDING or ACCEPTED");
         }
         ride.setStatus(RideStatus.CANCELED);
@@ -158,15 +161,19 @@ public class RideService {
 
     public RideResponseDTO cancelRide(Long id, Rejection rejection){
         Ride ride = this.findOne(id);
-        if(ride.getStatus() != RideStatus.PENDING){
-            throw new BadRequestException("Cannot cancel a ride that is not in status PENDING");
+        System.err.println(ride.getStatus());
+        if(ride.getStatus() != RideStatus.PENDING && ride.getStatus() != RideStatus.ACCEPTED){
+            throw new BadRequestException("Cannot cancel a ride that is not in status PENDING or ACCEPTED!");
         }
         // Rejection repository?
-        ride.setStatus(RideStatus.CANCELED);
-        rejection.setRide(ride);
-        rejection.setTime(LocalDateTime.now());
-        // TODO rejection.setUser
-        ride.setRejection(rejection);
+        ride.setStatus(RideStatus.REJECTED);
+        if(rejection!= null){
+            rejection.setRide(ride);
+            rejection.setTimeOfRejection(LocalDateTime.now());
+            // TODO rejection.setUser
+            ride.setRejection(rejection);
+        }
+
 
         return RideDTOMapper.fromRideToDTO(rideRepository.save(ride));
     }
@@ -175,7 +182,6 @@ public class RideService {
         Ride ride = this.findOne(id);
         ride.setPanic(true);
         ride.setStatus(RideStatus.PANIC);
-        // Do we have to change ride status???
         return rideRepository.save(ride);
     }
 
