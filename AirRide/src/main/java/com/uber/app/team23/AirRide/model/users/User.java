@@ -31,12 +31,7 @@ public abstract class User implements UserDetails {
     @Column(name = "last_name")
     protected String surname;
 
-<<<<<<< Updated upstream
     @Lob
-=======
-
-    @NotNull @NotEmpty
->>>>>>> Stashed changes
     @Column(name = "profile_picture")
     protected byte[] profilePicture;
 
@@ -44,12 +39,7 @@ public abstract class User implements UserDetails {
     protected String telephoneNumber;
 
     @Column(name = "email", unique = true)
-<<<<<<< Updated upstream
     @Email(message = "Email Not Valid", regexp = "^[a-zA-Z0-9_!#$%&amp;'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
-=======
-//    @Size(min = 3, max = 25)
-//    @Email(message = "Email Not Valid", regexp = "^[a-zA-Z0-9_!#$%&amp;'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
->>>>>>> Stashed changes
     @NotEmpty(message = "Email cannot be empty")
     protected String email;
 

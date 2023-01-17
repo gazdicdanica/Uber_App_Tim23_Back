@@ -1,0 +1,22 @@
+[
+  {
+    "vehicleReview": {
+      "id": 123,
+      "rating": 3,
+      "comment": "The vehicle was bad and dirty",
+      "passenger": {
+        "id": 123,
+        "email": "user@example.com"
+      }
+    },
+    "driverReview": {
+      "id": 123,
+      "rating": 3,
+      "comment": "The driver was driving too fast",
+      "passenger": {
+        "id": 123,
+        "email": "user@example.com"
+      }
+    }
+  }
+]

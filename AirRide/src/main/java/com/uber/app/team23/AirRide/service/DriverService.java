@@ -1,12 +1,9 @@
 package com.uber.app.team23.AirRide.service;
 
 import com.uber.app.team23.AirRide.dto.DriverDocumentsDTO;
-import com.uber.app.team23.AirRide.dto.UserDTO;
 import com.uber.app.team23.AirRide.dto.VehicleDTO;
 import com.uber.app.team23.AirRide.exceptions.BadRequestException;
 import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
-import com.uber.app.team23.AirRide.mapper.DocumentDTOMapper;
-import com.uber.app.team23.AirRide.mapper.DriverDTOMapper;
 import com.uber.app.team23.AirRide.mapper.VehicleDTOMapper;
 import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
@@ -25,9 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class DriverService {
@@ -46,16 +41,10 @@ public class DriverService {
     private VehicleTypeRepository vehicleTypeRepository;
 
     @Autowired
-    private LocationRepository locationRepository;
-
-    @Autowired
-    private RoleService roleService;
-
-    @Autowired
     private RideRepository rideRepository;
 
-    public Page<Driver> findAll(Pageable pageable) {
-        return driverRepository.findAll(pageable);
+    public Page<Driver> findAll(Pageable page) {
+        return driverRepository.findAll(page);
     }
 
     public List<Driver> findAll() {
@@ -74,7 +63,6 @@ public class DriverService {
         }
 
         Driver newDriver = new Driver();
-        newDriver.setUsername(driver.getEmail());
         newDriver.setPassword(passwordEncoder.encode(driver.getPassword()));
         newDriver.setName(driver.getName());
         newDriver.setSurname(driver.getSurname());
@@ -83,11 +71,10 @@ public class DriverService {
         newDriver.setEmail(driver.getEmail());
         newDriver.setAddress(driver.getAddress());
         newDriver.setBlocked(false);
-        newDriver.setActive(true);
+        newDriver.setActive(false);
 
         List<Role> li = new ArrayList<>();
-        Role role = roleService.findById(3l);
-        li.add(role);
+        li.add(new Role(1L, "driver"));
         newDriver.setRole(li);
         return driverRepository.save(newDriver);
     }
@@ -115,18 +102,18 @@ public class DriverService {
         return driver;
     }
 
-    public Driver changeDriverData(Driver driver, UserDTO driverDTO, Long id) {
+    public Driver changeDriverData(Driver driver, Driver driverDTO, Long id) {
         driver.setName(driverDTO.getName());
         driver.setSurname(driverDTO.getSurname());
-        driver.setProfilePicture(driverDTO.getProfilePicture().getBytes());
+        driver.setProfilePicture(driverDTO.getProfilePicture());
         driver.setTelephoneNumber(driverDTO.getTelephoneNumber());
         driver.setEmail(driverDTO.getEmail());
         driver.setAddress(driverDTO.getAddress());
-        driver = driverRepository.save(driver);
+        driver.setPassword(driverRepository.findPasswordById(id));
+
         return driver;
     }
 
-<<<<<<< Updated upstream
     public DriverDocumentsDTO getDocuments(Driver driver) {
         Document document = documentRepository.findAllByDriverId(driver.getId());
 
@@ -140,17 +127,6 @@ public class DriverService {
             throw new EntityNotFoundException("Documents for this driver do not exist");
         }
         documentRepository.deleteById(document.getId());
-=======
-//    public DriverDocumentsDTO getDocuments(Driver driver) {
-//        Document document = documentRepository.findAllByDriver(driver);
-//
-//        DriverDocumentsDTO dto = new DriverDocumentsDTO(document.getId(), document.getName(), document.getDocumentImage(), document.getDriver().getId());
-//        return dto;
-//    }
-
-    public void deleteDocsForDriver(Long id) {
-        documentRepository.deleteById(id);
->>>>>>> Stashed changes
     }
 
     public DriverDocumentsDTO saveDocsForDriver(Driver driver, DriverDocumentsDTO documentsDTO) {
@@ -180,7 +156,10 @@ public class DriverService {
         vehicleDTO.setPassengerSeats(vehicle.getPassengerSeats());
         vehicleDTO.setBabyTransport(vehicle.isBabyTransport());
         vehicleDTO.setPetTransport(vehicle.isPetTransport());
-        vehicleDTO.setCurrentLocation(vehicle.getCurrentLocation());
+
+        // TODO Add table VehicleLocation
+        vehicleDTO.setCurrentLocation(new Location());
+
 
         return vehicleDTO;
     }
@@ -194,14 +173,8 @@ public class DriverService {
         Vehicle toSave = new Vehicle();
         toSave.setDriver(driver);
         toSave.setVehicleModel(vehicleDTO.getModel());
-
         VehicleType vt = vehicleTypeRepository.findByType(vehicleDTO.getVehicleType()).orElse(null);
         toSave.setVehicleType(vt);
-        System.err.println("2");
-        Location location = vehicleDTO.getCurrentLocation();
-        location = locationRepository.save(location);
-        toSave.setCurrentLocation(location);
-
         toSave.setLicenseNumber(vehicleDTO.getLicenseNumber());
         toSave.setPassengerSeats(vehicleDTO.getPassengerSeats());
         toSave.setBabyTransport(vehicleDTO.isBabyTransport());
@@ -248,16 +221,5 @@ public class DriverService {
 
     public Ride findRideById(Long rideId) {
         return rideRepository.findById(rideId).orElse(null);
-    }
-
-    public List<DriverDocumentsDTO> getAllDocuments(Driver driver) {
-
-        List<Document> docs = documentRepository.findAllByDriver(driver);
-        List<DriverDocumentsDTO> resp = docs.stream().map(DocumentDTOMapper::fromDocToDTO).collect(Collectors.toList());
-        return resp;
-    }
-
-    public Document findDocById(Long id) {
-        return documentRepository.findById(id).orElse(null);
     }
 }
