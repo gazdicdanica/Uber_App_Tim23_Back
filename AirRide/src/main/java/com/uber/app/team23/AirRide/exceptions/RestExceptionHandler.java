@@ -24,6 +24,6 @@ public class RestExceptionHandler {
     @ExceptionHandler(value = BadCredentialsException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ExceptionResponse> handleBadCredentialsException(BadCredentialsException ex){
-        return new ResponseEntity<>(new ExceptionResponse("Bad credentials"), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ExceptionResponse("Wrong username or password!"), HttpStatus.BAD_REQUEST);
     }
 }
