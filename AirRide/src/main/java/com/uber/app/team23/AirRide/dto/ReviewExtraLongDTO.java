@@ -1,14 +1,12 @@
 package com.uber.app.team23.AirRide.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Data
+@NoArgsConstructor @AllArgsConstructor
 public class ReviewExtraLongDTO {
     private List<ReviewDTO> vehicleReviews = new ArrayList<>();
     private List<ReviewDTO> driverReviews = new ArrayList<>();
