@@ -10,11 +10,12 @@ import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
 import com.uber.app.team23.AirRide.model.users.Role;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.service.UserService;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -43,7 +44,7 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<TokensDTO> createAuthenticationToken(
-            @RequestBody LoginDTO authenticationRequest) {
+           @Valid @RequestBody LoginDTO authenticationRequest) {
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 authenticationRequest.getEmail(), authenticationRequest.getPassword()));
@@ -68,16 +69,21 @@ public class AuthenticationController {
             throw new BadRequestException("You Might Have Been Blocked By Administration");
         }
     }
-    @PutMapping("/user/{id}/changePassword")
-    public ResponseEntity<?> changePassword(@PathVariable Long id, @RequestBody UpdatePasswordDTO dto){
+
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN', 'ROLE_DRIVER')")
+    @PutMapping("/{id}/changePassword")
+    public ResponseEntity<?> changePassword(@PathVariable Long id, @Valid @RequestBody UpdatePasswordDTO dto){
         User u = userService.findById(id);
         if (u == null) {
             throw new EntityNotFoundException("User With This ID Does Not Exist");
-        } else if (!passwordEncoder.matches(dto.getOld_password(), u.getPassword())) {
+        } else if (!passwordEncoder.matches(dto.getOldPassword(), u.getPassword())) {
             throw new BadRequestException("Current password is not matching!");
         } else {
-            u.setPassword(passwordEncoder.encode(dto.getNew_password()));
-            userService.updateUserPassword(u);
+            String newPassword = passwordEncoder.encode(dto.getNewPassword());
+            System.err.println(newPassword);
+            System.err.println(u.getId());
+            u.setPassword(newPassword);
+            userService.save(u);
         }
         return new ResponseEntity<>("Password successfully changed!", HttpStatus.NO_CONTENT);
     }

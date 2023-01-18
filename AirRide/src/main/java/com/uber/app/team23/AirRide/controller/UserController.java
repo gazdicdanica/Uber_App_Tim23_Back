@@ -15,12 +15,15 @@ import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.service.*;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,6 +47,7 @@ public class UserController {
     @Autowired
     private NoteService noteService;
 
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @GetMapping(value = "/user/{id}/ride")
     public ResponseEntity<?> getUserRidesPaginated(@PathVariable Long id, Pageable pageable) {
         User u = userService.findById(id);
@@ -56,7 +60,7 @@ public class UserController {
         }
     }
 
-
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping(value = "/user")
     public ResponseEntity<UserPaginatedDTO> getUserPaginated(Pageable page) {
         Page<User> users = userService.findAll(page);
@@ -105,12 +109,12 @@ public class UserController {
 
     @Transactional
     @PostMapping(value = "/user/{id}/message")
-    public ResponseEntity<MessageResponseDTO> sendMessage(@PathVariable Long id, @RequestBody SendMessageDTO dto) {
-        //TODO Take User From Token
-        User u1 = userService.findById(4L);
+    public ResponseEntity<MessageResponseDTO> sendMessage(@PathVariable Long id, @Valid @RequestBody SendMessageDTO dto) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User u1 = userService.findById(user.getId());
         User u = userService.findById(id);
         if (u == null) {
-            throw new EntityNotFoundException("User does not exist");
+            throw new EntityNotFoundException("Receiver does not exist");
         }
         Ride ride = driverService.findRideById(dto.getRideId());
         if (ride == null) {
@@ -122,6 +126,7 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping(value = "/user/{id}/block")
     public ResponseEntity<String > blockUser(@PathVariable Long id) {
         User u = userService.findById(id);
@@ -136,6 +141,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping(value = "/user/{id}/unblock")
     public ResponseEntity<String> unblockUser(@PathVariable Long id) {
         User u = userService.findById(id);
@@ -150,8 +156,9 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping(value = "/user/{id}/note")
-    public ResponseEntity<Note> createNote(@PathVariable Long id, @RequestBody AdminNoteDTO dto) {
+    public ResponseEntity<Note> createNote(@PathVariable Long id,@Valid @RequestBody AdminNoteDTO dto) {
         User u = userService.findById(id);
         if (u == null) {
             throw new EntityNotFoundException("User does not exist");
@@ -162,6 +169,7 @@ public class UserController {
     }
 
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping(value = "/user/{id}/note")
     public ResponseEntity<NoteDTO> getAllNotesForUser(@PathVariable Long id, Pageable page) {
         User u = userService.findById(id);
