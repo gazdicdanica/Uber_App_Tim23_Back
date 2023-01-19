@@ -48,7 +48,8 @@ public class RideController {
     @Transactional
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<RideResponseDTO> createRide(@Valid @RequestBody @Nullable RideDTO rideDTO){
+    public ResponseEntity<RideResponseDTO> createRide(@Valid @RequestBody RideDTO rideDTO){
+        System.err.println("createRide");
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Ride ride = rideService.save(rideDTO);
         ride = rideService.addRoutes(rideDTO, ride.getId());

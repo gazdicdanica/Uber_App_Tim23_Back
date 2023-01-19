@@ -21,6 +21,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -70,6 +71,7 @@ public class AuthenticationController {
         }
     }
 
+    @Transactional
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN', 'ROLE_DRIVER')")
     @PutMapping("/{id}/changePassword")
     public ResponseEntity<?> changePassword(@PathVariable Long id, @Valid @RequestBody UpdatePasswordDTO dto){
