@@ -52,21 +52,27 @@ public class DriverController {
     }
 
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
     public ResponseEntity<UserDTO> getDriver(@PathVariable Long id) {
         Driver driver = driverService.findOne(id);
         return new ResponseEntity<>(new UserDTO(driver), HttpStatus.OK);
     }
 
+    @Transactional
     @PutMapping(value = "/{id}")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
     public ResponseEntity<Object> updateDriver(@Valid @RequestBody UserDTO driverDTO, @PathVariable Long id) {
         Driver driver = driverService.changeDriverData(driverService.findById(id), driverDTO, id);
-        return new ResponseEntity<>(new UserDTO(driverService.update(driver)), HttpStatus.OK);
+        System.err.println("DTO");
+        System.err.println(driverDTO.getProfilePicture());
+        UserDTO ret = new UserDTO(driverService.update(driver));
+        System.err.println("RET");
+        System.err.println(ret.getProfilePicture());
+        return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}/documents")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
     public ResponseEntity<List<DriverDocumentsDTO>> getDriverDocuments(@PathVariable Long id) {
         Driver driver = driverService.findById(id);
         List<Document> documentList = driverService.getDocuments(driver);
@@ -82,7 +88,7 @@ public class DriverController {
     }
 
     @PostMapping(value = "/{id}/documents")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
     public ResponseEntity<DriverDocumentsDTO> addDriverDocuments(@Valid @RequestBody DriverDocumentsDTO dto, @PathVariable Long id) {
         Driver driver = driverService.findById(id);
         DriverDocumentsDTO document = driverService.saveDocsForDriver(driver, dto);
@@ -106,8 +112,9 @@ public class DriverController {
         return new ResponseEntity<>(vehicle, HttpStatus.OK);
     }
 
+    @Transactional
     @PutMapping(value = "/{id}/vehicle")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
     public ResponseEntity<VehicleDTO> updateDriverVehicle(@PathVariable Long id, @Valid @RequestBody VehicleDTO vehicleDTO) {
         driverService.findById(id);
         VehicleDTO vehicle = driverService.updateVehicleForDriver(id, vehicleDTO);
@@ -125,7 +132,7 @@ public class DriverController {
     }
 
     @PostMapping(value = "/{id}/working-hour")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_DRIVER')")
     public ResponseEntity<WorkHoursDTO> createDriverWorkingHours(@PathVariable Long id, @RequestBody WorkHoursDTO workHoursDTO) {
         // Time generated when driver logged
         // TODO cannot start shift 400
@@ -151,14 +158,14 @@ public class DriverController {
     }
 
     @GetMapping(value = "/working-hour/{working-hour-id}")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
     public ResponseEntity<WorkHoursDTO> getOneWorkingHour(@PathVariable("working-hour-id") Long id) {
         WorkingHours wh = workingHoursService.findOne(id);
         return new ResponseEntity<>(new WorkHoursDTO(wh.getStart(), wh.getEnd(), wh.getId()), HttpStatus.OK);
     }
 
     @PutMapping(value = "/working-hour/{working-hour-id}")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
     public ResponseEntity<WorkHoursDTO> updateWorkingHours(@PathVariable("working-hour-id") Long id) {
         WorkingHours wh = workingHoursService.update(id);
         driverService.changeDriverStatus(false, wh.getDriver().getId());
@@ -166,7 +173,7 @@ public class DriverController {
     }
 
     @PostMapping(value = "/{id}/working-hour/start")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_DRIVER')")
     public ResponseEntity<WorkHoursDTO> startWorkingHours(@PathVariable Long id) {
         Driver d = driverService.findById(id);
         WorkingHours workingHours = workingHoursService.save(d, null);
@@ -177,7 +184,7 @@ public class DriverController {
     }
 
     @PutMapping(value = "/{id}/working-hour/end")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_DRIVER')")
     public ResponseEntity<WorkHoursDTO> endWorkingHours(@PathVariable Long id){
         Driver d = driverService.findById(id);
         WorkingHours workingHours = workingHoursService.endWorkingHours(d);
