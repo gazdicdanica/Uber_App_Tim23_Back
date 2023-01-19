@@ -139,7 +139,7 @@ public class DriverService {
         Document document = new Document();
         document.setDriver(driver);
         document.setName(documentsDTO.getName());
-        document.setDocumentImage(documentsDTO.getDocumentImage());
+        document.setDocumentImage(Base64.getDecoder().decode(documentsDTO.getDocumentImage()));
 
         document = documentRepository.save(document);
 
@@ -227,5 +227,9 @@ public class DriverService {
 
     public void deleteDocsById(Long id) {
         documentRepository.deleteById(id);
+    }
+
+    public void deleteDocumentByName(String name){
+        documentRepository.deleteByName(name);
     }
 }

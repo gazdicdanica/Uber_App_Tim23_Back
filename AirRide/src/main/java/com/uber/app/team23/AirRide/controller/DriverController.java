@@ -20,6 +20,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.print.Doc;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -76,7 +78,11 @@ public class DriverController {
     public ResponseEntity<List<DriverDocumentsDTO>> getDriverDocuments(@PathVariable Long id) {
         Driver driver = driverService.findById(id);
         List<Document> documentList = driverService.getDocuments(driver);
-        List<DriverDocumentsDTO> resp = documentList.stream().map(DocumentDTOMapper::fromDocToDTO).collect(Collectors.toList());
+        List<DriverDocumentsDTO> resp = new ArrayList<>(); //= documentList.stream().map(DocumentDTOMapper::fromDocToDTO).collect(Collectors.toList());
+        for(Document doc : documentList){
+            DriverDocumentsDTO dto = new DriverDocumentsDTO(doc);
+            resp.add(dto);
+        }
         return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 
@@ -84,13 +90,22 @@ public class DriverController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<String> deleteDriverDocuments(@PathVariable Long id) {
         driverService.deleteDocsById(id);
-        return new ResponseEntity<>("Driver Deleted Successfully", HttpStatus.OK);
+        return new ResponseEntity<>("Document Deleted Successfully", HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/document")
+    @PreAuthorize("hasAuthority('ROLE_DRIVER')")
+    public ResponseEntity<String> deleteDocument(@RequestParam(value = "name") String value){
+        driverService.deleteDocumentByName(value);
+        System.err.println("DELETED");
+        return new ResponseEntity<>("Document deleted successfully", HttpStatus.OK);
     }
 
     @PostMapping(value = "/{id}/documents")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
     public ResponseEntity<DriverDocumentsDTO> addDriverDocuments(@Valid @RequestBody DriverDocumentsDTO dto, @PathVariable Long id) {
         Driver driver = driverService.findById(id);
+        System.err.println("ADD DOCUMENT");
         DriverDocumentsDTO document = driverService.saveDocsForDriver(driver, dto);
         return new ResponseEntity<>(document, HttpStatus.OK);
     }

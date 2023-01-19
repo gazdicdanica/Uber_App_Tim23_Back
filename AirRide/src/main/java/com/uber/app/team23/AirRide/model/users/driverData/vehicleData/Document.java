@@ -18,8 +18,9 @@ public class Document {
     public Long id;
     @Column(name = "name")
     public String name;
+    @Lob
     @Column(name = "photo")
-    public String documentImage;
+    public byte[] documentImage;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "driver_id")
     public Driver driver;
