@@ -3,6 +3,7 @@ package com.uber.app.team23.AirRide.controller;
 import com.uber.app.team23.AirRide.dto.*;
 import com.uber.app.team23.AirRide.exceptions.BadRequestException;
 import com.uber.app.team23.AirRide.mapper.*;
+import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
@@ -41,6 +42,14 @@ public class DriverController {
     public ResponseEntity<UserDTO> createDriver(@Valid @RequestBody Driver driver) throws ConstraintViolationException {
         Driver newDriver = driverService.save(driver);
         return new ResponseEntity<>(new UserDTO(newDriver), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{id}/location")
+    @PreAuthorize("hasAuthority('ROLE_DRIVER')")
+    public ResponseEntity<Location> getDriverLocation(@PathVariable Long id) {
+        Driver driver = driverService.findById(id);
+        VehicleDTO vehicle = driverService.getVehicleForDriver(driver);
+        return new ResponseEntity<>(vehicle.getCurrentLocation(), HttpStatus.OK);
     }
 
     @GetMapping
@@ -187,11 +196,14 @@ public class DriverController {
         return new ResponseEntity<>(new WorkHoursDTO(wh.getStart(), wh.getEnd(), wh.getId()), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/{id}/working-hour/start")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_DRIVER')")
+
+    @PutMapping(value = "/{id}/working-hour/start")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
+    @Transactional
     public ResponseEntity<WorkHoursDTO> startWorkingHours(@PathVariable Long id) {
         Driver d = driverService.findById(id);
         WorkingHours workingHours = workingHoursService.save(d, null);
+        System.err.println(workingHours.toString());
         driverService.changeDriverStatus(true, id);
 
         WorkHoursDTO dto = new WorkHoursDTO(workingHours.getStart(),null, id);
@@ -199,12 +211,13 @@ public class DriverController {
     }
 
     @PutMapping(value = "/{id}/working-hour/end")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_DRIVER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
+    @Transactional
     public ResponseEntity<WorkHoursDTO> endWorkingHours(@PathVariable Long id){
         Driver d = driverService.findById(id);
         WorkingHours workingHours = workingHoursService.endWorkingHours(d);
         driverService.changeDriverStatus(false, id);
-
         return new ResponseEntity<>(new WorkHoursDTO(workingHours.getStart(), workingHours.getEnd(), id), HttpStatus.OK );
     }
+
 }

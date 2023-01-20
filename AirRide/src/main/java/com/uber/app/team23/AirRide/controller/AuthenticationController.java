@@ -21,6 +21,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -71,6 +72,7 @@ public class AuthenticationController {
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN', 'ROLE_DRIVER')")
+    @Transactional
     @PutMapping("/{id}/changePassword")
     public ResponseEntity<?> changePassword(@PathVariable Long id, @Valid @RequestBody UpdatePasswordDTO dto){
         User u = userService.findById(id);
@@ -80,11 +82,9 @@ public class AuthenticationController {
             throw new BadRequestException("Current password is not matching!");
         } else {
             String newPassword = passwordEncoder.encode(dto.getNewPassword());
-            System.err.println(newPassword);
-            System.err.println(u.getId());
             u.setPassword(newPassword);
             userService.save(u);
+            return new ResponseEntity<>("Password successfully changed!", HttpStatus.OK);
         }
-        return new ResponseEntity<>("Password successfully changed!", HttpStatus.NO_CONTENT);
     }
 }
