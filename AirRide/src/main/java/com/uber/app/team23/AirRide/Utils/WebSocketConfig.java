@@ -1,4 +1,4 @@
-package com.uber.app.team23.AirRide.security;
+package com.uber.app.team23.AirRide.Utils;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -18,6 +18,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry){
         registry.setApplicationDestinationPrefixes("/sub")
-                .enableSimpleBroker("/ride");
+                .enableSimpleBroker("/ride", "/map-updates");
     }
 }

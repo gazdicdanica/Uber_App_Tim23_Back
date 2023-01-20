@@ -39,13 +39,12 @@ public abstract class User implements UserDetails {
     protected String surname;
 
     @Lob
-    @NotNull @NotEmpty
     @Column(name = "profile_picture")
     protected byte[] profilePicture;
 
     @Column(name = "telephone_number", unique = true)
     @NotNull @NotEmpty
-    @NumberFormat
+//    @NumberFormat
     @Size(min = 3, max = 15)
     protected String telephoneNumber;
 
