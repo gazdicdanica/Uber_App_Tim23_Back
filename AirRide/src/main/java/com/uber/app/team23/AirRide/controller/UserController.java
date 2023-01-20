@@ -68,6 +68,7 @@ public class UserController {
         return new ResponseEntity<>(new UserPaginatedDTO(userDTOS), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_DRIVER')")
     @GetMapping(value = "/user/{id}")
     public ResponseEntity<UserDTO> getUserData(@PathVariable Long id){
         User u = userService.findById(id);

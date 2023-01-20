@@ -2,6 +2,7 @@ package com.uber.app.team23.AirRide.dto;
 
 import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -28,6 +29,7 @@ public class VehicleDTO {
     @Size(min = 5, max = 10)
     private String licenseNumber;
 
+    @Nullable
     @Valid
     private Location currentLocation;
 

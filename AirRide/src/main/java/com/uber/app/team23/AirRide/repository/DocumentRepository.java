@@ -10,4 +10,6 @@ import java.util.List;
 public interface DocumentRepository extends JpaRepository<Document, Long> {
 
     public List<Document> findAllByDriver(Driver driver);
+
+    public void deleteByName(String name);
 }

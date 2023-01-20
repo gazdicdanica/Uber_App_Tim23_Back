@@ -22,7 +22,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -110,7 +109,7 @@ public class DriverService {
     public Driver changeDriverData(Driver driver, UserDTO driverDTO, Long id) {
         driver.setName(driverDTO.getName());
         driver.setSurname(driverDTO.getSurname());
-        driver.setProfilePicture(driverDTO.getProfilePicture().getBytes());
+        driver.setProfilePicture(Base64.getDecoder().decode(driverDTO.getProfilePicture()));
         driver.setTelephoneNumber(driverDTO.getTelephoneNumber());
         driver.setEmail(driverDTO.getEmail());
         driver.setAddress(driverDTO.getAddress());
@@ -140,7 +139,7 @@ public class DriverService {
         Document document = new Document();
         document.setDriver(driver);
         document.setName(documentsDTO.getName());
-        document.setDocumentImage(documentsDTO.getDocumentImage());
+        document.setDocumentImage(Base64.getDecoder().decode(documentsDTO.getDocumentImage()));
 
         document = documentRepository.save(document);
 
@@ -150,7 +149,7 @@ public class DriverService {
     }
 
     public VehicleDTO getVehicleForDriver(Driver driver) {
-        Vehicle vehicle = vehicleRepository.findAllByDriver(driver.getId());
+        Vehicle vehicle = vehicleRepository.findByDriver(driver.getId());
         if (vehicle == null) {
             throw new EntityNotFoundException("Vehicle For This Driver Does Not Exist");
         }
@@ -170,7 +169,7 @@ public class DriverService {
     }
 
     public VehicleDTO saveVehicleForDriver(Long driverId, VehicleDTO vehicleDTO) {
-        Vehicle vehicle = vehicleRepository.findAllByDriver(driverId);
+        Vehicle vehicle = vehicleRepository.findByDriver(driverId);
         if (vehicle != null) {
             throw new BadRequestException("Driver Already Has Vehicle");
         }
@@ -193,24 +192,18 @@ public class DriverService {
     }
 
     public VehicleDTO updateVehicleForDriver(long driverId, VehicleDTO vehicleDTO) {
-        Vehicle vehicle = vehicleRepository.findAllByDriver(driverId);
+        Vehicle vehicle = vehicleRepository.findByDriver(driverId);
         if (vehicle == null) {
-            return saveVehicleForDriver(driverId, vehicleDTO);
+            throw new EntityNotFoundException("Vehicle not found");
         } else {
             vehicle.setVehicleModel(vehicleDTO.getModel());
             vehicle.setLicenseNumber(vehicleDTO.getLicenseNumber());
             vehicle.setPassengerSeats(vehicleDTO.getPassengerSeats());
             vehicle.setPetTransport(vehicleDTO.isPetTransport());
             vehicle.setBabyTransport(vehicleDTO.isBabyTransport());
-            Location location = vehicleDTO.getCurrentLocation();
-            location = locationRepository.save(location);
-            vehicle.setCurrentLocation(location);
             if (vehicle.getVehicleType().getType() != vehicleDTO.getVehicleType()){
-                VehicleType vt = new VehicleType();
-                vt.setType(vehicleDTO.getVehicleType());
-                vt.setPrice(400);
-                vehicleTypeRepository.save(vt);
-                // TODO price
+                VehicleType vt = vehicleTypeRepository.findByType(vehicleDTO.getVehicleType()).orElse(null);
+                vehicle.setVehicleType(vt);
             }
             vehicleRepository.save(vehicle);
 
@@ -234,5 +227,9 @@ public class DriverService {
 
     public void deleteDocsById(Long id) {
         documentRepository.deleteById(id);
+    }
+
+    public void deleteDocumentByName(String name){
+        documentRepository.deleteByName(name);
     }
 }
