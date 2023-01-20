@@ -20,14 +20,10 @@ import java.util.List;
 public class RideSchedulingService {
     @Autowired
     private  DriverService driverService;
-
-    @Autowired
-    private VehicleService vehicleService;
     @Autowired
     private RideRepository rideRepository;
     @Autowired
     private WorkingHoursService workingHoursService;
-
 
     private List<Driver> findAvailableDrivers(List<Driver> onlineDrivers){
         List<Driver> ret = new ArrayList<>();
@@ -121,14 +117,15 @@ public class RideSchedulingService {
 
     public Driver findDriver(Ride ride){
         List<Driver> onlineDrivers = driverService.findOnlineDrivers();
+        if(onlineDrivers.isEmpty()){
+            throw new BadRequestException("No drivers are online.");
+        }
         List<Driver> driversWithAppropriateVehicle = onlineDrivers.stream().filter(driver -> driver.getVehicle().getVehicleType().getType() == ride.getVehicleType())
                 .filter(driver -> driver.getVehicle().babyTransport == ride.isBabyTransport())
                 .filter(driver -> driver.getVehicle().petTransport == ride.isPetTransport()).toList();
 
         List<Driver> driversWorkHours = driversWithAppropriateVehicle.stream().filter(driver -> workingHoursService.calculateWorkingHours(driver) < 8).toList();
-        if(onlineDrivers.isEmpty()){
-            throw new BadRequestException("No drivers are online.");
-        }if(driversWithAppropriateVehicle.isEmpty()){
+        if(driversWithAppropriateVehicle.isEmpty()){
             throw new BadRequestException("No driver is online with appropriate vehicle.");
         }if(areAllDriversOccupied(onlineDrivers, ride.getScheduledTime()) || driversWorkHours.isEmpty()){
             // no drivers are available and all have scheduled rides
