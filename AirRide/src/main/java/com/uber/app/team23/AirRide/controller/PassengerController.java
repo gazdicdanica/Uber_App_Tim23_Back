@@ -38,7 +38,7 @@ public class PassengerController {
     public ResponseEntity<UserDTO> createPassenger(@Valid @RequestBody Passenger passenger) throws ConstraintViolationException {
         Passenger newPassenger = passengerService.createPassenger(passenger);
         UserActivation activation = passengerService.addActivation(newPassenger);
-//        passengerService.sendActivationEmail(newPassenger.getEmail(), activation.getActivationId());
+        passengerService.sendActivationEmail(newPassenger.getEmail(), activation.getActivationId());
         return new ResponseEntity<>(new UserDTO(newPassenger), HttpStatus.OK);
 
     }

@@ -7,21 +7,31 @@ import com.uber.app.team23.AirRide.exceptions.BadRequestException;
 import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
 import com.uber.app.team23.AirRide.mapper.RideDTOMapper;
 import com.uber.app.team23.AirRide.model.messageData.Rejection;
+import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.rideData.RideStatus;
 import com.uber.app.team23.AirRide.model.rideData.Route;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
+import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
+import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleType;
 import com.uber.app.team23.AirRide.repository.RideRepository;
+import com.uber.app.team23.AirRide.repository.VehicleTypeRepository;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 
 @Transactional
@@ -36,9 +46,29 @@ public class RideService {
     private RouteService routeService;
     @Autowired
     private RideSchedulingService rideSchedulingService;
+    @Autowired
+    private VehicleTypeRepository vehicleTypeRepository;
 
     public Ride findOne(Long id){
         return rideRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Ride does not exist"));
+    }
+
+    public List<Double> getRouteEstimates(String uri){
+        RestTemplate restTemplate = new RestTemplate();
+        String result = restTemplate.getForObject(uri, String.class);
+//        LinkedHashMap<?,?> res = (LinkedHashMap<?, ?>) result;
+        JSONObject obj = new JSONObject(result);
+        JSONArray routes = obj.getJSONArray("routes");
+        JSONObject o = (JSONObject) routes.get(0);
+        double distanceInM = o.getDouble("distance");
+        double durationInSec = o.getDouble("duration");
+
+        List<Double> ret = new ArrayList<>();
+        ret.add(durationInSec);
+        ret.add(distanceInM/1000);
+        return ret;
+//        System.err.println(distance);
+
     }
 
     public RideResponseDTO findActiveByDriver(Long driverId){
@@ -64,17 +94,39 @@ public class RideService {
     public Ride addRoutes(RideDTO rideDTO, Long id){
         Ride ride = this.findOne(id);
         ride.setLocations(new HashSet<>());
+        int estimatedTime = 0;
+        double distance = 0;
         for(Route route: rideDTO.getLocations()){
             Route r = routeService.findByLocationAddress(route.getDeparture().getAddress(), route.getDestination().getAddress());
             if(r == null){
                 r = routeService.save(route);
             }
             ride.getLocations().add(r);
-//            Location departure = route.getDeparture();
-//            Location destination = route.getDestination();
-//             "http://router.project-osrm.org/route/v1/driving/{" + departure.getLongitude() + "},{" + departure.getLatitude() + "};{" + departure.getLongitude() + "},{" + departure.getLatitude() + "}?overview=false";
-
+            StringBuilder uri = new StringBuilder("https://router.project-osrm.org/route/v1/driving/");
+            uri.append(r.getDeparture().getLongitude());
+            uri.append(",");
+            uri.append(r.getDeparture().getLatitude());
+            uri.append(";");
+            uri.append(r.getDestination().getLongitude());
+            uri.append(",");
+            uri.append(r.getDestination().getLatitude());
+            uri.append("?overview=false&geometries=geojson");
+            System.err.println(uri.toString());
+            List<Double> estimation = getRouteEstimates(uri.toString());
+            int time =(int) Math.round(estimation.get(0)/60);
+            estimatedTime += time;
+            if (r.getDistance() == 0){
+                r.setDistance(estimation.get(1));
+                distance += estimation.get(1);
+                routeService.save(r);
+            }else{
+                distance += r.getDistance();
+            }
         }
+        VehicleEnum vehicleEnum = ride.getVehicleType();
+        VehicleType vehicleType = vehicleTypeRepository.findByType(vehicleEnum).orElse(null);
+        ride.setTotalCost(distance * vehicleType.getPrice());
+        ride.setEstimatedTimeInMinutes(estimatedTime);
         return rideRepository.save(ride);
     }
 

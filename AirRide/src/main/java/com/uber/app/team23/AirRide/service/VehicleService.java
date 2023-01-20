@@ -31,7 +31,4 @@ public class VehicleService {
         vehicleRepository.save(vehicle);
     }
 
-    public List<Vehicle> findVehicleByRideParameters(VehicleEnum vehicleEnum, boolean babyTransport, boolean petTransport){
-        return vehicleRepository.findVehicleByRideParameters(vehicleEnum, babyTransport, petTransport);
-    }
 }
