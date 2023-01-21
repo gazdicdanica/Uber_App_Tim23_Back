@@ -17,6 +17,7 @@ import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.service.*;
 import jakarta.validation.Valid;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -191,7 +192,8 @@ public class UserController {
             throw new EntityNotFoundException("User does not exist!");
         } else {
             userService.sendResetPwCode(u);
-            return new ResponseEntity<>("Email with reset code has been sent", HttpStatus.OK);
+            JSONObject resp = new JSONObject();
+            return new ResponseEntity<>(resp.put("message", "Email with reset code has been sent").toString(), HttpStatus.OK);
         }
     }
 
@@ -204,7 +206,8 @@ public class UserController {
             throw new EntityNotFoundException("User does not exist!");
         } else {
             userService.resetPassword(dto);
-            return new ResponseEntity<>("Password successfully changed!", HttpStatus.OK);
+            JSONObject resp = new JSONObject();
+            return new ResponseEntity<>(resp.put("message", "Password successfully changed!").toString(), HttpStatus.OK);
         }
     }
 }

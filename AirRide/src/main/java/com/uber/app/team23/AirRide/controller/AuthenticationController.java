@@ -11,6 +11,7 @@ import com.uber.app.team23.AirRide.model.users.Role;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.service.UserService;
 import jakarta.validation.Valid;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -84,7 +85,8 @@ public class AuthenticationController {
             String newPassword = passwordEncoder.encode(dto.getNewPassword());
             u.setPassword(newPassword);
             userService.save(u);
-            return new ResponseEntity<>("Password successfully changed!", HttpStatus.OK);
+            JSONObject resp = new JSONObject();
+            return new ResponseEntity<>(resp.put("message", "Password successfully changed!").toString(), HttpStatus.OK);
         }
     }
 }
