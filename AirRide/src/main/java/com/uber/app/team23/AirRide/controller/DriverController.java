@@ -93,12 +93,15 @@ public class DriverController {
         return new ResponseEntity<>("Document Deleted Successfully", HttpStatus.OK);
     }
 
+    @Transactional
     @DeleteMapping(value = "/document")
     @PreAuthorize("hasAuthority('ROLE_DRIVER')")
     public ResponseEntity<String> deleteDocument(@RequestParam(value = "name") String value){
         driverService.deleteDocumentByName(value);
         System.err.println("DELETED");
-        return new ResponseEntity<>("Document deleted successfully", HttpStatus.OK);
+        JSONObject obj = new JSONObject();
+        obj.put("message", "Document deleted successfully");
+        return new ResponseEntity<>(obj.toString(), HttpStatus.OK);
     }
 
     @PostMapping(value = "/{id}/documents")
