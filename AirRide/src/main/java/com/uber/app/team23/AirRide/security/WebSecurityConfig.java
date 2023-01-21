@@ -71,7 +71,7 @@ public class WebSecurityConfig {
                         .authenticationEntryPoint(restAuthenticationEntryPoint);
         http.authorizeHttpRequests()
                 .requestMatchers("/auth/**").permitAll()
-//                .requestMatchers("api/ride").permitAll()
+                .requestMatchers("api/ride").permitAll()
                 .requestMatchers(toH2Console()).permitAll()
                 .requestMatchers("/api/user/forgotPassword").permitAll()
                 .requestMatchers("/api/user/resetPassword").permitAll()
@@ -80,6 +80,7 @@ public class WebSecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/passenger/activate/*").permitAll()
                 .requestMatchers("/api/unregisteredUser").permitAll()
                 .requestMatchers("/api/ride/active").permitAll()
+                .requestMatchers("/socket/**").permitAll()
 //                .requestMatchers("/**").permitAll().and()
                 .anyRequest().authenticated().and().cors().and()
                 .addFilterBefore(new TokenAuthenticationFilter(tokenUtils, userDetailsService()), BasicAuthenticationFilter.class);

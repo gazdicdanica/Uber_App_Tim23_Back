@@ -62,7 +62,7 @@ public class RideController {
         }
         ride = rideService.addDriver(ride, potential);
         RideResponseDTO dto = new RideResponseDTO(ride);
-        webSocketController.simpMessagingTemplate.convertAndSend("/ride", dto);
+        webSocketController.simpMessagingTemplate.convertAndSend("/ride/" + potential.getId(), dto);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 

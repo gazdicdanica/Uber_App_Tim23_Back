@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
 import java.util.Map;
-
+@CrossOrigin(origins = "http://localhost:4200")
 @Controller
 public class WebSocketController {
 
     @Autowired
     public SimpMessagingTemplate simpMessagingTemplate;
 
-    @CrossOrigin(origins = "http://localhost:4200")
+
     @RequestMapping(value = "/sendMessageRest")
     public ResponseEntity<?> sendMessage(@RequestBody Map<String, String>message){
         if (message.containsKey("message")){
