@@ -73,7 +73,7 @@ public class DriverController {
     @PutMapping(value = "/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
     public ResponseEntity<Object> updateDriver(@Valid @RequestBody UserDTO driverDTO, @PathVariable Long id) {
-        Driver driver = driverService.changeDriverData(driverService.findById(id), driverDTO, id);
+        Driver driver = driverService.changeDriverData(driverService.findById(id), driverDTO);
         System.err.println("DTO");
         System.err.println(driverDTO.getProfilePicture());
         UserDTO ret = new UserDTO(driverService.update(driver));
@@ -102,12 +102,15 @@ public class DriverController {
         return new ResponseEntity<>("Document Deleted Successfully", HttpStatus.OK);
     }
 
+    @Transactional
     @DeleteMapping(value = "/document")
     @PreAuthorize("hasAuthority('ROLE_DRIVER')")
     public ResponseEntity<String> deleteDocument(@RequestParam(value = "name") String value){
         driverService.deleteDocumentByName(value);
         System.err.println("DELETED");
-        return new ResponseEntity<>("Document deleted successfully", HttpStatus.OK);
+        JSONObject obj = new JSONObject();
+        obj.put("message", "Document deleted successfully");
+        return new ResponseEntity<>(obj.toString(), HttpStatus.OK);
     }
 
     @PostMapping(value = "/{id}/documents")
