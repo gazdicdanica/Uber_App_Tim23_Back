@@ -136,10 +136,9 @@ public class RideSchedulingService {
         if(onlineDrivers.isEmpty()){
             throw new BadRequestException("No drivers are online.");
         }
-        List<Driver> driversWithAppropriateVehicle = onlineDrivers.stream().filter(driver -> driver.getVehicle()!=null)
-                .filter(driver -> driver.getVehicle().getVehicleType().getType() == ride.getVehicleType())
-                .filter(driver -> driver.getVehicle().babyTransport == ride.isBabyTransport())
-                .filter(driver -> driver.getVehicle().petTransport == ride.isPetTransport()).toList();
+        List<Driver> driversWithAppropriateVehicle = onlineDrivers.stream().filter(driver -> driver.getVehicle()!=null && driver.getVehicle().getVehicleType().getType() == ride.getVehicleType())
+                .filter(driver -> driver.getVehicle().babyTransport == ride.isBabyTransport() || driver.getVehicle().babyTransport)
+                .filter(driver -> driver.getVehicle().petTransport == ride.isPetTransport() || driver.getVehicle().petTransport).toList();
 
         List<Driver> driversWorkHours = driversWithAppropriateVehicle.stream().filter(driver -> workingHoursService.calculateWorkingHours(driver) < 8).toList();
         if(driversWithAppropriateVehicle.isEmpty()){
