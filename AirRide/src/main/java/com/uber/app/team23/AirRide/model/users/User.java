@@ -39,7 +39,7 @@ public abstract class User implements UserDetails {
     protected String surname;
 
     @Lob
-    @NotNull @NotEmpty
+//    @NotNull @NotEmpty
     @Column(name = "profile_picture")
     protected byte[] profilePicture;
 

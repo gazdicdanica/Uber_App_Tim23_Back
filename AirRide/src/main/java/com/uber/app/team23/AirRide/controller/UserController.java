@@ -12,10 +12,12 @@ import com.uber.app.team23.AirRide.model.messageData.MessageType;
 import com.uber.app.team23.AirRide.model.messageData.Note;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.users.Passenger;
+import com.uber.app.team23.AirRide.model.users.PasswordResetData;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.service.*;
 import jakarta.validation.Valid;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -182,25 +184,30 @@ public class UserController {
         return new ResponseEntity<>(new NoteDTO(noteList), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/user/{id}/resetPassword")
-    public ResponseEntity<?> resetPassword(@PathVariable Long id) {
-        User u = userService.findById(id);
+    @PutMapping(value = "/user/forgotPassword")
+    @Transactional
+    public ResponseEntity<?> resetPassword(@RequestBody UserShortDTO dto) {
+        User u = userService.findByEmail(dto.getEmail());
         if (u == null){
             throw new EntityNotFoundException("User does not exist!");
         } else {
-            // TODO SEND EMAIL WITH UNIQUE CODE
-            return new ResponseEntity<>("Email with reset code has been sent", HttpStatus.NO_CONTENT);
+            userService.sendResetPwCode(u);
+            JSONObject resp = new JSONObject();
+            return new ResponseEntity<>(resp.put("message", "Email with reset code has been sent").toString(), HttpStatus.OK);
         }
     }
 
-    @PutMapping(value = "/user/{id}/resetPassword")
-    public ResponseEntity<?> resetPasswordWithCode(@PathVariable Long id, @RequestBody ChangePasswordDTO dto) {
-        User u = userService.findById(id);
+    @PutMapping(value = "/user/resetPassword")
+    @Transactional
+    public ResponseEntity<?> resetPasswordWithCode(@RequestBody PasswordResetData dto) {
+        System.err.println(dto.toString());
+        User u = userService.findByEmail(dto.getEmail());
         if (u == null) {
             throw new EntityNotFoundException("User does not exist!");
         } else {
-            // TODO CHECK isCodeValid AND UPDATE PASSWORD
-            return new ResponseEntity<>("Password successfully changed!", HttpStatus.NO_CONTENT);
+            userService.resetPassword(dto);
+            JSONObject resp = new JSONObject();
+            return new ResponseEntity<>(resp.put("message", "Password successfully changed!").toString(), HttpStatus.OK);
         }
     }
 }

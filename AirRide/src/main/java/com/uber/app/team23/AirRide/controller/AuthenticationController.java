@@ -11,6 +11,7 @@ import com.uber.app.team23.AirRide.model.users.Role;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.service.UserService;
 import jakarta.validation.Valid;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,6 +22,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -71,6 +73,7 @@ public class AuthenticationController {
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN', 'ROLE_DRIVER')")
+    @Transactional
     @PutMapping("/{id}/changePassword")
     public ResponseEntity<?> changePassword(@PathVariable Long id, @Valid @RequestBody UpdatePasswordDTO dto){
         User u = userService.findById(id);
@@ -80,11 +83,10 @@ public class AuthenticationController {
             throw new BadRequestException("Current password is not matching!");
         } else {
             String newPassword = passwordEncoder.encode(dto.getNewPassword());
-            System.err.println(newPassword);
-            System.err.println(u.getId());
             u.setPassword(newPassword);
             userService.save(u);
+            JSONObject resp = new JSONObject();
+            return new ResponseEntity<>(resp.put("message", "Password successfully changed!").toString(), HttpStatus.OK);
         }
-        return new ResponseEntity<>("Password successfully changed!", HttpStatus.NO_CONTENT);
     }
 }
