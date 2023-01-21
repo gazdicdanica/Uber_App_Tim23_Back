@@ -64,7 +64,7 @@ public class DriverController {
     @PutMapping(value = "/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
     public ResponseEntity<Object> updateDriver(@Valid @RequestBody UserDTO driverDTO, @PathVariable Long id) {
-        Driver driver = driverService.changeDriverData(driverService.findById(id), driverDTO, id);
+        Driver driver = driverService.changeDriverData(driverService.findById(id), driverDTO);
         System.err.println("DTO");
         System.err.println(driverDTO.getProfilePicture());
         UserDTO ret = new UserDTO(driverService.update(driver));
