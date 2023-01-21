@@ -77,6 +77,7 @@ public class WebSecurityConfig {
                 .requestMatchers(HttpMethod.POST,"/api/passenger").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/passenger/activate/*").permitAll()
                 .requestMatchers("/api/unregisteredUser").permitAll()
+                .requestMatchers("/api/ride/active").permitAll()
 //                .requestMatchers("/**").permitAll().and()
                 .anyRequest().authenticated().and().cors().and()
                 .addFilterBefore(new TokenAuthenticationFilter(tokenUtils, userDetailsService()), BasicAuthenticationFilter.class);

@@ -21,7 +21,7 @@ public class WebSocketController {
     @Autowired
     public SimpMessagingTemplate simpMessagingTemplate;
 
-//    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = "/sendMessageRest")
     public ResponseEntity<?> sendMessage(@RequestBody Map<String, String>message){
         if (message.containsKey("message")){

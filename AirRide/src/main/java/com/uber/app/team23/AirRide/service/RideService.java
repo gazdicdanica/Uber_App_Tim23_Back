@@ -241,6 +241,10 @@ public class RideService {
         return rideRepository.findAllByDriver(byId, pageable);
     }
 
+    public List<Ride> findByStatus(RideStatus status){
+        return rideRepository.findByStatus(status);
+    }
+
 //    public Page<Ride> findAllByPassenger(Passenger passenger, Pageable pageable){
 //        return rideRepository.findAllByPassengers(passenger, pageable);
 //    }

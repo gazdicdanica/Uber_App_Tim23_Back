@@ -2,6 +2,7 @@ package com.uber.app.team23.AirRide.repository;
 
 import com.uber.app.team23.AirRide.dto.RideResponseDTO;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
+import com.uber.app.team23.AirRide.model.rideData.RideStatus;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
@@ -30,4 +31,6 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
     public Page<Ride> findAllByDriver(User byId, Pageable pageable);
 
     public Page<Ride> findByPassengersContaining(Passenger passenger, Pageable pageable);
+
+    public List<Ride> findByStatus(RideStatus status);
 }

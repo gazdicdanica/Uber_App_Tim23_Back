@@ -46,7 +46,7 @@ insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, 
 
 
 insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id,  vehicle_type)
-VALUES (true, '2023-01-11T17:43:49.439927', false, false, 5, 7, 350, 4, 1, 1);
+VALUES (true, '2023-01-11T17:43:49.439927', false, false, 3, 7, 350, 4, 1, 1);
 insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, vehicle_type)
 VALUES (true, '2023-01-11T17:43:49.439927', true, false, 4, 2, 350, 5, 1, 2);
 insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, vehicle_type)
