@@ -57,6 +57,9 @@ public class RideController {
         ride = rideService.addRoutes(rideDTO, ride.getId());
         ride = rideService.addPassengers(rideDTO, ride.getId(), user.getId());
         Driver potential = rideService.findPotentialDriver(ride);
+        if(potential == null){
+            throw new BadRequestException("No driver is available at the moment");
+        }
         ride = rideService.addDriver(ride, potential);
         RideResponseDTO dto = new RideResponseDTO(ride);
         webSocketController.simpMessagingTemplate.convertAndSend("/ride", dto);

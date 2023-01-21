@@ -3,6 +3,7 @@ package com.uber.app.team23.AirRide.controller;
 import com.uber.app.team23.AirRide.dto.*;
 import com.uber.app.team23.AirRide.exceptions.BadRequestException;
 import com.uber.app.team23.AirRide.mapper.*;
+import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
@@ -43,6 +44,14 @@ public class DriverController {
         return new ResponseEntity<>(new UserDTO(newDriver), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/{id}/location")
+    @PreAuthorize("hasAuthority('ROLE_DRIVER')")
+    public ResponseEntity<Location> getDriverLocation(@PathVariable Long id) {
+        Driver driver = driverService.findById(id);
+        VehicleDTO vehicle = driverService.getVehicleForDriver(driver);
+        return new ResponseEntity<>(vehicle.getCurrentLocation(), HttpStatus.OK);
+    }
+
     @GetMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<UserPaginatedDTO> getPaginatedDrivers(Pageable page) {
@@ -64,7 +73,7 @@ public class DriverController {
     @PutMapping(value = "/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
     public ResponseEntity<Object> updateDriver(@Valid @RequestBody UserDTO driverDTO, @PathVariable Long id) {
-        Driver driver = driverService.changeDriverData(driverService.findById(id), driverDTO, id);
+        Driver driver = driverService.changeDriverData(driverService.findById(id), driverDTO);
         System.err.println("DTO");
         System.err.println(driverDTO.getProfilePicture());
         UserDTO ret = new UserDTO(driverService.update(driver));
@@ -93,12 +102,15 @@ public class DriverController {
         return new ResponseEntity<>("Document Deleted Successfully", HttpStatus.OK);
     }
 
+    @Transactional
     @DeleteMapping(value = "/document")
     @PreAuthorize("hasAuthority('ROLE_DRIVER')")
     public ResponseEntity<String> deleteDocument(@RequestParam(value = "name") String value){
         driverService.deleteDocumentByName(value);
         System.err.println("DELETED");
-        return new ResponseEntity<>("Document deleted successfully", HttpStatus.OK);
+        JSONObject obj = new JSONObject();
+        obj.put("message", "Document deleted successfully");
+        return new ResponseEntity<>(obj.toString(), HttpStatus.OK);
     }
 
     @PostMapping(value = "/{id}/documents")
@@ -187,11 +199,14 @@ public class DriverController {
         return new ResponseEntity<>(new WorkHoursDTO(wh.getStart(), wh.getEnd(), wh.getId()), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/{id}/working-hour/start")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_DRIVER')")
+
+    @PutMapping(value = "/{id}/working-hour/start")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
+    @Transactional
     public ResponseEntity<WorkHoursDTO> startWorkingHours(@PathVariable Long id) {
         Driver d = driverService.findById(id);
         WorkingHours workingHours = workingHoursService.save(d, null);
+        System.err.println(workingHours.toString());
         driverService.changeDriverStatus(true, id);
 
         WorkHoursDTO dto = new WorkHoursDTO(workingHours.getStart(),null, id);
@@ -199,12 +214,13 @@ public class DriverController {
     }
 
     @PutMapping(value = "/{id}/working-hour/end")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_DRIVER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
+    @Transactional
     public ResponseEntity<WorkHoursDTO> endWorkingHours(@PathVariable Long id){
         Driver d = driverService.findById(id);
         WorkingHours workingHours = workingHoursService.endWorkingHours(d);
         driverService.changeDriverStatus(false, id);
-
         return new ResponseEntity<>(new WorkHoursDTO(workingHours.getStart(), workingHours.getEnd(), id), HttpStatus.OK );
     }
+
 }

@@ -10,8 +10,11 @@ insert into users (type, active, address, blocked, email, last_name, name, usern
 VALUES ('driver', true, 'Adresa1', false, 'pp@gmail.com', 'Peric', 'Pera','pp@gmail.com' ,'$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0641212', 'qwer', true);
 insert into users (type, active, address, blocked, email, last_name, name, username ,password, telephone_number, profile_picture, online)
 VALUES ('driver', true, 'Adresa2', false, 'pr@gmail.com', 'Radovanovic', 'Pera', 'pr@gmail.com' , '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '06412', 'qwer', true);
-insert into users (type, active, address, blocked, email, last_name, name,username, password, telephone_number, profile_picture, online)
+insert into users (type, active, address, blocked, email, last_name, name, username, password, telephone_number, profile_picture, online)
 VALUES ('driver', true, 'Adresa2', false, 'pa@gmail.com', 'Bro', 'Da', 'pa@gmail.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '062134412', 'qwer', true);
+insert into users (type, active, address, blocked, email, last_name, name, username, password, telephone_number, profile_picture, online)
+VALUES ('driver', true, 'Adresa2', false, 'isomidobradovic@gmail.com', 'Obradovic', 'Milos', 'isomidobradovic@gmail.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0649144773', 'qwer', true);
+
 
 insert into role (name) VALUES ('ROLE_USER');
 insert into role (name) VALUES ('ROLE_ADMIN');
@@ -23,6 +26,7 @@ insert into user_role (user_id, role_id) VALUES (3, 1);
 insert into user_role (user_id, role_id) VALUES (4, 3);
 insert into user_role (user_id, role_id) VALUES (5, 3);
 insert into user_role (user_id, role_id) VALUES (6, 3);
+insert into user_role (user_id, role_id) VALUES (7, 3);
 
 insert into working_hours (end_time, start_time, driver_id) VALUES ('2023-01-02T10:00:00.469083', '2023-01-02T19:00:00.469083', 4);
 insert into working_hours (end_time, start_time, driver_id) VALUES ('2023-01-03T10:00:00.123411', '2023-01-03T18:11:11.123411', 5);
@@ -46,13 +50,13 @@ insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, 
 
 
 insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id,  vehicle_type)
-VALUES (true, '2023-01-11T17:43:49.439927', false, false, 3, 7, 350, 4, 1, 1);
+VALUES (true, '2023-01-11T17:43:49.439927', false, false, 3, 6, 350, 4, 1, 1);
 insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, vehicle_type)
-VALUES (true, '2023-01-11T17:43:49.439927', true, false, 4, 2, 350, 5, 1, 2);
+VALUES (true, '2023-01-11T17:43:49.439927', true, false, 3, 2, 350, 5, 1, 2);
 insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, vehicle_type)
-VALUES (true, '2023-01-11T18:00:49.439927', true, false, 6, 2, 350, 5, 1, 0);
+VALUES (true, '2023-01-11T18:00:49.439927', true, false, 3, 9, 350, 7, 1, 0);
 insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, vehicle_type)
-VALUES (false,'2023-01-11T17:43:49.439927', false, false, 4, 4, 500, 6, 1, 1);
+VALUES (false,'2023-01-11T17:43:49.439927', false, false, 3, 3, 500, 6, 1, 1);
 
 insert into ride_passengers (passenger_id, ride_id) VALUES (2, 1);
 insert into ride_passengers (passenger_id, ride_id) VALUES (3, 1);
@@ -71,8 +75,16 @@ insert into reviews (comment, grade, driver_id, passenger_id, ride_id, vehicle) 
 insert into reviews (comment, grade, driver_id, passenger_id, ride_id, vehicle) VALUES ('Svaka bajo', 5, 5, 2, 1, false);
 insert into reviews (comment, grade, driver_id, passenger_id, ride_id, vehicle) VALUES ('Svaka moj', 5, 4, 2, 1, false);
 
-insert into routes (distance, departure, destination) VALUES (4.2, 1, 2);
+
+insert into routes (distance, departure, destination) VALUES (3.0, 1, 2);
+insert into routes (distance, departure, destination) VALUES (2.1, 1, 3);
+insert into routes (distance, departure, destination) VALUES (2.1, 2, 3);
+insert into routes (distance, departure, destination) VALUES(1.6, 3, 4);
+
 insert into rides_locations (ride_id, locations_id) VALUES (3, 1);
+insert into rides_locations (ride_id, locations_id) VALUES (1, 2);
+insert into rides_locations (ride_id, locations_id) VALUES (2, 3);
+insert into rides_locations (ride_id, locations_id) VALUES (4, 4);
 
 insert into notes (user_id, creation_date, message) VALUES (5, '2022-12-21T16:48:49.439927', 'Daj radi vise');
 

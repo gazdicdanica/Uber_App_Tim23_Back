@@ -12,7 +12,7 @@ import org.springframework.format.annotation.NumberFormat;
 @Data
 @AllArgsConstructor @NoArgsConstructor
 public class UserShortDTO {
-    @NotNull
+
     @NumberFormat(style = NumberFormat.Style.NUMBER)
     private int id;
     @NotNull @NotEmpty

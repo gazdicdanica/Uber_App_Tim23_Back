@@ -36,7 +36,7 @@ public class DriverService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
-    private LocationRepository locationRepository;
+    private RoleService roleService;
     @Autowired
     private VehicleRepository vehicleRepository;
     @Autowired
@@ -78,7 +78,7 @@ public class DriverService {
         newDriver.setActive(true);
 
         List<Role> li = new ArrayList<>();
-        li.add(new Role(3L, "ROLE_DRIVER"));
+        li.add(roleService.findByName("ROLE_DRIVER"));
         newDriver.setRole(li);
         return driverRepository.save(newDriver);
     }
@@ -106,14 +106,14 @@ public class DriverService {
         return driver;
     }
 
-    public Driver changeDriverData(Driver driver, UserDTO driverDTO, Long id) {
+    public Driver changeDriverData(Driver driver, UserDTO driverDTO) {
         driver.setName(driverDTO.getName());
         driver.setSurname(driverDTO.getSurname());
         driver.setProfilePicture(Base64.getDecoder().decode(driverDTO.getProfilePicture()));
         driver.setTelephoneNumber(driverDTO.getTelephoneNumber());
         driver.setEmail(driverDTO.getEmail());
         driver.setAddress(driverDTO.getAddress());
-        driver.setPassword(driverRepository.findPasswordById(id));
+//        driver.setPassword(driverRepository.findPasswordById(id));
 
         return driver;
     }

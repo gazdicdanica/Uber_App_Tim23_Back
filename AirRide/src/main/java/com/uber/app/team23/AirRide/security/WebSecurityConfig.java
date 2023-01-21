@@ -73,6 +73,8 @@ public class WebSecurityConfig {
                 .requestMatchers("/auth/**").permitAll()
 //                .requestMatchers("api/ride").permitAll()
                 .requestMatchers(toH2Console()).permitAll()
+                .requestMatchers("/api/user/forgotPassword").permitAll()
+                .requestMatchers("/api/user/resetPassword").permitAll()
                 .requestMatchers("/api/user/login").permitAll()
                 .requestMatchers(HttpMethod.POST,"/api/passenger").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/passenger/activate/*").permitAll()
