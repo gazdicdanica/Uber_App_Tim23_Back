@@ -118,7 +118,7 @@ public class RideSchedulingService {
             throw new BadRequestException("No driver is available at the moment.");
         }
 
-        List<Route> routes = new ArrayList<>(ride.getLocations());
+        List<Route> routes = ride.getLocations();
         return findFastestDriver(driversWorkHours, routes.get(0).getDeparture());
 
     }
