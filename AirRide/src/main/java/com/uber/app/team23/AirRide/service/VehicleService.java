@@ -4,6 +4,7 @@ import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
 import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
+import com.uber.app.team23.AirRide.repository.DriverRepository;
 import com.uber.app.team23.AirRide.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import java.util.List;
 public class VehicleService {
     @Autowired
     VehicleRepository vehicleRepository;
+
     @Autowired
     LocationService locationService;
 
@@ -22,13 +24,20 @@ public class VehicleService {
     }
 
     public void changeLocation(Long id, Location location){
-        Vehicle vehicle = findOne(id);
+        Vehicle vehicle = findOneByDriverId(id);
+        if (vehicle == null) {
+            throw new EntityNotFoundException("Vehicle does not exist");
+        }
         Location l = locationService.findByAddress(location.getAddress());
         if(l == null){
             l = locationService.save(location);
         }
         vehicle.setCurrentLocation(l);
         vehicleRepository.save(vehicle);
+    }
+
+    private Vehicle findOneByDriverId(Long id) {
+        return vehicleRepository.findByDriver(id);
     }
 
 }

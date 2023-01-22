@@ -81,8 +81,8 @@ public class WebSecurityConfig {
                 .requestMatchers("/api/unregisteredUser").permitAll()
                 .requestMatchers("/api/ride/active").permitAll()
                 .requestMatchers("/socket/**").permitAll()
-//                .requestMatchers("/**").permitAll().and()
-                .anyRequest().authenticated().and().cors().and()
+                .requestMatchers("/**").permitAll().and()
+//                .anyRequest().authenticated().and().cors().and()
                 .addFilterBefore(new TokenAuthenticationFilter(tokenUtils, userDetailsService()), BasicAuthenticationFilter.class);
         http.csrf().ignoringRequestMatchers(toH2Console());
         http.csrf().disable();

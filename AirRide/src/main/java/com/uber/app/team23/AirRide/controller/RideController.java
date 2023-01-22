@@ -62,6 +62,7 @@ public class RideController {
         }
         ride = rideService.addDriver(ride, potential);
         RideResponseDTO dto = new RideResponseDTO(ride);
+        System.err.println("ID: "+ dto.getId());
         webSocketController.simpMessagingTemplate.convertAndSend("/ride/" + potential.getId(), dto);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
