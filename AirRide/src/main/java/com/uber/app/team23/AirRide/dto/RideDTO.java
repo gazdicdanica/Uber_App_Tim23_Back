@@ -36,5 +36,4 @@ public class RideDTO {
     @NotNull
     private boolean petTransport;
     private double estimatedTime;
-    private float estimatedPrice;
 }

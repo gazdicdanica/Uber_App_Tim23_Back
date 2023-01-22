@@ -33,6 +33,7 @@ public class RideResponseDTO {
     private RideStatus status;
     private Rejection rejection;
     private LocalDateTime scheduledTime;
+    private Double totalDistance;
 
     public RideResponseDTO(Ride ride){
         this.id = ride.getId();
@@ -55,6 +56,7 @@ public class RideResponseDTO {
         this.status = ride.getStatus();
         this.rejection = ride.getRejection();
         this.scheduledTime = ride.getScheduledTime();
+        this.totalDistance = ride.getTotalDistance();
     }
 
 }

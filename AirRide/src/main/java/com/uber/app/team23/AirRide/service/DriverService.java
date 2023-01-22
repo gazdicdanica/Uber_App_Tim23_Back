@@ -36,7 +36,7 @@ public class DriverService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
-    private LocationRepository locationRepository;
+    private RoleService roleService;
     @Autowired
     private VehicleRepository vehicleRepository;
     @Autowired
@@ -78,7 +78,7 @@ public class DriverService {
         newDriver.setActive(true);
 
         List<Role> li = new ArrayList<>();
-        li.add(new Role(3L, "ROLE_DRIVER"));
+        li.add(roleService.findByName("ROLE_DRIVER"));
         newDriver.setRole(li);
         return driverRepository.save(newDriver);
     }

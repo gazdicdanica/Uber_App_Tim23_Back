@@ -28,8 +28,8 @@ public class PassengerService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-//    @Autowired
-//    private RideService rideService;
+    @Autowired
+    private RoleService roleService;
 
     @Autowired
     private RideRepository rideRepository;
@@ -106,7 +106,7 @@ public class PassengerService {
         p.setBlocked(false);
         p.setActive(false);
         List<Role> li = new ArrayList<>();
-        li.add(new Role(1L, "passenger"));
+        li.add(roleService.findByName("ROLE_USER"));
         p.setRole(li);
 
         return this.passengerRepository.save(p);

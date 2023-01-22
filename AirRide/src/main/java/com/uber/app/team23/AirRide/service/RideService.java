@@ -53,24 +53,6 @@ public class RideService {
         return rideRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Ride does not exist"));
     }
 
-    public List<Double> getRouteEstimates(String uri){
-        RestTemplate restTemplate = new RestTemplate();
-        String result = restTemplate.getForObject(uri, String.class);
-//        LinkedHashMap<?,?> res = (LinkedHashMap<?, ?>) result;
-        JSONObject obj = new JSONObject(result);
-        JSONArray routes = obj.getJSONArray("routes");
-        JSONObject o = (JSONObject) routes.get(0);
-        double distanceInM = o.getDouble("distance");
-        double durationInSec = o.getDouble("duration");
-
-        List<Double> ret = new ArrayList<>();
-        ret.add(durationInSec);
-        ret.add(distanceInM/1000);
-        return ret;
-//        System.err.println(distance);
-
-    }
-
     public RideResponseDTO findActiveByDriver(Long driverId){
         return rideRepository.findActiveByDriver(driverId).orElseThrow(() -> new EntityNotFoundException("Active ride does not exist"));
     }
@@ -102,17 +84,7 @@ public class RideService {
                 r = routeService.save(route);
             }
             ride.getLocations().add(r);
-            StringBuilder uri = new StringBuilder("https://router.project-osrm.org/route/v1/driving/");
-            uri.append(r.getDeparture().getLongitude());
-            uri.append(",");
-            uri.append(r.getDeparture().getLatitude());
-            uri.append(";");
-            uri.append(r.getDestination().getLongitude());
-            uri.append(",");
-            uri.append(r.getDestination().getLatitude());
-            uri.append("?overview=false&geometries=geojson");
-            System.err.println(uri.toString());
-            List<Double> estimation = getRouteEstimates(uri.toString());
+            List<Double> estimation = rideSchedulingService.getEstimates(r.getDeparture(), r.getDestination());
             int time =(int) Math.round(estimation.get(0)/60);
             estimatedTime += time;
             if (r.getDistance() == 0){
@@ -126,6 +98,8 @@ public class RideService {
         VehicleEnum vehicleEnum = ride.getVehicleType();
         VehicleType vehicleType = vehicleTypeRepository.findByType(vehicleEnum).orElse(null);
         ride.setTotalCost(distance * vehicleType.getPrice());
+        double dist = (double)Math.round(distance * 100) /100;
+        ride.setTotalDistance(dist);
         ride.setEstimatedTimeInMinutes(estimatedTime);
         return rideRepository.save(ride);
     }
@@ -157,7 +131,6 @@ public class RideService {
         ride.setStatus(RideStatus.PENDING);
         ride.setPanic(false);
         ride.setEstimatedTimeInMinutes((int) rideDTO.getEstimatedTime());
-        ride.setTotalCost(rideDTO.getEstimatedPrice());
         ride.setVehicleType(rideDTO.getVehicleType());
         ride.setBabyTransport(rideDTO.isBabyTransport());
         ride.setPetTransport(rideDTO.isPetTransport());
@@ -239,6 +212,10 @@ public class RideService {
 
     public Page<Ride> findAllByDriver(Driver byId, Pageable pageable) {
         return rideRepository.findAllByDriver(byId, pageable);
+    }
+
+    public List<Ride> findByStatus(RideStatus status){
+        return rideRepository.findByStatus(status);
     }
 
 //    public Page<Ride> findAllByPassenger(Passenger passenger, Pageable pageable){

@@ -3,10 +3,12 @@ package com.uber.app.team23.AirRide.controller;
 import com.uber.app.team23.AirRide.dto.*;
 import com.uber.app.team23.AirRide.exceptions.BadRequestException;
 import com.uber.app.team23.AirRide.mapper.FavoriteDTOMapper;
+import com.uber.app.team23.AirRide.mapper.RideDTOMapper;
 import com.uber.app.team23.AirRide.model.messageData.Panic;
 import com.uber.app.team23.AirRide.model.messageData.Rejection;
 import com.uber.app.team23.AirRide.model.rideData.Favorite;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
+import com.uber.app.team23.AirRide.model.rideData.RideStatus;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -54,10 +57,21 @@ public class RideController {
         ride = rideService.addRoutes(rideDTO, ride.getId());
         ride = rideService.addPassengers(rideDTO, ride.getId(), user.getId());
         Driver potential = rideService.findPotentialDriver(ride);
+        if(potential == null){
+            throw new BadRequestException("No driver is available at the moment");
+        }
         ride = rideService.addDriver(ride, potential);
         RideResponseDTO dto = new RideResponseDTO(ride);
-        webSocketController.simpMessagingTemplate.convertAndSend("/ride", dto);
+        webSocketController.simpMessagingTemplate.convertAndSend("/ride/" + potential.getId(), dto);
         return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
+    @Transactional
+    @GetMapping("/active")
+    public ResponseEntity<List<RideResponseDTO>> getActive(){
+        List<Ride> actives = rideService.findByStatus(RideStatus.ACTIVE);
+        List<RideResponseDTO> ret = actives.stream().map(RideDTOMapper::fromRideToDTO).toList();
+        return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")

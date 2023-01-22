@@ -2,6 +2,7 @@ package com.uber.app.team23.AirRide.repository;
 
 import com.uber.app.team23.AirRide.dto.RideResponseDTO;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
+import com.uber.app.team23.AirRide.model.rideData.RideStatus;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
@@ -22,7 +23,7 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
     public Optional<RideResponseDTO> findActiveByDriver(Long driverId);
 
     @Query(value = "select new com.uber.app.team23.AirRide.dto.RideResponseDTO(r) from Ride r left join fetch r.driver d where d.id=?1 and r.status=1")
-    public List<RideResponseDTO> findAcceptedByDriver(Long driverId);
+    public Optional<RideResponseDTO> findAcceptedByDriver(Long driverId);
 
     @Query(value = "select new com.uber.app.team23.AirRide.dto.RideResponseDTO(r) from Ride r join r.passengers p where p.id=?1 and r.status=3")
     public Optional<RideResponseDTO> findActiveByPassenger(Long passengerId);
@@ -30,4 +31,6 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
     public Page<Ride> findAllByDriver(User byId, Pageable pageable);
 
     public Page<Ride> findByPassengersContaining(Passenger passenger, Pageable pageable);
+
+    public List<Ride> findByStatus(RideStatus status);
 }
