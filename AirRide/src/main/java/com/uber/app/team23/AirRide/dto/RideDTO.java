@@ -3,6 +3,7 @@ package com.uber.app.team23.AirRide.dto;
 import com.uber.app.team23.AirRide.model.rideData.Route;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
 import com.uber.app.team23.AirRide.validation.EnumValidator;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotEmpty;
@@ -18,7 +19,7 @@ public class RideDTO {
     @Valid
     private ArrayList<Route> locations = new ArrayList<>();
 
-    @Valid
+    
     private ArrayList<UserShortDTO> passengers = new ArrayList<>();
 
     @NotNull
@@ -26,7 +27,7 @@ public class RideDTO {
     private VehicleEnum vehicleType;
     // For scheduling in advance
 
-    @Future
+    @Nullable
     private LocalDateTime scheduledTime;
 
     @NotNull

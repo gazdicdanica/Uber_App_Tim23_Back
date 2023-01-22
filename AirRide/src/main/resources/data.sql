@@ -26,7 +26,7 @@ insert into user_role (user_id, role_id) VALUES (3, 1);
 insert into user_role (user_id, role_id) VALUES (4, 3);
 insert into user_role (user_id, role_id) VALUES (5, 3);
 insert into user_role (user_id, role_id) VALUES (6, 3);
-insert into user_role (user_id, role_id) VALUES (7, 3);
+-- insert into user_role (user_id, role_id) VALUES (7, 3);
 
 insert into working_hours (end_time, start_time, driver_id) VALUES ('2023-01-02T10:00:00.469083', '2023-01-02T19:00:00.469083', 4);
 insert into working_hours (end_time, start_time, driver_id) VALUES ('2023-01-03T10:00:00.123411', '2023-01-03T18:11:11.123411', 5);

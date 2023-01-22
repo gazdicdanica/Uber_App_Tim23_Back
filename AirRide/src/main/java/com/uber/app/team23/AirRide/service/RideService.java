@@ -66,7 +66,7 @@ public class RideService {
         ride.setPassengers(new HashSet<>());
         Passenger creator = passengerService.findOne(userId);
         for(UserShortDTO user: rideDTO.getPassengers()){
-            Passenger p = passengerService.findOne((long) user.getId());
+            Passenger p = passengerService.findByEmail(user.getEmail());
             ride.getPassengers().add(p);
         }
         ride.getPassengers().add(creator);

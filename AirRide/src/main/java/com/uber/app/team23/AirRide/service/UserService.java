@@ -59,7 +59,7 @@ public class UserService {
 
     public boolean isDriver(User user){
         for(Role role : user.getRole()){
-            if(role.getName().equals("driver")){
+            if(role.getName().equals("ROLE_DRIVER")){
                 return true;
             }
         }
@@ -68,7 +68,7 @@ public class UserService {
 
     public boolean isPassenger(User user){
         for(Role role : user.getRole()){
-            if(role.getName().equals("passenger")){
+            if(role.getName().equals("ROLE_USER")){
                 return true;
             }
         }
