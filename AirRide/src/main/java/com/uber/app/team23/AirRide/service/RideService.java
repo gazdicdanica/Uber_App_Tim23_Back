@@ -12,9 +12,11 @@ import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.rideData.RideStatus;
 import com.uber.app.team23.AirRide.model.rideData.Route;
 import com.uber.app.team23.AirRide.model.users.Passenger;
+import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleType;
+import com.uber.app.team23.AirRide.repository.RejectionRepository;
 import com.uber.app.team23.AirRide.repository.RideRepository;
 import com.uber.app.team23.AirRide.repository.VehicleTypeRepository;
 import org.json.JSONArray;
@@ -22,6 +24,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -48,6 +51,8 @@ public class RideService {
     private RideSchedulingService rideSchedulingService;
     @Autowired
     private VehicleTypeRepository vehicleTypeRepository;
+    @Autowired
+    private RejectionRepository rejectionRepository;
 
     public Ride findOne(Long id){
         return rideRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Ride does not exist"));
@@ -186,20 +191,19 @@ public class RideService {
 
     public RideResponseDTO cancelRide(Long id, Rejection rejection){
         Ride ride = this.findOne(id);
-        System.err.println(ride.getStatus());
         if(ride.getStatus() != RideStatus.PENDING && ride.getStatus() != RideStatus.ACCEPTED){
             throw new BadRequestException("Cannot cancel a ride that is not in status PENDING or ACCEPTED!");
         }
         // Rejection repository?
+        Rejection r = new Rejection();
         ride.setStatus(RideStatus.REJECTED);
-        if(rejection!= null){
-            rejection.setRide(ride);
-            rejection.setTimeOfRejection(LocalDateTime.now());
-            // TODO rejection.setUser
-            ride.setRejection(rejection);
-        }
-
-
+        r.setRide(ride);
+        r.setTimeOfRejection(LocalDateTime.now());
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        r.setUser(user);
+        r.setReason(rejection.getReason());
+        r = rejectionRepository.save(rejection);
+        ride.setRejection(r);
         return RideDTOMapper.fromRideToDTO(rideRepository.save(ride));
     }
 
