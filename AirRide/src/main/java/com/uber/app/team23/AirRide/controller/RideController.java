@@ -143,9 +143,11 @@ public class RideController {
 
     }
 
+    @Transactional
     @PreAuthorize("hasAuthority('ROLE_DRIVER')")
     @PutMapping("/{id}/cancel")
-    public ResponseEntity<RideResponseDTO> cancelRide(@PathVariable Long id, @Nullable @RequestBody Rejection rejection){
+    public ResponseEntity<RideResponseDTO> cancelRide(@PathVariable Long id, @RequestBody Rejection rejection){
+        System.err.println(rejection.reason);
         RideResponseDTO ride = rideService.cancelRide(id, rejection);
         return new ResponseEntity<>(ride, HttpStatus.OK);
 
