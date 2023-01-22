@@ -24,7 +24,7 @@ public class VehicleController {
     @Transactional
     public ResponseEntity<Void> changeLocation(@PathVariable Long id, @Valid @RequestBody Location location){
         vehicleService.changeLocation(id, location);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/vehicleTypes")

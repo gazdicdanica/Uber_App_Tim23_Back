@@ -16,6 +16,7 @@ import java.util.List;
 public class VehicleService {
     @Autowired
     VehicleRepository vehicleRepository;
+
     @Autowired
     LocationService locationService;
     @Autowired
@@ -26,7 +27,10 @@ public class VehicleService {
     }
 
     public void changeLocation(Long id, Location location){
-        Vehicle vehicle = findOne(id);
+        Vehicle vehicle = findOneByDriverId(id);
+        if (vehicle == null) {
+            throw new EntityNotFoundException("Vehicle does not exist");
+        }
         Location l = locationService.findByAddress(location.getAddress());
         if(l == null){
             l = locationService.save(location);
@@ -35,6 +39,10 @@ public class VehicleService {
         vehicleRepository.save(vehicle);
     }
 
+    private Vehicle findOneByDriverId(Long id) {
+        return vehicleRepository.findByDriver(id);
+    }
+    
     public List<VehicleType> findAllVehicleTypes(){
         return this.vehicleTypeRepository.findAll();
     }
