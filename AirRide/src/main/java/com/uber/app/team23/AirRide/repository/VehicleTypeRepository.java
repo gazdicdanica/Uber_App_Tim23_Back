@@ -5,10 +5,13 @@ import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnu
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface VehicleTypeRepository extends JpaRepository<VehicleType, Long> {
 
     Optional<VehicleType> findByType(VehicleEnum vehicleEnum);
+
+    List<VehicleType> findAll();
 
 }
