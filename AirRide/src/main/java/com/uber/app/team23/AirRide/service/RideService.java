@@ -98,6 +98,8 @@ public class RideService {
         VehicleEnum vehicleEnum = ride.getVehicleType();
         VehicleType vehicleType = vehicleTypeRepository.findByType(vehicleEnum).orElse(null);
         ride.setTotalCost(distance * vehicleType.getPrice());
+        double dist = (double)Math.round(distance * 100) /100;
+        ride.setTotalDistance(dist);
         ride.setEstimatedTimeInMinutes(estimatedTime);
         return rideRepository.save(ride);
     }
@@ -129,7 +131,6 @@ public class RideService {
         ride.setStatus(RideStatus.PENDING);
         ride.setPanic(false);
         ride.setEstimatedTimeInMinutes((int) rideDTO.getEstimatedTime());
-        ride.setTotalCost(rideDTO.getEstimatedPrice());
         ride.setVehicleType(rideDTO.getVehicleType());
         ride.setBabyTransport(rideDTO.isBabyTransport());
         ride.setPetTransport(rideDTO.isPetTransport());
@@ -211,6 +212,10 @@ public class RideService {
 
     public Page<Ride> findAllByDriver(Driver byId, Pageable pageable) {
         return rideRepository.findAllByDriver(byId, pageable);
+    }
+
+    public List<Ride> findByStatus(RideStatus status){
+        return rideRepository.findByStatus(status);
     }
 
 //    public Page<Ride> findAllByPassenger(Passenger passenger, Pageable pageable){

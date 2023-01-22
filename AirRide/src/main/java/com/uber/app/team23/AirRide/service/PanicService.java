@@ -25,6 +25,7 @@ public class PanicService {
         p.setCurrentRide(ride);
         p.setTime(LocalDateTime.now());
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        p.setUser(user);
         return new PanicDTO(panicRepository.save(p));
     }
 
