@@ -71,6 +71,9 @@ public class Ride {
     @Column(name = "scheduled_time")
     private LocalDateTime scheduledTime;
 
+    @Column(name = "total_distance")
+    private Double totalDistance;
+
     public void addReview(Review review){
         this.reviews.add(review);
         review.setRide(this);
