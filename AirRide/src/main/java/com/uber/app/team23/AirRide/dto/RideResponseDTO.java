@@ -13,6 +13,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter @Setter @NoArgsConstructor
 public class RideResponseDTO {
@@ -25,7 +26,7 @@ public class RideResponseDTO {
     private double totalCost;
     private UserShortDTO driver;
     private int estimatedTimeInMinutes;
-    private ArrayList<Route> locations;
+    private List<Route> locations;
     private ArrayList<UserShortDTO> passengers;
     private VehicleEnum vehicleType;
     private boolean babyTransport;
@@ -44,7 +45,7 @@ public class RideResponseDTO {
             this.driver = new UserShortDTO(ride.getDriver());
         }
         this.estimatedTimeInMinutes = ride.getEstimatedTimeInMinutes();
-        this.locations = new ArrayList<>(ride.getLocations());
+        this.locations = ride.getLocations();
         this.passengers = new ArrayList<>();
         for(User u: ride.getPassengers()){
             UserShortDTO dto = new UserShortDTO(u);
