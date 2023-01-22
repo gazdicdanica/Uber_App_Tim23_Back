@@ -62,6 +62,23 @@ public class UserController {
         }
     }
 
+    @GetMapping(value = "/user/exist/{email}")
+    @Transactional
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_DRIVER')")
+    public ResponseEntity<?> doesUserExist(@PathVariable String email) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User u = userService.findByEmail(email);
+        JSONObject resp = new JSONObject();
+        if (u == null) {
+            throw new EntityNotFoundException("User With This Email Does Not Exist");
+        } else if (user.getEmail().equals(email)){
+            return new ResponseEntity<>(resp.put("message", "You Cannot Invite Yourself").toString(), HttpStatus.NOT_FOUND);
+        } else if (userService.isPassenger(u)) {
+            return new ResponseEntity<>(resp.put("message", "User With This Email Does Exist").toString(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(resp.put("message", "You Cannot Invite Driver/Admin To ride").toString(), HttpStatus.NOT_FOUND);
+    }
+
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping(value = "/user")
     public ResponseEntity<UserPaginatedDTO> getUserPaginated(Pageable page) {
