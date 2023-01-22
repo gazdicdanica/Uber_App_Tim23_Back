@@ -131,7 +131,6 @@ public class RideService {
         ride.setStatus(RideStatus.PENDING);
         ride.setPanic(false);
         ride.setEstimatedTimeInMinutes((int) rideDTO.getEstimatedTime());
-        ride.setTotalCost(rideDTO.getEstimatedPrice());
         ride.setVehicleType(rideDTO.getVehicleType());
         ride.setBabyTransport(rideDTO.isBabyTransport());
         ride.setPetTransport(rideDTO.isPetTransport());
