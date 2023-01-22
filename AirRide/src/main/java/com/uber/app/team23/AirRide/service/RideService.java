@@ -80,7 +80,7 @@ public class RideService {
 
     public Ride addRoutes(RideDTO rideDTO, Long id){
         Ride ride = this.findOne(id);
-        ride.setLocations(new HashSet<>());
+        ride.setLocations(new ArrayList<>());
         int estimatedTime = 0;
         double distance = 0;
         for(Route route: rideDTO.getLocations()){
