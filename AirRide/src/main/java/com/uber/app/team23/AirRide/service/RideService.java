@@ -1,5 +1,6 @@
 package com.uber.app.team23.AirRide.service;
 
+import com.uber.app.team23.AirRide.controller.WebSocketController;
 import com.uber.app.team23.AirRide.dto.RideDTO;
 import com.uber.app.team23.AirRide.dto.RideResponseDTO;
 import com.uber.app.team23.AirRide.dto.UserShortDTO;
@@ -53,6 +54,8 @@ public class RideService {
     private VehicleTypeRepository vehicleTypeRepository;
     @Autowired
     private RejectionRepository rejectionRepository;
+    @Autowired
+    WebSocketController webSocketController;
 
     public Ride findOne(Long id){
         return rideRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Ride does not exist"));
