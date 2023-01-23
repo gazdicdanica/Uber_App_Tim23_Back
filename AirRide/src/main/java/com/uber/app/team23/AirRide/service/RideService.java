@@ -69,17 +69,15 @@ public class RideService {
         return rideRepository.findActiveByPassenger(passengerId).orElseThrow(() -> new EntityNotFoundException("Active ride does not exist"));
     }
 
-    public Ride addPassengers(RideDTO rideDTO, Long rideId, Long userId, RideResponseDTO dto){
+    public Ride addPassengers(RideDTO rideDTO, Long rideId, Long userId){
         Ride ride = this.findOne(rideId);
         ride.setPassengers(new HashSet<>());
         Passenger creator = passengerService.findOne(userId);
+        ride.getPassengers().add(creator);
         for(UserShortDTO user: rideDTO.getPassengers()){
             Passenger p = passengerService.findByEmail(user.getEmail());
             ride.getPassengers().add(p);
-            System.err.println("LINKED: " + p.getId());
-            webSocketController.simpMessagingTemplate.convertAndSend("/linkPassengers/" + p.getId(), dto);
         }
-        ride.getPassengers().add(creator);
         return rideRepository.save(ride);
     }
 

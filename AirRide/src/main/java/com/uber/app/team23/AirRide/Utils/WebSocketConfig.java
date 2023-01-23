@@ -18,6 +18,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry){
         registry.setApplicationDestinationPrefixes("/sub")
-                .enableSimpleBroker("/ride", "/map-updates", "/linkPassenger");
+                .enableSimpleBroker("/ride", "/map-updates", "/linkPassengers");
     }
 }
