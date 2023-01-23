@@ -70,11 +70,11 @@ public class RideService {
         Ride ride = this.findOne(rideId);
         ride.setPassengers(new HashSet<>());
         Passenger creator = passengerService.findOne(userId);
+        ride.getPassengers().add(creator);
         for(UserShortDTO user: rideDTO.getPassengers()){
             Passenger p = passengerService.findByEmail(user.getEmail());
             ride.getPassengers().add(p);
         }
-        ride.getPassengers().add(creator);
         return rideRepository.save(ride);
     }
 

@@ -53,6 +53,7 @@ public class RideController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<RideResponseDTO> createRide(@Valid @RequestBody @Nullable RideDTO rideDTO){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        // TODO check passengers pending/active/started ride
         Ride ride = rideService.save(rideDTO);
         ride = rideService.addRoutes(rideDTO, ride.getId());
         ride = rideService.addPassengers(rideDTO, ride.getId(), user.getId());
@@ -62,7 +63,6 @@ public class RideController {
         }
         ride = rideService.addDriver(ride, potential);
         RideResponseDTO dto = new RideResponseDTO(ride);
-        System.err.println("ID: "+ dto.getId());
         webSocketController.simpMessagingTemplate.convertAndSend("/ride/" + potential.getId(), dto);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
@@ -132,6 +132,16 @@ public class RideController {
     @PutMapping("/{id}/accept")
     public ResponseEntity<RideResponseDTO> acceptRide(@PathVariable Long id){
         RideResponseDTO ride = rideService.acceptRide(id);
+        int i =0;
+        for(UserShortDTO user : ride.getPassengers()){
+            if(i == 0){
+                webSocketController.simpMessagingTemplate.convertAndSend("/ride/" + user.getId(), ride);
+                i++;
+                continue;
+            }
+            webSocketController.simpMessagingTemplate.convertAndSend("/linkPassengers/" + user.getId(), ride);
+            i++;
+        }
         return new ResponseEntity<>(ride, HttpStatus.OK);
 
     }
