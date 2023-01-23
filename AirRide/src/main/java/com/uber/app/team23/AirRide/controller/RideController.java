@@ -55,13 +55,13 @@ public class RideController {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Ride ride = rideService.save(rideDTO);
         ride = rideService.addRoutes(rideDTO, ride.getId());
-        ride = rideService.addPassengers(rideDTO, ride.getId(), user.getId());
+        RideResponseDTO dto = new RideResponseDTO(ride);
+        ride = rideService.addPassengers(rideDTO, ride.getId(), user.getId(), dto);
         Driver potential = rideService.findPotentialDriver(ride);
         if(potential == null){
             throw new BadRequestException("No driver is available at the moment");
         }
         ride = rideService.addDriver(ride, potential);
-        RideResponseDTO dto = new RideResponseDTO(ride);
         System.err.println("ID: "+ dto.getId());
         webSocketController.simpMessagingTemplate.convertAndSend("/ride/" + potential.getId(), dto);
         return new ResponseEntity<>(dto, HttpStatus.OK);
