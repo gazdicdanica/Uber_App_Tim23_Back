@@ -4,7 +4,7 @@ VALUES ('admin', true, 'AdresaAdmina', false, 'piaegrhfvpiae4h4', '064123412', '
 insert into users (type, active, address, blocked, profile_picture, name, username, last_name, telephone_number, email, password)
 VALUES ('passenger', true, 'Dimitrija Avramovic 4', false, '123asdq', 'Danica','test@email.com', 'Gazdic', '0691852001', 'test@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
 insert into users (type, active, address, blocked, profile_picture, name, username, last_name, telephone_number, email, password)
-VALUES ('passenger', false, 'Maksima Gorkog 55', false, '123qwerty', 'Milos', 'test2@email.com','Obradovic', '12341234', 'test2@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
+VALUES ('passenger', true, 'Maksima Gorkog 55', false, '123qwerty', 'Milos', 'test2@email.com','Obradovic', '12341234', 'test2@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
 
 insert into users (type, active, address, blocked, email, last_name, name, username, password, telephone_number, profile_picture, online)
 VALUES ('driver', true, 'Adresa1', false, 'pp@gmail.com', 'Peric', 'Pera','pp@gmail.com' ,'$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0641212', 'qwer', true);

@@ -1,5 +1,6 @@
 package com.uber.app.team23.AirRide.service;
 
+import com.uber.app.team23.AirRide.controller.WebSocketController;
 import com.uber.app.team23.AirRide.dto.RideDTO;
 import com.uber.app.team23.AirRide.dto.RideResponseDTO;
 import com.uber.app.team23.AirRide.dto.UserShortDTO;
@@ -53,6 +54,8 @@ public class RideService {
     private VehicleTypeRepository vehicleTypeRepository;
     @Autowired
     private RejectionRepository rejectionRepository;
+    @Autowired
+    WebSocketController webSocketController;
 
     public Ride findOne(Long id){
         return rideRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Ride does not exist"));
@@ -66,13 +69,15 @@ public class RideService {
         return rideRepository.findActiveByPassenger(passengerId).orElseThrow(() -> new EntityNotFoundException("Active ride does not exist"));
     }
 
-    public Ride addPassengers(RideDTO rideDTO, Long rideId, Long userId){
+    public Ride addPassengers(RideDTO rideDTO, Long rideId, Long userId, RideResponseDTO dto){
         Ride ride = this.findOne(rideId);
         ride.setPassengers(new HashSet<>());
         Passenger creator = passengerService.findOne(userId);
         for(UserShortDTO user: rideDTO.getPassengers()){
             Passenger p = passengerService.findByEmail(user.getEmail());
             ride.getPassengers().add(p);
+            System.err.println("LINKED: " + p.getId());
+            webSocketController.simpMessagingTemplate.convertAndSend("/linkPassengers/" + p.getId(), dto);
         }
         ride.getPassengers().add(creator);
         return rideRepository.save(ride);
