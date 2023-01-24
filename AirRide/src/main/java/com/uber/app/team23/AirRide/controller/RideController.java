@@ -105,6 +105,10 @@ public class RideController {
     @PutMapping("/{id}/withdraw")
     public ResponseEntity<RideResponseDTO> withdrawRide(@PathVariable Long id){
         RideResponseDTO ride = rideService.withdrawRide(id);
+        if(ride.getDriver() != null){
+            webSocketController.simpMessagingTemplate.convertAndSend("/ride-cancel/" + ride.getDriver().getId(), ride);
+        }
+
         return new ResponseEntity<>(ride, HttpStatus.OK);
 
     }
