@@ -225,6 +225,16 @@ public class RideService {
         return rideRepository.findByStatus(status);
     }
 
+    public int countForDriver(User user) {
+        List<Ride> list = rideRepository.findAllByDriver(user);
+        return  list.size();
+    }
+
+    public int countForPsngr(User u) {
+        List<Ride> list = rideRepository.findAllByPassengersContaining(u);
+        return  list.size();
+    }
+
 //    public Page<Ride> findAllByPassenger(Passenger passenger, Pageable pageable){
 //        return rideRepository.findAllByPassengers(passenger, pageable);
 //    }

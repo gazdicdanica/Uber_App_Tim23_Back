@@ -55,7 +55,7 @@ public class PassengerController {
     @GetMapping
     public ResponseEntity<UserPaginatedDTO> getPassengersPage(Pageable page){
         Page<Passenger> passengersPage = passengerService.findAll(page);
-        List<UserDTO> users = new ArrayList<>(); //passengersPage.stream().map(PassengerDTOMapper::fromPassengerToDTO).collect(Collectors.toList());
+        List<UserDTO> users = new ArrayList<>();//passengersPage.stream().map(PassengerDTOMapper::fromPassengerToDTO).collect(Collectors.toList());
 
         return new ResponseEntity<>(new UserPaginatedDTO(users), HttpStatus.OK);
     }
