@@ -63,7 +63,7 @@ public class RideController {
         }
         ride = rideService.addDriver(ride, potential);
         RideResponseDTO dto = new RideResponseDTO(ride);
-        webSocketController.simpMessagingTemplate.convertAndSend("/ride/" + potential.getId(), dto);
+        webSocketController.simpMessagingTemplate.convertAndSend("/ride-driver/" + potential.getId(), dto);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
@@ -116,6 +116,14 @@ public class RideController {
         Ride ride = rideService.setPanic(id);
         if(panic != null){
             PanicDTO p = panicService.save(panic, ride);
+            if (p.getUser().getId() == ride.getDriver().getId()){
+                for(Passenger passenger : ride.getPassengers()){
+                    System.err.println(passenger.getId());
+                    webSocketController.simpMessagingTemplate.convertAndSend("/ride-panic/"+passenger.getId(), new RideResponseDTO(ride));
+                }
+            }else{
+                webSocketController.simpMessagingTemplate.convertAndSend("/ride-panic/"+ride.getDriver().getId(), new RideResponseDTO(ride));
+            }
             return new ResponseEntity<>(p, HttpStatus.OK);
         }
         return new ResponseEntity<>(new PanicDTO(), HttpStatus.OK);
@@ -125,6 +133,9 @@ public class RideController {
     @PutMapping("/{id}/start")
     public ResponseEntity<RideResponseDTO> startRide(@PathVariable Long id){
         RideResponseDTO ride = rideService.startRide(id);
+        for(UserShortDTO p : ride.getPassengers()){
+            webSocketController.simpMessagingTemplate.convertAndSend("/ride-passenger/"+p.getId(), ride);
+        }
         return new ResponseEntity<>(ride, HttpStatus.OK);
     }
 
@@ -135,7 +146,7 @@ public class RideController {
         int i =0;
         for(UserShortDTO user : ride.getPassengers()){
             if(i == 0){
-                webSocketController.simpMessagingTemplate.convertAndSend("/ride/" + user.getId(), ride);
+                webSocketController.simpMessagingTemplate.convertAndSend("/ride-passenger/" + user.getId(), ride);
                 i++;
                 continue;
             }
@@ -150,6 +161,9 @@ public class RideController {
     @PutMapping("/{id}/end")
     public ResponseEntity<RideResponseDTO> endRide(@PathVariable Long id){
         RideResponseDTO ride = rideService.endRide(id);
+        for(UserShortDTO p : ride.getPassengers()){
+            webSocketController.simpMessagingTemplate.convertAndSend("/ride-passenger/"+p.getId(), ride);
+        }
         return new ResponseEntity<>(ride, HttpStatus.OK);
 
     }
