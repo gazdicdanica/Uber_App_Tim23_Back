@@ -22,6 +22,8 @@ public class PanicService {
     public PanicDTO save(Panic panic, Ride ride){
         Panic p = new Panic();
         p.setReason(panic.getReason());
+        System.err.println(ride.getId());
+        System.err.println(ride.getLocations());
         p.setCurrentRide(ride);
         p.setTime(LocalDateTime.now());
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

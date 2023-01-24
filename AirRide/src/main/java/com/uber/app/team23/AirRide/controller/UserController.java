@@ -217,7 +217,6 @@ public class UserController {
     @PutMapping(value = "/user/resetPassword")
     @Transactional
     public ResponseEntity<?> resetPasswordWithCode(@RequestBody PasswordResetData dto) {
-        System.err.println(dto.toString());
         User u = userService.findByEmail(dto.getEmail());
         if (u == null) {
             throw new EntityNotFoundException("User does not exist!");

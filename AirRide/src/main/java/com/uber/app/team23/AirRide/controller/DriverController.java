@@ -74,11 +74,7 @@ public class DriverController {
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
     public ResponseEntity<Object> updateDriver(@Valid @RequestBody UserDTO driverDTO, @PathVariable Long id) {
         Driver driver = driverService.changeDriverData(driverService.findById(id), driverDTO);
-        System.err.println("DTO");
-        System.err.println(driverDTO.getProfilePicture());
         UserDTO ret = new UserDTO(driverService.update(driver));
-        System.err.println("RET");
-        System.err.println(ret.getProfilePicture());
         return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
@@ -107,7 +103,6 @@ public class DriverController {
     @PreAuthorize("hasAuthority('ROLE_DRIVER')")
     public ResponseEntity<String> deleteDocument(@RequestParam(value = "name") String value){
         driverService.deleteDocumentByName(value);
-        System.err.println("DELETED");
         JSONObject obj = new JSONObject();
         obj.put("message", "Document deleted successfully");
         return new ResponseEntity<>(obj.toString(), HttpStatus.OK);
@@ -117,7 +112,6 @@ public class DriverController {
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
     public ResponseEntity<DriverDocumentsDTO> addDriverDocuments(@Valid @RequestBody DriverDocumentsDTO dto, @PathVariable Long id) {
         Driver driver = driverService.findById(id);
-        System.err.println("ADD DOCUMENT");
         DriverDocumentsDTO document = driverService.saveDocsForDriver(driver, dto);
         return new ResponseEntity<>(document, HttpStatus.OK);
     }
@@ -206,7 +200,6 @@ public class DriverController {
     public ResponseEntity<WorkHoursDTO> startWorkingHours(@PathVariable Long id) {
         Driver d = driverService.findById(id);
         WorkingHours workingHours = workingHoursService.save(d, null);
-        System.err.println(workingHours.toString());
         driverService.changeDriverStatus(true, id);
 
         WorkHoursDTO dto = new WorkHoursDTO(workingHours.getStart(),null, id);
