@@ -2,6 +2,7 @@ package com.uber.app.team23.AirRide.controller;
 
 import com.uber.app.team23.AirRide.dto.*;
 import com.uber.app.team23.AirRide.exceptions.BadRequestException;
+import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
 import com.uber.app.team23.AirRide.mapper.FavoriteDTOMapper;
 import com.uber.app.team23.AirRide.mapper.RideDTOMapper;
 import com.uber.app.team23.AirRide.model.messageData.Panic;
@@ -53,7 +54,10 @@ public class RideController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<RideResponseDTO> createRide(@Valid @RequestBody @Nullable RideDTO rideDTO){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        // TODO check passengers pending/active/started ride
+        if(rideService.findActiveByPassenger(user.getId()) != null){
+            throw new BadRequestException("Cannot order a ride while you have an active one");
+        }
+        rideService.checkPassengerRide(user.getId());
         Ride ride = rideService.save(rideDTO);
         ride = rideService.addRoutes(rideDTO, ride.getId());
         ride = rideService.addPassengers(rideDTO, ride.getId(), user.getId());
@@ -79,6 +83,9 @@ public class RideController {
     @GetMapping("/driver/{driverId}/active")
     public ResponseEntity<RideResponseDTO> getActiveRideDriver(@PathVariable Long driverId){
         RideResponseDTO ride = rideService.findActiveByDriver(driverId);
+        if(ride == null){
+            throw new EntityNotFoundException("Active ride for this driver does not exist");
+        }
         return new ResponseEntity<>(ride, HttpStatus.OK);
     }
 
@@ -86,6 +93,9 @@ public class RideController {
     @GetMapping("/passenger/{passengerId}/active")
     public ResponseEntity<RideResponseDTO> getActiveRidePassenger(@PathVariable Long passengerId){
         RideResponseDTO ride = rideService.findActiveByPassenger(passengerId);
+        if(ride == null){
+            throw new EntityNotFoundException("Active ride for this passenger does not exist");
+        }
         return new ResponseEntity<>(ride, HttpStatus.OK);
     }
 

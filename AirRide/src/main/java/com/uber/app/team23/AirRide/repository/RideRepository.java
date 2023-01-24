@@ -17,20 +17,22 @@ import java.util.Optional;
 public interface RideRepository extends JpaRepository<Ride, Long> {
 
     @Query(value = "select r from Ride r join r.passengers p where p.id=?1 and r.status=0")
-    public Optional<Ride> findPendingByPassenger(Long passengerId);
+    Optional<Ride> findPendingByPassenger(Long passengerId);
+    @Query(value = "select r from Ride r join r.passengers pass where pass.id=?1 and r.status = 1")
+    Optional<Ride> findAcceptedByPassenger(Long pId);
 
     @Query(value = "select new com.uber.app.team23.AirRide.dto.RideResponseDTO(r) from Ride r left join fetch r.driver d where d.id=?1 and r.status=3")
-    public Optional<RideResponseDTO> findActiveByDriver(Long driverId);
+    Optional<RideResponseDTO> findActiveByDriver(Long driverId);
 
     @Query(value = "select new com.uber.app.team23.AirRide.dto.RideResponseDTO(r) from Ride r left join fetch r.driver d where d.id=?1 and r.status=1")
-    public Optional<RideResponseDTO> findAcceptedByDriver(Long driverId);
+    Optional<RideResponseDTO> findAcceptedByDriver(Long driverId);
 
     @Query(value = "select new com.uber.app.team23.AirRide.dto.RideResponseDTO(r) from Ride r join r.passengers p where p.id=?1 and r.status=3")
-    public Optional<RideResponseDTO> findActiveByPassenger(Long passengerId);
+    Optional<RideResponseDTO> findActiveByPassenger(Long passengerId);
 
-    public Page<Ride> findAllByDriver(User byId, Pageable pageable);
+    Page<Ride> findAllByDriver(User byId, Pageable pageable);
 
-    public Page<Ride> findByPassengersContaining(Passenger passenger, Pageable pageable);
+    Page<Ride> findByPassengersContaining(Passenger passenger, Pageable pageable);
 
-    public List<Ride> findByStatus(RideStatus status);
+    List<Ride> findByStatus(RideStatus status);
 }

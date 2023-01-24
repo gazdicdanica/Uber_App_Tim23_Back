@@ -62,11 +62,11 @@ public class RideService {
     }
 
     public RideResponseDTO findActiveByDriver(Long driverId){
-        return rideRepository.findActiveByDriver(driverId).orElseThrow(() -> new EntityNotFoundException("Active ride does not exist"));
+        return rideRepository.findActiveByDriver(driverId).orElse(null);
     }
 
     public RideResponseDTO findActiveByPassenger(Long passengerId){
-        return rideRepository.findActiveByPassenger(passengerId).orElseThrow(() -> new EntityNotFoundException("Active ride does not exist"));
+        return rideRepository.findActiveByPassenger(passengerId).orElse(null);
     }
 
     public Ride addPassengers(RideDTO rideDTO, Long rideId, Long userId){
@@ -112,9 +112,10 @@ public class RideService {
         return rideRepository.save(ride);
     }
 
-    public void checkPassengerPendingRide(Long passengerId){
+    public void checkPassengerRide(Long passengerId){
         Ride ride = rideRepository.findPendingByPassenger(passengerId).orElse(null);
-        if(ride != null){
+        Ride accepted = rideRepository.findAcceptedByPassenger(passengerId).orElse(null);
+        if(ride != null || accepted != null){
             throw new BadRequestException("Cannot create a ride while you have one already pending!");
         }
     }
@@ -126,7 +127,7 @@ public class RideService {
 
     public Ride save(RideDTO rideDTO){
         for(UserShortDTO u : rideDTO.getPassengers()){
-            this.checkPassengerPendingRide((long)u.getId());
+            this.checkPassengerRide((long)u.getId());
         }
         Ride ride = new Ride();
         // potential start of ride
