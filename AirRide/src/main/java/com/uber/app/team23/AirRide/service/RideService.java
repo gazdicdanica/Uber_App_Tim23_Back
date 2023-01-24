@@ -105,7 +105,7 @@ public class RideService {
         }
         VehicleEnum vehicleEnum = ride.getVehicleType();
         VehicleType vehicleType = vehicleTypeRepository.findByType(vehicleEnum).orElse(null);
-        ride.setTotalCost(distance * vehicleType.getPrice());
+        ride.setTotalCost(distance * 120 + vehicleType.getPrice());
         double dist = (double)Math.round(distance * 100) /100;
         ride.setTotalDistance(dist);
         ride.setEstimatedTimeInMinutes(estimatedTime);
