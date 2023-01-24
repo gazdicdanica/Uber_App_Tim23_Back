@@ -107,6 +107,7 @@ public class RideController {
             throw new BadRequestException("Bad id format");
         }
         Ride ride = rideService.findOne(id);
+        System.err.println(ride.getLocations());
         return new ResponseEntity<>(new RideResponseDTO(ride), HttpStatus.OK);
 
     }
