@@ -73,7 +73,6 @@ public class ReviewController {
     @PostMapping(value = "/{rideId}/driver")
     public ResponseEntity<ReviewDTO> createReviewDriver(@PathVariable Long rideId, @Valid @RequestBody ReviewDTO dto) {
         Ride ride = rideService.findOne(rideId);
-        System.err.println("RIDEX: " + ride.toString());
         driverService.findById(ride.getDriver().getId());
         Review rev = new Review(dto, ride, false);
         return new ResponseEntity<>(new ReviewDTO(reviewService.save(rev)), HttpStatus.OK);

@@ -39,7 +39,6 @@ public class FavoriteService {
         for(Favorite f : favorites){
             for(Passenger u: f.getPassengers()){
                 if (Objects.equals(u.getId(), p.getId())){
-                    System.err.println(u.getId() + " " + p.getId());
                     ret.add(new FavoriteDTO(f));
                 }
             }

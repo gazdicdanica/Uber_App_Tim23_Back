@@ -214,7 +214,8 @@ public class RideService {
         Ride ride = this.findOne(id);
         ride.setPanic(true);
         ride.setStatus(RideStatus.PANIC);
-        return rideRepository.save(ride);
+        ride = rideRepository.save(ride);
+        return ride;
     }
 
     public Page<Ride> findAllByDriver(Driver byId, Pageable pageable) {
