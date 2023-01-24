@@ -188,6 +188,7 @@ public class RideController {
     public ResponseEntity<RideResponseDTO> cancelRide(@PathVariable Long id, @RequestBody Rejection rejection){
         System.err.println(rejection.reason);
         RideResponseDTO ride = rideService.cancelRide(id, rejection);
+        webSocketController.simpMessagingTemplate.convertAndSend("/ride-passenger/"+ride.getPassengers().get(0).getId(), ride);
         return new ResponseEntity<>(ride, HttpStatus.OK);
 
     }
