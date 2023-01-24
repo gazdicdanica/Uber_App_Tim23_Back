@@ -62,6 +62,23 @@ public class UserController {
         }
     }
 
+    @Transactional
+    @GetMapping(value = "user/{id}/rideCount")
+    @PreAuthorize("hasAnyAuthority('ROLE_DRIVER', 'ROLE_USER')")
+    public ResponseEntity<?> getRidesCount(@PathVariable Long id) {
+        User u = userService.findById(id);
+        JSONObject resp = new JSONObject();
+        if (u == null) {
+            throw new EntityNotFoundException("User does not exist");
+        } else {
+            if (u.getRole().get(0).getName().equals("ROLE_DRIVER")){
+                return new ResponseEntity<>(resp.put("count", rideService.countForDriver(u)).toString(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(resp.put("count", rideService.countForPsngr(u)).toString(), HttpStatus.OK);
+            }
+        }
+    }
+
     @GetMapping(value = "/user/exist/{email}")
     @Transactional
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_DRIVER')")

@@ -53,7 +53,7 @@ public class DriverController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
     public ResponseEntity<UserPaginatedDTO> getPaginatedDrivers(Pageable page) {
         Page<Driver> drivers = driverService.findAll(page);
 
@@ -171,7 +171,7 @@ public class DriverController {
 
     @Transactional
     @GetMapping(value = "/{id}/ride")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
     public ResponseEntity<RidePaginatedDTO> getRidesSorted(@PathVariable Long id, Pageable pageable){
         Page<Ride> rides = driverService.findAllRides(driverService.findById(id), pageable);
         List<RideResponseDTO> dto = rides.stream().map(RideDTOMapper::fromRideToDTO).collect(Collectors.toList());
