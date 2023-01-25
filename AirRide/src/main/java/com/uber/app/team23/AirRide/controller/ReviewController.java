@@ -63,7 +63,6 @@ public class ReviewController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<ReviewLongDTO> getReviewsForDriver(@PathVariable Long id) {
         List<ReviewDTO> reviewDTOS = reviewService.findAll(driverService.findById(id), false);
-        System.err.println(reviewDTOS.get(0).toString());
 
         return new ResponseEntity<>(new ReviewLongDTO(reviewDTOS), HttpStatus.OK);
     }

@@ -34,7 +34,7 @@ public class Ride {
     private double totalCost;
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "ride_passengers", joinColumns = @JoinColumn(name = "ride_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "passenger_id", referencedColumnName = "id"))
-    public Set<Passenger> passengers = new HashSet<>();
+    public List<Passenger> passengers = new ArrayList<>();
 
     @Column(name = "timeEstimate")
     private int estimatedTimeInMinutes;
@@ -84,6 +84,10 @@ public class Ride {
     public void removeReview(Review review){
         this.reviews.remove(review);
         review.setRide(null);
+    }
+
+    public void addPassenger(Passenger passenger) {
+        this.passengers.add(passenger);
     }
 
 }

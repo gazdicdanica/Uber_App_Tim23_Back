@@ -8,7 +8,6 @@ import com.uber.app.team23.AirRide.exceptions.BadRequestException;
 import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
 import com.uber.app.team23.AirRide.mapper.RideDTOMapper;
 import com.uber.app.team23.AirRide.model.messageData.Rejection;
-import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.rideData.RideStatus;
 import com.uber.app.team23.AirRide.model.rideData.Route;
@@ -20,21 +19,18 @@ import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleTyp
 import com.uber.app.team23.AirRide.repository.RejectionRepository;
 import com.uber.app.team23.AirRide.repository.RideRepository;
 import com.uber.app.team23.AirRide.repository.VehicleTypeRepository;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 
@@ -57,6 +53,34 @@ public class RideService {
     @Autowired
     WebSocketController webSocketController;
 
+    @Scheduled(fixedRate = 1000 * 60)
+    public void scheduledRides() {
+        System.err.println("Usao u scheduled");
+        List<Ride> rides = rideRepository.findAll();
+        rides = filterRidesForScheduling(rides);
+        for (Ride ride : rides) {
+            Driver driver = findPotentialDriver(ride);
+            ride = addDriver(ride, driver);
+            RideResponseDTO dto = new RideResponseDTO(ride);
+            webSocketController.simpMessagingTemplate.convertAndSend("/ride-driver/" + driver.getId(), dto);
+        }
+    }
+
+    private List<Ride> filterRidesForScheduling(List<Ride> rides) {
+        List<Ride> schedule = new ArrayList<>();
+        for (Ride ride : rides) {
+            if (ride.getStatus() == RideStatus.PENDING) {
+                if (ride.getScheduledTime() != null) {
+                    if (ride.getScheduledTime().isAfter(LocalDateTime.now()) &&
+                            ride.getScheduledTime().isBefore(LocalDateTime.now().plusMinutes(15))) {
+                        schedule.add(ride);
+                    }
+                }
+            }
+        }
+        return schedule;
+    }
+
     public Ride findOne(Long id){
         return rideRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Ride does not exist"));
     }
@@ -71,9 +95,8 @@ public class RideService {
 
     public Ride addPassengers(RideDTO rideDTO, Long rideId, Long userId){
         Ride ride = this.findOne(rideId);
-        ride.setPassengers(new HashSet<>());
         Passenger creator = passengerService.findOne(userId);
-        ride.getPassengers().add(creator);
+        ride.addPassenger(creator);
         for(UserShortDTO user: rideDTO.getPassengers()){
             Passenger p = passengerService.findByEmail(user.getEmail());
             ride.getPassengers().add(p);
@@ -131,9 +154,9 @@ public class RideService {
         }
         Ride ride = new Ride();
         // potential start of ride
-        if(rideDTO.getScheduledTime() != null){
-            ride.setStartTime(rideDTO.getScheduledTime());
-            ride.setScheduledTime(rideDTO.getScheduledTime());
+        if(rideDTO.getScheduleTime() != null){
+            ride.setStartTime(rideDTO.getScheduleTime());
+            ride.setScheduledTime(rideDTO.getScheduleTime());
         }else{
             ride.setStartTime(LocalDateTime.now());
         }

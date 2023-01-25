@@ -19,6 +19,7 @@ import com.uber.app.team23.AirRide.service.RideService;
 import com.uber.app.team23.AirRide.service.UserService;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,9 +29,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -52,23 +51,33 @@ public class RideController {
     @Transactional
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<RideResponseDTO> createRide(@Valid @RequestBody @Nullable RideDTO rideDTO){
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(rideService.findActiveByPassenger(user.getId()) != null){
-            throw new BadRequestException("Cannot order a ride while you have an active one");
+    public ResponseEntity<?> createRide(@Valid @RequestBody @Nullable RideDTO rideDTO){
+
+        if (rideDTO.getScheduleTime() == null) {
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if(rideService.findActiveByPassenger(user.getId()) != null){
+                throw new BadRequestException("Cannot order a ride while you have an active one");
+            }
+            rideService.checkPassengerRide(user.getId());
+            Ride ride = rideService.save(rideDTO);
+            ride = rideService.addRoutes(rideDTO, ride.getId());
+            ride = rideService.addPassengers(rideDTO, ride.getId(), user.getId());
+            Driver potential = rideService.findPotentialDriver(ride);
+            if(potential == null){
+                throw new BadRequestException("No driver is available at the moment");
+            }
+            ride = rideService.addDriver(ride, potential);
+            RideResponseDTO dto = new RideResponseDTO(ride);
+            webSocketController.simpMessagingTemplate.convertAndSend("/ride-driver/" + potential.getId(), dto);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+        } else {
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Ride ride = rideService.save(rideDTO);
+            ride = rideService.addRoutes(rideDTO, ride.getId());
+            rideService.addPassengers(rideDTO, ride.getId(), user.getId());
+            JSONObject resp = new JSONObject();
+            return new ResponseEntity<>(resp.put("response", "Ride Notified").toString(), HttpStatus.OK);
         }
-        rideService.checkPassengerRide(user.getId());
-        Ride ride = rideService.save(rideDTO);
-        ride = rideService.addRoutes(rideDTO, ride.getId());
-        ride = rideService.addPassengers(rideDTO, ride.getId(), user.getId());
-        Driver potential = rideService.findPotentialDriver(ride);
-        if(potential == null){
-            throw new BadRequestException("No driver is available at the moment");
-        }
-        ride = rideService.addDriver(ride, potential);
-        RideResponseDTO dto = new RideResponseDTO(ride);
-        webSocketController.simpMessagingTemplate.convertAndSend("/ride-driver/" + potential.getId(), dto);
-        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @Transactional
@@ -107,7 +116,6 @@ public class RideController {
             throw new BadRequestException("Bad id format");
         }
         Ride ride = rideService.findOne(id);
-        System.err.println(ride.getLocations());
         return new ResponseEntity<>(new RideResponseDTO(ride), HttpStatus.OK);
 
     }
@@ -133,7 +141,6 @@ public class RideController {
             PanicDTO p = panicService.save(panic, ride);
             if (p.getUser().getId() == ride.getDriver().getId()){
                 for(Passenger passenger : ride.getPassengers()){
-                    System.err.println(passenger.getId());
                     webSocketController.simpMessagingTemplate.convertAndSend("/ride-panic/"+passenger.getId(), new RideResponseDTO(ride));
                 }
             }else{
@@ -161,6 +168,9 @@ public class RideController {
         int i =0;
         for(UserShortDTO user : ride.getPassengers()){
             if(i == 0){
+                if (ride.getScheduledTime() != null) {
+                    webSocketController.simpMessagingTemplate.convertAndSend("/scheduledNotifications/" + user.getId(), ride);
+                }
                 webSocketController.simpMessagingTemplate.convertAndSend("/ride-passenger/" + user.getId(), ride);
                 i++;
                 continue;
@@ -187,7 +197,6 @@ public class RideController {
     @PreAuthorize("hasAuthority('ROLE_DRIVER')")
     @PutMapping("/{id}/cancel")
     public ResponseEntity<RideResponseDTO> cancelRide(@PathVariable Long id, @RequestBody Rejection rejection){
-        System.err.println(rejection.reason);
         RideResponseDTO ride = rideService.cancelRide(id, rejection);
         webSocketController.simpMessagingTemplate.convertAndSend("/ride-passenger/"+ride.getPassengers().get(0).getId(), ride);
         return new ResponseEntity<>(ride, HttpStatus.OK);
