@@ -63,7 +63,7 @@ public class DriverController {
     }
 
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER', 'ROLE_USER')")
     public ResponseEntity<UserDTO> getDriver(@PathVariable Long id) {
         Driver driver = driverService.findOne(id);
         return new ResponseEntity<>(new UserDTO(driver), HttpStatus.OK);
@@ -117,7 +117,7 @@ public class DriverController {
     }
 
     @GetMapping(value = "/{id}/vehicle")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER', 'ROLE_USER')")
     public ResponseEntity<VehicleDTO> getVehicleForDriver(@PathVariable Long id) {
         Driver driver = driverService.findById(id);
         VehicleDTO vehicle = driverService.getVehicleForDriver(driver);
