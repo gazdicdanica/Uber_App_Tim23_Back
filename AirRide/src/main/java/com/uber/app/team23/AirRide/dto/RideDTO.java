@@ -5,12 +5,9 @@ import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnu
 import com.uber.app.team23.AirRide.validation.EnumValidator;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -28,7 +25,7 @@ public class RideDTO {
     // For scheduling in advance
 
     @Nullable
-    private LocalDateTime scheduledTime;
+    private LocalDateTime scheduleTime;
 
     @NotNull
     private boolean babyTransport;

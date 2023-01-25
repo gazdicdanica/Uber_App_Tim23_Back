@@ -7,6 +7,7 @@ import com.uber.app.team23.AirRide.model.rideData.RideStatus;
 import com.uber.app.team23.AirRide.model.rideData.Route;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter @Setter @NoArgsConstructor
+@Getter @Setter @NoArgsConstructor @Data
 public class RideResponseDTO {
 
     private Long id;
