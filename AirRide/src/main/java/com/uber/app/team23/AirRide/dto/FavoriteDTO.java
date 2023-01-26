@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,22 +20,22 @@ import java.util.stream.Collectors;
 public class FavoriteDTO {
     private Long id;
 
-    @NotEmpty @NotNull
+//    @NotEmpty @NotNull
     private String favoriteName;
 
     @Valid
-    private Set<Route> locations;
+    private List<Route> locations;
 
     @Valid
-    private Set<UserShortDTO> passengers;
+    private List<UserShortDTO> passengers;
 
-    @NotNull
+//    @NotNull
     private VehicleEnum vehicleType;
 
-    @NotNull
+//    @NotNull
     private boolean babyTransport;
 
-    @NotNull
+//    @NotNull
     private boolean petTransport;
 
 
@@ -46,7 +47,7 @@ public class FavoriteDTO {
         f.setVehicleType(favorite.getVehicleType());
         f.setBabyTransport(favorite.isBabyTransport());
         f.setPetTransport(favorite.isPetTransport());
-        f.setPassengers(favorite.getPassengers().stream().map(PassengerDTOMapper::fromPassengerToShortDTO).collect(Collectors.toSet()));
+        f.setPassengers(favorite.getPassengers().stream().map(PassengerDTOMapper::fromPassengerToShortDTO).collect(Collectors.toList()));
     }
 
 }
