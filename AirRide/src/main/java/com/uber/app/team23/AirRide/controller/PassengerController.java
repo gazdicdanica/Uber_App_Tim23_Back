@@ -78,6 +78,7 @@ public class PassengerController {
         return new ResponseEntity<>(obj.toString(),HttpStatus.OK);
     }
 
+    @Transactional
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> updatePassenger(@Valid @RequestBody UserDTO passenger, @PathVariable Long id){
