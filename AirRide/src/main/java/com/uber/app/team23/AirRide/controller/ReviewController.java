@@ -79,7 +79,7 @@ public class ReviewController {
 
 
     @GetMapping(value = "/{rideId}")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_DRIVER')")
     public ResponseEntity<ReviewExtraLongDTO> getAllReview(@PathVariable Long rideId) {
         Ride ride = rideService.findOne(rideId);
         List<ReviewDTO> vehicleReviews = reviewService.findAll(ride.getDriver(), true);
