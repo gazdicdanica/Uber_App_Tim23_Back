@@ -53,7 +53,8 @@ public class RideController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<?> createRide(@Valid @RequestBody @Nullable RideDTO rideDTO){
 
-        if (rideDTO.getScheduleTime() == null) {
+        if (rideDTO.getScheduledTime() == null) {
+            System.err.println(rideDTO);
             User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if(rideService.findActiveByPassenger(user.getId()) != null){
                 throw new BadRequestException("Cannot order a ride while you have an active one");
