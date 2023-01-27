@@ -118,7 +118,10 @@ public class RideService {
             List<Double> estimation = rideSchedulingService.getEstimates(r.getDeparture(), r.getDestination());
             int time =(int) Math.round(estimation.get(0)/60);
             estimatedTime += time;
+            System.err.println("DISTANCE BEFORE CHANGE" + r.getDistance());
             if (r.getDistance() == 0){
+                System.err.println("it is 0");
+                System.err.println("estimation " + estimation.get(1));
                 r.setDistance(estimation.get(1));
                 distance += estimation.get(1);
                 routeService.save(r);
@@ -128,7 +131,8 @@ public class RideService {
         }
         VehicleEnum vehicleEnum = ride.getVehicleType();
         VehicleType vehicleType = vehicleTypeRepository.findByType(vehicleEnum).orElse(null);
-        ride.setTotalCost(distance * 120 + vehicleType.getPrice());
+        double price = (double) Math.round((distance*120 + vehicleType.getPrice())*100) / 100;
+        ride.setTotalCost(price);
         double dist = (double)Math.round(distance * 100) /100;
         ride.setTotalDistance(dist);
         ride.setEstimatedTimeInMinutes(estimatedTime);
@@ -154,9 +158,9 @@ public class RideService {
         }
         Ride ride = new Ride();
         // potential start of ride
-        if(rideDTO.getScheduleTime() != null){
-            ride.setStartTime(rideDTO.getScheduleTime());
-            ride.setScheduledTime(rideDTO.getScheduleTime());
+        if(rideDTO.getScheduledTime() != null){
+            ride.setStartTime(rideDTO.getScheduledTime());
+            ride.setScheduledTime(rideDTO.getScheduledTime());
         }else{
             ride.setStartTime(LocalDateTime.now());
         }

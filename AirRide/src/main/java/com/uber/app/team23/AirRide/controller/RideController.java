@@ -53,7 +53,7 @@ public class RideController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<?> createRide(@Valid @RequestBody @Nullable RideDTO rideDTO){
 
-        if (rideDTO.getScheduleTime() == null) {
+        if (rideDTO.getScheduledTime() == null) {
             User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if(rideService.findActiveByPassenger(user.getId()) != null){
                 throw new BadRequestException("Cannot order a ride while you have an active one");
@@ -68,6 +68,7 @@ public class RideController {
             }
             ride = rideService.addDriver(ride, potential);
             RideResponseDTO dto = new RideResponseDTO(ride);
+            System.err.println("DISTANCE " + dto.getLocations().get(0).getDistance() );
             webSocketController.simpMessagingTemplate.convertAndSend("/ride-driver/" + potential.getId(), dto);
             return new ResponseEntity<>(dto, HttpStatus.OK);
         } else {

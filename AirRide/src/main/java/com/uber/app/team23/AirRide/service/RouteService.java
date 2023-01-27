@@ -29,6 +29,7 @@ public class RouteService {
 
     public Route save(Route route){
 
+        Route r = new Route();
         Location departure = locationService.findByAddress(route.getDeparture().getAddress());
         if(departure == null){
             departure = locationService.save(route.getDeparture());
@@ -38,8 +39,9 @@ public class RouteService {
             destination = locationService.save(route.getDestination());
         }
 
-        route.setDeparture(departure);
-        route.setDestination(destination);
+        r.setDeparture(departure);
+        r.setDestination(destination);
+        r.setDistance(route.getDistance());
         // TODO setDistance ???
 //        Route existingRoute = this.findByLocationIds(departure.getId(), destination.getId());
 //        if(existingRoute != null){
