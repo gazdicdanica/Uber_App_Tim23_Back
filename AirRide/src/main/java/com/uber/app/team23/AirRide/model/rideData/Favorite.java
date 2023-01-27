@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
@@ -19,10 +20,10 @@ public class Favorite {
     @Column(name = "name")
     private String favoriteName;
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE})
-    private Set<Route> locations;
+    private List<Route> locations;
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE})
     @JoinTable(name = "favorites_passenger", joinColumns = @JoinColumn(name = "favorite_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "passenger_id", referencedColumnName = "id"))
-    private Set<Passenger> passengers;
+    private List<Passenger> passengers;
     @Column(name = "vehicle_type")
     private VehicleEnum vehicleType;
     @Column(name = "baby_transport")
