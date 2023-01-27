@@ -30,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 
@@ -53,7 +52,7 @@ public class RideService {
     @Autowired
     WebSocketController webSocketController;
 
-    @Scheduled(fixedRate = 1000 * 60)
+    @Scheduled(fixedRate = 1000 * 60 * 2)
     public void scheduledRides() {
         System.err.println("Usao u scheduled");
         List<Ride> rides = rideRepository.findAll();
