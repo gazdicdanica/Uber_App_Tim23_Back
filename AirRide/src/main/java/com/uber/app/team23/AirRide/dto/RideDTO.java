@@ -25,7 +25,7 @@ public class RideDTO {
     // For scheduling in advance
 
     @Nullable
-    private LocalDateTime scheduleTime;
+    private LocalDateTime scheduledTime;
 
     @NotNull
     private boolean babyTransport;
