@@ -37,32 +37,31 @@ public class FavoriteService {
             return new ArrayList<>();
         }
         for(Favorite f : favorites){
-            for(Passenger u: f.getPassengers()){
-                if (Objects.equals(u.getId(), p.getId())){
-                    ret.add(new FavoriteDTO(f));
-                }
+            Passenger u = f.getPassengers().get(0);
+            if (Objects.equals(u.getId(), p.getId())){
+                ret.add(new FavoriteDTO(f));
             }
         }
         return ret;
     }
 
-    public Favorite addPassengers(Long id, Set<UserShortDTO> passengers){
+    public Favorite addPassengers(Long id, List<UserShortDTO> passengers){
         Favorite favorite = findOne(id);
-        favorite.setPassengers(new HashSet<>());
+        favorite.setPassengers(new ArrayList<>());
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        for(UserShortDTO p : passengers){
-            Passenger passenger = passengerService.findOne((long)p.getId());
-            favorite.getPassengers().add(passenger);
-        }
         Passenger p = passengerService.findOne(user.getId());
         favorite.getPassengers().add(p);
+        for(UserShortDTO pass : passengers){
+            Passenger passenger = passengerService.findByEmail(pass.getEmail());
+            favorite.getPassengers().add(passenger);
+        }
+
         return favoriteRepository.save(favorite);
     }
 
-    public Favorite addLocations(Long id, Set<Route> routes){
+    public Favorite addLocations(Long id, List<Route> routes){
         Favorite favorite = findOne(id);
-        favorite.setLocations(new HashSet<>());
+        favorite.setLocations(new ArrayList<>());
         for(Route r: routes){
             Route route = routeService.findByLocationAddress(r.getDeparture().getAddress(), r.getDestination().getAddress());
             if(route == null){
@@ -75,8 +74,11 @@ public class FavoriteService {
 
 //    @Transactional
     public Favorite save(FavoriteDTO favorite){
-        // TODO number of favorites cannot exceed 10
 
+        System.err.println(favorite.getFavoriteName());
+        System.err.println(favorite.isBabyTransport());
+        System.err.println(favorite.isPetTransport());
+        System.err.println(favorite.getVehicleType());
         Favorite newFavorite = new Favorite();
         newFavorite.setFavoriteName(favorite.getFavoriteName());
         newFavorite.setPetTransport(favorite.isPetTransport());

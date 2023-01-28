@@ -7,13 +7,13 @@ insert into users (type, active, address, blocked, profile_picture, name, userna
 VALUES ('passenger', true, 'Maksima Gorkog 55', false, '123qwerty', 'Milos', 'test2@email.com','Obradovic', '12341234', 'test2@email.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra');
 
 insert into users (type, active, address, blocked, email, last_name, name, username, password, telephone_number, profile_picture, online)
-VALUES ('driver', true, 'Adresa1', false, 'pp@gmail.com', 'Peric', 'Pera','pp@gmail.com' ,'$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0641212', 'qwer', true);
+VALUES ('driver', true, 'Adresa1', false, 'pp@gmail.com', 'Peric', 'Pera','pp@gmail.com' ,'$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0641212', 'qwer', false);
 insert into users (type, active, address, blocked, email, last_name, name, username ,password, telephone_number, profile_picture, online)
-VALUES ('driver', true, 'Adresa2', false, 'pr@gmail.com', 'Radovanovic', 'Pera', 'pr@gmail.com' , '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '06412', 'qwer', true);
+VALUES ('driver', true, 'Adresa2', false, 'pr@gmail.com', 'Radovanovic', 'Pera', 'pr@gmail.com' , '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '06412', 'qwer', false);
 insert into users (type, active, address, blocked, email, last_name, name, username, password, telephone_number, profile_picture, online)
-VALUES ('driver', true, 'Adresa2', false, 'pa@gmail.com', 'Bro', 'Da', 'pa@gmail.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '062134412', 'qwer', true);
+VALUES ('driver', true, 'Adresa2', false, 'pa@gmail.com', 'Bro', 'Da', 'pa@gmail.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '062134412', 'qwer', false);
 insert into users (type, active, address, blocked, email, last_name, name, username, password, telephone_number, profile_picture, online)
-VALUES ('driver', true, 'Adresa2', false, 'isomidobradovic@gmail.com', 'Obradovic', 'Milos', 'isomidobradovic@gmail.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0649144773', 'qwer', true);
+VALUES ('driver', true, 'Adresa2', false, 'isomidobradovic@gmail.com', 'Obradovic', 'Milos', 'isomidobradovic@gmail.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0649144773', 'qwer', false);
 
 
 insert into role (name) VALUES ('ROLE_USER');
@@ -44,7 +44,7 @@ insert into vehicle_type (price, type) VALUES (100, 0);
 insert into vehicle_type (price, type) VALUES (200, 1);
 insert into vehicle_type (price, type) VALUES (300, 2);
 
-insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, vehicle_type_id, current_location) VALUES (true, true, 4, 'NS-680HS', 'Škoda Fabia', 4, 2, 1);
+insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, vehicle_type_id, current_location) VALUES (true, true, 4, 'NS-680HS', 'Škoda Fabia', 4, 1, 1);
 insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, vehicle_type_id, current_location) VALUES (true, true, 3, 'BG-123AB' , 'Volkswagen golf', 5, 1, 2);
 insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, vehicle_type_id, current_location) VALUES (true, true, 4, 'NS-555VV', 'BMW 530i', 6, 1, 3);
 
