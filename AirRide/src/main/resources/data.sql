@@ -37,7 +37,8 @@ insert into locations (longitude, latitude, address) VALUES (19.847719,45.244913
 insert into locations (longitude, latitude, address) VALUES (19.854553,45.252264, 'Maksima Gorkog 57');
 insert into locations (longitude, latitude, address) VALUES (19.842469,45.244482 ,'Promenada, Novi Sad');
 
-insert into documents (name, photo, driver_id) VALUES ('Vozacka', 'qwer123', 3);
+insert into documents (name, photo, driver_id) VALUES ('Vehicle Registration', 'qwer123', 4);
+insert into documents (name, photo, driver_id) VALUES ('ID Card', 'qwer123', 4);
 
 insert into vehicle_type (price, type) VALUES (100, 0);
 insert into vehicle_type (price, type) VALUES (200, 1);
