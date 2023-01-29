@@ -221,6 +221,7 @@ public class RideController {
     public ResponseEntity<List<FavoriteDTO>> getFavorites(){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<FavoriteDTO> favs = favoriteService.getPassengerFavorites(user);
+        System.err.println(favs);
         return new ResponseEntity<>(favs, HttpStatus.OK);
 
     }
