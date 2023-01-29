@@ -1,6 +1,7 @@
 package com.uber.app.team23.AirRide.dto;
 
 import com.uber.app.team23.AirRide.model.rideData.Review;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -20,6 +21,7 @@ public class ReviewDTO {
     @NotNull
     private String comment;
 
+    @Nullable
     @Valid
     private UserShortDTO passenger;
 
