@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,6 +49,8 @@ public class UserController {
 
     @Autowired
     private NoteService noteService;
+    @Autowired
+    private WebSocketController webSocketController;
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @GetMapping(value = "/user/{id}/ride")
@@ -117,13 +120,17 @@ public class UserController {
 
     @Transactional
     @GetMapping(value = "/user/{id}/message")
-    public ResponseEntity<MessageDTO> getAllMessages(@PathVariable Long id) {
+    public ResponseEntity<List<MessageResponseDTO>> getAllMessages(@PathVariable Long id) {
         User u = userService.findById(id);
         if (u == null) {
             throw new EntityNotFoundException("User does not exist!");
         } else {
             List<Message> messages = messageService.findAllForUser(u);
-            return new ResponseEntity<>(new MessageDTO(messages), HttpStatus.OK);
+            List<MessageResponseDTO> messageDTOS = new ArrayList<>();
+            for(Message m : messages){
+                messageDTOS.add(new MessageResponseDTO(m));
+            }
+            return new ResponseEntity<>(messageDTOS, HttpStatus.OK);
         }
     }
 
@@ -160,6 +167,7 @@ public class UserController {
         Message msg = new Message(dto, ride, u, u1);
         msg = messageService.save(msg);
         MessageResponseDTO response = new MessageResponseDTO(msg);
+        webSocketController.simpMessagingTemplate.convertAndSend("/message/"+response.getRide().toString()+"/"+id.toString(), response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

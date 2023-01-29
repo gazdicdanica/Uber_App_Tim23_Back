@@ -72,13 +72,7 @@ public class FavoriteService {
         return favoriteRepository.save(favorite);
     }
 
-//    @Transactional
     public Favorite save(FavoriteDTO favorite){
-
-        System.err.println(favorite.getFavoriteName());
-        System.err.println(favorite.isBabyTransport());
-        System.err.println(favorite.isPetTransport());
-        System.err.println(favorite.getVehicleType());
         Favorite newFavorite = new Favorite();
         newFavorite.setFavoriteName(favorite.getFavoriteName());
         newFavorite.setPetTransport(favorite.isPetTransport());
