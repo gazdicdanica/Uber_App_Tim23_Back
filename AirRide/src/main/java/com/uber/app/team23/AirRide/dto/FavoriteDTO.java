@@ -7,16 +7,14 @@ import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnu
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Data
+@NoArgsConstructor @AllArgsConstructor
 public class FavoriteDTO {
     private Long id;
 
@@ -40,14 +38,13 @@ public class FavoriteDTO {
 
 
     public FavoriteDTO(Favorite favorite){
-        FavoriteDTO f = new FavoriteDTO();
-        f.setId(favorite.getId());
-        f.setFavoriteName(favorite.getFavoriteName());
-        f.setLocations(favorite.getLocations());
-        f.setVehicleType(favorite.getVehicleType());
-        f.setBabyTransport(favorite.isBabyTransport());
-        f.setPetTransport(favorite.isPetTransport());
-        f.setPassengers(favorite.getPassengers().stream().map(PassengerDTOMapper::fromPassengerToShortDTO).collect(Collectors.toList()));
+        this.id = favorite.getId();
+        this.favoriteName = favorite.getFavoriteName();
+        this.locations = favorite.getLocations();
+        this.vehicleType = favorite.getVehicleType();
+        this.babyTransport = favorite.isBabyTransport();
+        this.petTransport = favorite.isPetTransport();
+        this.passengers = favorite.getPassengers().stream().map(PassengerDTOMapper::fromPassengerToShortDTO).collect(Collectors.toList());
     }
 
 }
