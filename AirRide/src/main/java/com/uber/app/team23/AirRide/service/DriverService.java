@@ -1,6 +1,7 @@
 package com.uber.app.team23.AirRide.service;
 
 import com.uber.app.team23.AirRide.dto.DriverDocumentsDTO;
+import com.uber.app.team23.AirRide.dto.RideResponseDTO;
 import com.uber.app.team23.AirRide.dto.UserDTO;
 import com.uber.app.team23.AirRide.dto.VehicleDTO;
 import com.uber.app.team23.AirRide.exceptions.BadRequestException;
@@ -8,6 +9,7 @@ import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
 import com.uber.app.team23.AirRide.mapper.VehicleDTOMapper;
 import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
+import com.uber.app.team23.AirRide.model.rideData.RideStatus;
 import com.uber.app.team23.AirRide.model.users.Role;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
@@ -231,5 +233,14 @@ public class DriverService {
 
     public void deleteDocumentByName(String name){
         documentRepository.deleteByName(name);
+    }
+
+    public RideStatus findDriverStatus(Driver driver) {
+        RideResponseDTO esp = rideRepository.findActiveByDriver(driver.getId()).orElse(null);
+        if (esp == null) {
+            return RideStatus.FINISHED;
+        } else {
+            return RideStatus.ACTIVE;
+        }
     }
 }
