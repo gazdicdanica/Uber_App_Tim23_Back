@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,4 +41,8 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
     List<Ride> findAllByPassengersContaining(User user);
 
     List<Ride> findByStatus(RideStatus status);
+
+    List<Ride> findAllByPassengersContainingAndStartTimeBetween(Passenger passenger, LocalDateTime start, LocalDateTime end);
+
+    List<Ride> findAllByDriverAndStartTimeBetween(Driver driver, LocalDateTime start, LocalDateTime end);
 }
