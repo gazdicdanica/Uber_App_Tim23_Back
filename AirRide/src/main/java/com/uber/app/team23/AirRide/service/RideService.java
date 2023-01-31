@@ -111,22 +111,18 @@ public class RideService {
         for(Route route: rideDTO.getLocations()){
             Route r = routeService.findByLocationAddress(route.getDeparture().getAddress(), route.getDestination().getAddress());
             if(r == null){
-                r = routeService.save(route);
-            }
-            ride.getLocations().add(r);
-            List<Double> estimation = rideSchedulingService.getEstimates(r.getDeparture(), r.getDestination());
-            int time =(int) Math.round(estimation.get(0)/60);
-            estimatedTime += time;
-            System.err.println("DISTANCE BEFORE CHANGE" + r.getDistance());
-            if (r.getDistance() == 0){
-                System.err.println("it is 0");
-                System.err.println("estimation " + estimation.get(1));
+                List<Double> estimation = rideSchedulingService.getEstimates(route.getDeparture(), route.getDestination());
+                int time =(int) Math.round(estimation.get(0)/60);
+                estimatedTime += time;
+                r = new Route();
+                r.setDeparture(route.getDeparture());
+                r.setDestination(route.getDestination());
                 r.setDistance(estimation.get(1));
                 distance += estimation.get(1);
                 routeService.save(r);
             }else{
                 distance += r.getDistance();
-            }
+            }ride.getLocations().add(r);
         }
         VehicleEnum vehicleEnum = ride.getVehicleType();
         VehicleType vehicleType = vehicleTypeRepository.findByType(vehicleEnum).orElse(null);

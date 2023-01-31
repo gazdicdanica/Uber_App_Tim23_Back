@@ -32,7 +32,7 @@ public class Ride {
 
     @Column(name = "total_price")
     private double totalCost;
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "ride_passengers", joinColumns = @JoinColumn(name = "ride_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "passenger_id", referencedColumnName = "id"))
     public List<Passenger> passengers = new ArrayList<>();
 
@@ -41,7 +41,7 @@ public class Ride {
     @OneToMany(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Set<Review> reviews = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
     public List<Route> locations = new ArrayList<>();
     @Column(name = "ride_status")
     public RideStatus status;
