@@ -4,6 +4,7 @@ import com.uber.app.team23.AirRide.dto.RideResponseDTO;
 import com.uber.app.team23.AirRide.exceptions.BadRequestException;
 import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
+import com.uber.app.team23.AirRide.model.rideData.RideStatus;
 import com.uber.app.team23.AirRide.model.rideData.Route;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.WorkingHours;
@@ -32,8 +33,9 @@ public class RideSchedulingService {
 
     public boolean areAllDriversOccupied(List<Driver> drivers, LocalDateTime scheduledTime){
         for(Driver d: drivers){
-            RideResponseDTO active = rideRepository.findActiveByDriver(d.getId()).orElse(null);
-            RideResponseDTO accepted = rideRepository.findAcceptedByDriver(d.getId()).orElse(null);
+            Driver driver = driverService.findById(d.getId());
+            Ride active = rideRepository.findByDriverAndStatus(driver, RideStatus.ACTIVE).orElse(null);
+            Ride accepted = rideRepository.findByDriverAndStatus(driver, RideStatus.ACCEPTED).orElse(null);
             if(active == null || accepted== null){
                 return false;
             }
@@ -73,12 +75,12 @@ public class RideSchedulingService {
         int leastTimeNeeded = 100000;
         Driver ret = null;
         for(Driver driver : drivers){
-            RideResponseDTO accepted = rideRepository.findAcceptedByDriver(driver.getId()).orElse(null);
+            Driver d = driverService.findById(driver.getId());
+            Ride accepted = rideRepository.findByDriverAndStatus(d, RideStatus.ACCEPTED).orElse(null);
             if(accepted != null){
                 continue;
             }
-            RideResponseDTO active = rideRepository.findActiveByDriver(driver.getId()).orElse(null);
-            Driver d = driverService.findById(driver.getId());
+            Ride active = rideRepository.findByDriverAndStatus(d, RideStatus.ACTIVE).orElse(null);
             Location current = d.getVehicle().getCurrentLocation();
             if(active == null){
                 int time = (int) Math.round(this.getEstimates(current, departure).get(0));

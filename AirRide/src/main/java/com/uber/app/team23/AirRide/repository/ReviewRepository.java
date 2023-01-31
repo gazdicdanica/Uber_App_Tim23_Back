@@ -10,9 +10,6 @@ import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    @Query("select new com.uber.app.team23.AirRide.dto.ReviewDTO(r) from Review r where r.driver=?1 and r.reviewForVehicle=true ")
-    List<ReviewDTO> findAllVehicleReviewsByDriver(Driver driver);
+    List<Review> findAllByDriverAndReviewForVehicle(Driver driver, boolean forVehicle);
 
-    @Query("select new com.uber.app.team23.AirRide.dto.ReviewDTO(r) from Review r where r.driver=?1 and r.reviewForVehicle=false ")
-    List<ReviewDTO> findAllDriverReviewsByDriver(Driver driver);
 }

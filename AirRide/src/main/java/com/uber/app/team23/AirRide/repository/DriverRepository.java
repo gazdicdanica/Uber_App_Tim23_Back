@@ -11,9 +11,5 @@ import java.util.Optional;
 public interface DriverRepository extends JpaRepository<Driver, Long> {
     Optional<Driver> findByEmail(String email);
 
-    @Query("select u.password from User u where u.id=?1")
-    String findPasswordById(Long id);
-
-    @Query(value = "select d from Driver d where d.online = true")
-    List<Driver> findOnlineDrivers();
+    List<Driver> findAllByOnline(Boolean online);
 }

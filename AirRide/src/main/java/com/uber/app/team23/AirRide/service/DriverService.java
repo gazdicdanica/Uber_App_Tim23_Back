@@ -57,7 +57,7 @@ public class DriverService {
         return driverRepository.findAll();
     }
 
-    public List<Driver> findOnlineDrivers() {return this.driverRepository.findOnlineDrivers();}
+    public List<Driver> findOnlineDrivers() {return this.driverRepository.findAllByOnline(true);}
 
     public Driver update(Driver driver) {
         return driverRepository.save(driver);
@@ -236,7 +236,8 @@ public class DriverService {
     }
 
     public RideStatus findDriverStatus(Driver driver) {
-        RideResponseDTO esp = rideRepository.findActiveByDriver(driver.getId()).orElse(null);
+        Driver d = this.findById(driver.getId());
+        Ride esp = rideRepository.findByDriverAndStatus(d, RideStatus.ACTIVE).orElse(null);
         if (esp == null) {
             return RideStatus.FINISHED;
         } else {

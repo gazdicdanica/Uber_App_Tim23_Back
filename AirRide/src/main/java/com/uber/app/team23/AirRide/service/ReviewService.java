@@ -2,6 +2,7 @@ package com.uber.app.team23.AirRide.service;
 
 import com.uber.app.team23.AirRide.dto.ReviewDTO;
 import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
+import com.uber.app.team23.AirRide.mapper.ReviewDTOMapper;
 import com.uber.app.team23.AirRide.model.rideData.Review;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.repository.ReviewRepository;
@@ -23,11 +24,7 @@ public class ReviewService {
 
 
     public List<ReviewDTO> findAll(Driver driver, boolean isVehicleReview) {
-        if(isVehicleReview) {
-            return reviewRepository.findAllVehicleReviewsByDriver(driver);
-        } else {
-            return reviewRepository.findAllDriverReviewsByDriver(driver);
-        }
+        return reviewRepository.findAllByDriverAndReviewForVehicle(driver, isVehicleReview).stream().map(ReviewDTOMapper::fromReviewToDTO).toList();
     }
 }
 
