@@ -30,13 +30,15 @@ public class RouteService {
     public Route save(Route route){
 
         Route r = new Route();
+        System.err.println("ROUTE SERVICE DEPARTURE " + route.getDeparture().getAddress());
         Location departure = locationService.findByAddress(route.getDeparture().getAddress());
         if(departure == null){
-            departure = locationService.save(route.getDeparture());
+            departure = route.getDeparture();
         }
+        System.err.println("ROUTE SERVICE DESTINATION " + route.getDestination().getAddress());
         Location destination = locationService.findByAddress(route.getDestination().getAddress());
         if (destination == null){
-            destination = locationService.save(route.getDestination());
+            destination = route.getDestination();
         }
 
         r.setDeparture(departure);

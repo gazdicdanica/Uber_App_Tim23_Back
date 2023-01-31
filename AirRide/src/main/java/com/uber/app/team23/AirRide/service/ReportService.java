@@ -3,6 +3,7 @@ package com.uber.app.team23.AirRide.service;
 import com.uber.app.team23.AirRide.dto.RideResponseDTO;
 import com.uber.app.team23.AirRide.mapper.RideDTOMapper;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
+import com.uber.app.team23.AirRide.model.rideData.RideStatus;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
@@ -27,10 +28,10 @@ public class ReportService {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<Ride> rides;
         if(userService.isDriver(user)){
-            rides = rideRepository.findAllByDriverAndStartTimeBetween((Driver) user, start, end);
+            rides = rideRepository.findAllByDriverAndStatusAndStartTimeBetween((Driver) user, RideStatus.FINISHED ,start, end);
 
         }else{
-            rides = rideRepository.findAllByPassengersContainingAndStartTimeBetween((Passenger) user, start, end);
+            rides = rideRepository.findAllByPassengersContainingAndStatusAndStartTimeBetween((Passenger) user,RideStatus.FINISHED ,start, end);
         }
 
         return rides.stream().map(RideDTOMapper::fromRideToDTO).toList();

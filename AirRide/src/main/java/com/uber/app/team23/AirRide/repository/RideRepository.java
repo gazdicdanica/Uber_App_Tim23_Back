@@ -42,7 +42,7 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
 
     List<Ride> findByStatus(RideStatus status);
 
-    List<Ride> findAllByPassengersContainingAndStartTimeBetween(Passenger passenger, LocalDateTime start, LocalDateTime end);
+    List<Ride> findAllByPassengersContainingAndStatusAndStartTimeBetween(Passenger passenger, RideStatus status, LocalDateTime start, LocalDateTime end);
 
-    List<Ride> findAllByDriverAndStartTimeBetween(Driver driver, LocalDateTime start, LocalDateTime end);
+    List<Ride> findAllByDriverAndStatusAndStartTimeBetween(Driver driver, RideStatus status,LocalDateTime start, LocalDateTime end);
 }
