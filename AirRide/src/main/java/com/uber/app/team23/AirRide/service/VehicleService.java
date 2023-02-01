@@ -31,11 +31,8 @@ public class VehicleService {
         if (vehicle == null) {
             throw new EntityNotFoundException("Vehicle does not exist");
         }
-        Location l = locationService.findByAddress(location.getAddress());
-        if(l == null){
-            l = locationService.save(location);
-        }
-        vehicle.setCurrentLocation(l);
+        location = locationService.save(location);
+        vehicle.setCurrentLocation(location);
         vehicleRepository.save(vehicle);
     }
 
@@ -47,4 +44,10 @@ public class VehicleService {
         return this.vehicleTypeRepository.findAll();
     }
 
+    public Vehicle findOneByLicensePlate(String licenseNumber) {
+        return vehicleRepository.findByLicenseNumber(licenseNumber);
+    }
+
+    public void save(Vehicle vehicle) {
+    }
 }

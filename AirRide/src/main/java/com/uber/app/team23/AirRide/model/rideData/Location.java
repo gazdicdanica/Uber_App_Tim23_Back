@@ -27,8 +27,12 @@ public class Location {
     public double latitude;
 
     @Column(name = "address")
-    @NotNull @NotEmpty
     public String address;
 
+    public Location(double latitude, double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.address = "Address";
+    }
 }
 

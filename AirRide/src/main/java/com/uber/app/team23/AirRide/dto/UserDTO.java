@@ -24,7 +24,7 @@ public class UserDTO {
     @NotNull @NotEmpty
     @Size(min = 2, max = 30)
     private String surname;
-    @NotNull @NotEmpty
+    @NotEmpty
     private String profilePicture;
     @NotNull @NotEmpty
     @NumberFormat
