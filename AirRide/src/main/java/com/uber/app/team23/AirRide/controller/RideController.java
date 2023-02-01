@@ -50,7 +50,7 @@ public class RideController {
 
     @Transactional
     @PostMapping
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+//    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<?> createRide(@Valid @RequestBody @Nullable RideDTO rideDTO){
 
         if (rideDTO.getScheduledTime() == null) {

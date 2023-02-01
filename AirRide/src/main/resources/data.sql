@@ -13,7 +13,8 @@ VALUES ('driver', true, 'Adresa2', false, 'pr@gmail.com', 'Radovanovic', 'Pera',
 insert into users (type, active, address, blocked, email, last_name, name, username, password, telephone_number, profile_picture, online)
 VALUES ('driver', true, 'Adresa2', false, 'pa@gmail.com', 'Bro', 'Da', 'pa@gmail.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '062134412', 'qwer', false);
 insert into users (type, active, address, blocked, email, last_name, name, username, password, telephone_number, profile_picture, online)
-VALUES ('driver', true, 'Adresa2', false, 'isomidobradovic@gmail.com', 'Obradovic', 'Milos', 'isomidobradovic@gmail.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0649144773', 'qwer', false);
+VALUES ('driver', true, 'Adresa2', false, 'isomidobradovicv3@gmail.com', 'Obradovic', 'Milos', 'isomidobradovicv3@gmail.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0649144773', 'qwer', true);
+
 
 
 insert into role (name) VALUES ('ROLE_USER');
@@ -44,9 +45,11 @@ insert into vehicle_type (price, type) VALUES (100, 0);
 insert into vehicle_type (price, type) VALUES (200, 1);
 insert into vehicle_type (price, type) VALUES (300, 2);
 
+
 insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, vehicle_type_id, current_location) VALUES (true, true, 4, 'NS-680HS', 'Škoda Fabia', 4, 1, 1);
 insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, vehicle_type_id, current_location) VALUES (true, true, 3, 'BG-123AB' , 'Volkswagen golf', 5, 1, 2);
 insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, vehicle_type_id, current_location) VALUES (true, true, 4, 'NS-555VV', 'BMW 530i', 6, 1, 3);
+
 
 
 
