@@ -208,10 +208,7 @@ public class RideController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @Transactional
     @PostMapping("/favorites")
-    public ResponseEntity<FavoriteDTO> setFavorite(@Valid @Nullable @RequestBody FavoriteDTO favorite){
-        if(favorite == null){
-            return new ResponseEntity<>(new FavoriteDTO(), HttpStatus.OK);
-        }
+    public ResponseEntity<FavoriteDTO> setFavorite(@Valid @RequestBody FavoriteDTO favorite){
         Favorite newFavorite = favoriteService.save(favorite);
         newFavorite = favoriteService.addLocations(newFavorite.getId(), favorite.getLocations());
         newFavorite = favoriteService.addPassengers(newFavorite.getId(), favorite.getPassengers());
@@ -224,6 +221,7 @@ public class RideController {
     public ResponseEntity<List<FavoriteDTO>> getFavorites(){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<FavoriteDTO> favs = favoriteService.getPassengerFavorites(user);
+        System.err.println(favs);
         return new ResponseEntity<>(favs, HttpStatus.OK);
 
     }

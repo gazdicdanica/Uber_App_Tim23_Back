@@ -5,12 +5,10 @@ import com.uber.app.team23.AirRide.dto.*;
 import com.uber.app.team23.AirRide.mapper.ReviewDTOMapper;
 import com.uber.app.team23.AirRide.model.rideData.Review;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
+import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
-import com.uber.app.team23.AirRide.service.DriverService;
-import com.uber.app.team23.AirRide.service.ReviewService;
-import com.uber.app.team23.AirRide.service.RideService;
-import com.uber.app.team23.AirRide.service.VehicleService;
+import com.uber.app.team23.AirRide.service.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -34,14 +33,29 @@ public class ReviewController {
     private RideService rideService;
     @Autowired
     private DriverService driverService;
+    @Autowired
+    private PassengerService passengerService;
 
     @Transactional
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping(value = "/{rideId}/vehicle")
     public ResponseEntity<ReviewDTO> createReviewVehicle(@PathVariable Long rideId, @RequestBody ReviewDTO dto) {
+
         Ride ride = rideService.findOne(rideId);
-        Review rev = new Review(dto, ride, true);
-        rev = reviewService.save(rev);
+        Driver driver = driverService.findById(ride.getDriver().getId());
+        Review review = new Review();
+        review.setDriver(driver);
+        review.setReviewForVehicle(true);
+        review.setRating(dto.getRating());
+        review.setComment(dto.getComment());
+        review.setRide(ride);
+        if(dto.getPassenger() != null){
+            review.setPassenger(passengerService.findOne((long)dto.getPassenger().getId()));
+        }else{
+            User user =(User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            review.setPassenger(passengerService.findOne(user.getId()));
+        }
+        Review rev = reviewService.save(review);
         ReviewDTO response = new ReviewDTO(rev);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -68,13 +82,24 @@ public class ReviewController {
     }
 
     @Transactional
-//    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @PostMapping(value = "/{rideId}/driver")
     public ResponseEntity<ReviewDTO> createReviewDriver(@PathVariable Long rideId, @Valid @RequestBody ReviewDTO dto) {
         Ride ride = rideService.findOne(rideId);
-        driverService.findById(ride.getDriver().getId());
-        Review rev = new Review(dto, ride, false);
-        return new ResponseEntity<>(new ReviewDTO(reviewService.save(rev)), HttpStatus.OK);
+        Driver driver = driverService.findById(ride.getDriver().getId());
+        Review review = new Review();
+        review.setDriver(driver);
+        review.setReviewForVehicle(false);
+        review.setRating(dto.getRating());
+        review.setComment(dto.getComment());
+        review.setRide(ride);
+        if(dto.getPassenger() != null){
+            review.setPassenger(passengerService.findOne((long)dto.getPassenger().getId()));
+        }else{
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            review.setPassenger(passengerService.findOne(user.getId()));
+        }
+        return new ResponseEntity<>(new ReviewDTO(reviewService.save(review)), HttpStatus.OK);
     }
 
 

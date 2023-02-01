@@ -19,6 +19,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry registry){
         registry.setApplicationDestinationPrefixes("/sub")
                 .enableSimpleBroker("/ride-driver","/ride-cancel" ,"/ride-panic", "/ride-passenger",
-                        "/scheduledNotifications", "/map-updates", "/linkPassengers");
+                        "/scheduledNotifications", "/map-updates", "/linkPassengers", "/message", "/update-vehicle-location");
+
     }
 }

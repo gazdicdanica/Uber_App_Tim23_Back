@@ -51,6 +51,8 @@ public class RideService {
     private RejectionRepository rejectionRepository;
     @Autowired
     WebSocketController webSocketController;
+    @Autowired
+    DriverService driverService;
 
     @Scheduled(fixedRate = 1000 * 60 * 2)
     public void scheduledRides() {
@@ -85,11 +87,20 @@ public class RideService {
     }
 
     public RideResponseDTO findActiveByDriver(Long driverId){
-        return rideRepository.findActiveByDriver(driverId).orElse(null);
+        Driver d = driverService.findById(driverId);
+        Ride ride = rideRepository.findByDriverAndStatus(d, RideStatus.ACTIVE).orElse(null);
+        if(ride != null){
+            return new RideResponseDTO(ride);
+        }return null;
     }
 
     public RideResponseDTO findActiveByPassenger(Long passengerId){
-        return rideRepository.findActiveByPassenger(passengerId).orElse(null);
+        Passenger p = passengerService.findOne(passengerId);
+        Ride active = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.ACTIVE).orElse(null);
+        if(active != null){
+            return new RideResponseDTO(active);
+        }
+        return null;
     }
 
     public Ride addPassengers(RideDTO rideDTO, Long rideId, Long userId){
@@ -111,22 +122,18 @@ public class RideService {
         for(Route route: rideDTO.getLocations()){
             Route r = routeService.findByLocationAddress(route.getDeparture().getAddress(), route.getDestination().getAddress());
             if(r == null){
-                r = routeService.save(route);
-            }
-            ride.getLocations().add(r);
-            List<Double> estimation = rideSchedulingService.getEstimates(r.getDeparture(), r.getDestination());
-            int time =(int) Math.round(estimation.get(0)/60);
-            estimatedTime += time;
-            System.err.println("DISTANCE BEFORE CHANGE" + r.getDistance());
-            if (r.getDistance() == 0){
-                System.err.println("it is 0");
-                System.err.println("estimation " + estimation.get(1));
+                List<Double> estimation = rideSchedulingService.getEstimates(route.getDeparture(), route.getDestination());
+                int time =(int) Math.round(estimation.get(0)/60);
+                estimatedTime += time;
+                r = new Route();
+                r.setDeparture(route.getDeparture());
+                r.setDestination(route.getDestination());
                 r.setDistance(estimation.get(1));
                 distance += estimation.get(1);
                 routeService.save(r);
             }else{
                 distance += r.getDistance();
-            }
+            }ride.getLocations().add(r);
         }
         VehicleEnum vehicleEnum = ride.getVehicleType();
         VehicleType vehicleType = vehicleTypeRepository.findByType(vehicleEnum).orElse(null);
@@ -139,15 +146,15 @@ public class RideService {
     }
 
     public void checkPassengerRide(Long passengerId){
-        Ride ride = rideRepository.findPendingByPassenger(passengerId).orElse(null);
-        Ride accepted = rideRepository.findAcceptedByPassenger(passengerId).orElse(null);
+        Passenger p = passengerService.findOne(passengerId);
+        Ride ride = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.PENDING).orElse(null);
+        Ride accepted = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.ACCEPTED).orElse(null);
         if(ride != null || accepted != null){
             throw new BadRequestException("Cannot create a ride while you have one already pending!");
         }
     }
 
     public Driver findPotentialDriver(Ride ride){
-        // TODO send notification to driver
         return this.rideSchedulingService.findDriver(ride);
     }
 
