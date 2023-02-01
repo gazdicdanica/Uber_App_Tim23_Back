@@ -1,12 +1,10 @@
 package com.uber.app.team23.AirRide.model.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import org.springframework.format.annotation.NumberFormat;
 import org.springframework.security.core.GrantedAuthority;
@@ -39,13 +37,14 @@ public abstract class User implements UserDetails {
     protected String surname;
 
     @Lob
+    @Nullable
     @Column(name = "profile_picture")
     protected byte[] profilePicture;
 
-    @Column(name = "telephone_number", unique = true)
+    @Column(name = "telephone_number")
     @NotNull @NotEmpty
 //    @NumberFormat
-    @Size(min = 3, max = 15)
+//    @Size(min = 3, max = 15)
     protected String telephoneNumber;
 
     @Column(name = "email", unique = true)

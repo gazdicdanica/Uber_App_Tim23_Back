@@ -16,6 +16,7 @@ insert into users (type, active, address, blocked, email, last_name, name, usern
 VALUES ('driver', true, 'Adresa2', false, 'isomidobradovicv3@gmail.com', 'Obradovic', 'Milos', 'isomidobradovicv3@gmail.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0649144773', 'qwer', true);
 
 
+
 insert into role (name) VALUES ('ROLE_USER');
 insert into role (name) VALUES ('ROLE_ADMIN');
 insert into role (name) VALUES ('ROLE_DRIVER');
@@ -44,9 +45,11 @@ insert into vehicle_type (price, type) VALUES (100, 0);
 insert into vehicle_type (price, type) VALUES (200, 1);
 insert into vehicle_type (price, type) VALUES (300, 2);
 
-insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, vehicle_type_id, current_location) VALUES (true, true, 4, 'NS-001-AA', 'Škoda Fabia', 4, 2, 1);
-insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, vehicle_type_id, current_location) VALUES (true, true, 3, 'NS-001-AB', 'Volkswagen golf', 5, 1, 2);
-insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, vehicle_type_id, current_location) VALUES (true, true, 4, 'NS-001-AC', 'BMW 530i', 6, 1, 3);
+
+insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, vehicle_type_id, current_location) VALUES (true, true, 4, 'NS-680HS', 'Škoda Fabia', 4, 1, 1);
+insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, vehicle_type_id, current_location) VALUES (true, true, 3, 'BG-123AB' , 'Volkswagen golf', 5, 1, 2);
+insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, vehicle_type_id, current_location) VALUES (true, true, 4, 'NS-555VV', 'BMW 530i', 6, 1, 3);
+
 
 
 

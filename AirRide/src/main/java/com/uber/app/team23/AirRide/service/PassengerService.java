@@ -91,9 +91,11 @@ public class PassengerService {
 
         Passenger existingPassenger = passengerRepository.findByEmail(passenger.getEmail()).orElse(null);
         if(existingPassenger != null){
+            System.err.println("User postoji??");
             throw new BadRequestException("User with that email already exists!");
         }
 
+        System.err.println("Prosao");
         Passenger p = new Passenger();
         p.setEmail(passenger.getEmail());
         p.setUsername(passenger.getEmail());
