@@ -16,6 +16,7 @@ import com.uber.app.team23.AirRide.repository.VehicleTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,13 +36,16 @@ public class VehicleService {
     @Autowired
     WebSocketController webSocketController;
 
-    @Scheduled(fixedRate = 1000 * 5)
+    @Scheduled(fixedRate = 1000 * 4)
+    @Transactional
     public void updateVehiclesLocation() {
         List<Driver> onlineDrivers = this.driverService.findOnlineDrivers();
         List<VehicleLocatingDTO> vehicles = new ArrayList<>();
         for (Driver driver : onlineDrivers) {
+            if (driver.getVehicle() == null) {
+                continue;
+            }
             Vehicle vehicle = driver.getVehicle();
-            vehicle.setDriver(null);
 
             VehicleLocatingDTO vldto = new VehicleLocatingDTO();
             vldto.setDriverEmail(driver.getEmail());

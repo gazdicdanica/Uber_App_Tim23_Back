@@ -70,6 +70,7 @@ public abstract class User implements UserDetails {
     protected boolean active;
 
     @Transient
+    @JsonIgnore
     private String jwt;
 
     @ManyToMany(fetch = FetchType.EAGER)

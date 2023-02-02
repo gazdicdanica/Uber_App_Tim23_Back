@@ -24,10 +24,8 @@ public class LocationService {
         Location existingLocation = this.findByAddress(location.address);
         if(existingLocation != null){
             // ride already persisted
-            System.err.println("EXISTS " + existingLocation.getAddress() );
             return existingLocation;
         }
-        System.err.println("NEW ADDRESS " + location.address);
         return locationRepository.save(location);
     }
 }

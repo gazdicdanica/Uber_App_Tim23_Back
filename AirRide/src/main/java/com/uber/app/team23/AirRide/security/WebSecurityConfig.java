@@ -83,8 +83,8 @@ public class WebSecurityConfig {
                 .requestMatchers("/socket/**").permitAll()
                 .requestMatchers("/api/vehicle/vehicleTypes").permitAll()
                 .requestMatchers("/api/vehicle").permitAll()
-//                .requestMatchers("/**").permitAll().and()
-                .anyRequest().authenticated().and().cors().and()
+                .requestMatchers("/**").permitAll().and()
+//                .anyRequest().authenticated().and().cors().and()
                 .addFilterBefore(new TokenAuthenticationFilter(tokenUtils, userDetailsService()), BasicAuthenticationFilter.class);
         http.csrf().ignoringRequestMatchers(toH2Console());
         http.csrf().disable();
