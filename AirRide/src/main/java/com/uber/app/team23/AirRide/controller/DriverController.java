@@ -216,4 +216,11 @@ public class DriverController {
         return new ResponseEntity<>(new WorkHoursDTO(workingHours.getStart(), workingHours.getEnd(), id), HttpStatus.OK );
     }
 
+    @GetMapping(value = "/{id}/status")
+    @PreAuthorize("hasAuthority('ROLE_DRIVER')")
+    public ResponseEntity<Boolean> getDriverStatus(@PathVariable Long id){
+        Driver d = driverService.findById(id);
+        return new ResponseEntity<>(d.online, HttpStatus.OK);
+    }
+
 }
