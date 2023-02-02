@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +49,14 @@ public class RideController {
     @Autowired
     WebSocketController webSocketController;
 
+    @Scheduled(fixedRate = 1000 * 2)
+    @Transactional
+    public void simulate() {
+        rideService.updateLocations(RideStatus.ACCEPTED);
+        rideService.updateLocations(RideStatus.ACTIVE);
+    }
+
+
     @Transactional
     @PostMapping
 //    @PreAuthorize("hasAuthority('ROLE_USER')")
@@ -68,7 +77,6 @@ public class RideController {
             }
             ride = rideService.addDriver(ride, potential);
             RideResponseDTO dto = new RideResponseDTO(ride);
-            System.err.println("DISTANCE " + dto.getLocations().get(0).getDistance() );
             webSocketController.simpMessagingTemplate.convertAndSend("/ride-driver/" + potential.getId(), dto);
             return new ResponseEntity<>(dto, HttpStatus.OK);
         } else {
@@ -188,6 +196,7 @@ public class RideController {
     @PutMapping("/{id}/end")
     public ResponseEntity<RideResponseDTO> endRide(@PathVariable Long id){
         RideResponseDTO ride = rideService.endRide(id);
+        System.err.println("PUTNICI: " + ride.getPassengers());
         for(UserShortDTO p : ride.getPassengers()){
             webSocketController.simpMessagingTemplate.convertAndSend("/ride-passenger/"+p.getId(), ride);
         }

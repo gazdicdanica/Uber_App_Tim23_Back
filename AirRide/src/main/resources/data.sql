@@ -13,7 +13,7 @@ VALUES ('driver', true, 'Adresa2', false, 'pr@gmail.com', 'Radovanovic', 'Pera',
 insert into users (type, active, address, blocked, email, last_name, name, username, password, telephone_number, profile_picture, online)
 VALUES ('driver', true, 'Adresa2', false, 'pa@gmail.com', 'Bro', 'Da', 'pa@gmail.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '062134412', 'qwer', false);
 insert into users (type, active, address, blocked, email, last_name, name, username, password, telephone_number, profile_picture, online)
-VALUES ('driver', true, 'Adresa2', false, 'isomidobradovicv3@gmail.com', 'Obradovic', 'Milos', 'isomidobradovicv3@gmail.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0649144773', 'qwer', true);
+VALUES ('driver', true, 'Adresa2', false, 'isomidobradovicv3@gmail.com', 'Obradovic', 'Milos', 'isomidobradovicv3@gmail.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0649144773', 'qwer', false);
 
 
 

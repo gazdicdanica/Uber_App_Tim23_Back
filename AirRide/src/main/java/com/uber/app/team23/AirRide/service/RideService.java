@@ -1,5 +1,6 @@
 package com.uber.app.team23.AirRide.service;
 
+import com.uber.app.team23.AirRide.Utils.GoogleMapUtils;
 import com.uber.app.team23.AirRide.controller.WebSocketController;
 import com.uber.app.team23.AirRide.dto.RideDTO;
 import com.uber.app.team23.AirRide.dto.RideResponseDTO;
@@ -8,17 +9,17 @@ import com.uber.app.team23.AirRide.exceptions.BadRequestException;
 import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
 import com.uber.app.team23.AirRide.mapper.RideDTOMapper;
 import com.uber.app.team23.AirRide.model.messageData.Rejection;
+import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.rideData.RideStatus;
 import com.uber.app.team23.AirRide.model.rideData.Route;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
+import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleType;
-import com.uber.app.team23.AirRide.repository.RejectionRepository;
-import com.uber.app.team23.AirRide.repository.RideRepository;
-import com.uber.app.team23.AirRide.repository.VehicleTypeRepository;
+import com.uber.app.team23.AirRide.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +32,7 @@ import java.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 @Transactional
@@ -53,10 +55,13 @@ public class RideService {
     WebSocketController webSocketController;
     @Autowired
     DriverService driverService;
+    @Autowired
+    private LocationRepository locationRepository;
+    @Autowired
+    private VehicleRepository vehicleRepository;
 
     @Scheduled(fixedRate = 1000 * 60 * 2)
     public void scheduledRides() {
-        System.err.println("Usao u scheduled");
         List<Ride> rides = rideRepository.findAll();
         rides = filterRidesForScheduling(rides);
         for (Ride ride : rides) {
@@ -106,8 +111,11 @@ public class RideService {
     public Ride addPassengers(RideDTO rideDTO, Long rideId, Long userId){
         Ride ride = this.findOne(rideId);
         Passenger creator = passengerService.findOne(userId);
+        System.err.println("Pukao Ovde");
         ride.addPassenger(creator);
+        System.err.println("Broj ulinkovanih: "+rideDTO.getPassengers().size());
         for(UserShortDTO user: rideDTO.getPassengers()){
+            System.err.println("Ili mozda ovde");
             Passenger p = passengerService.findByEmail(user.getEmail());
             ride.getPassengers().add(p);
         }
@@ -154,13 +162,22 @@ public class RideService {
         }
     }
 
+    public void checkPassengerRideByEmail(String email) {
+        Passenger p = passengerService.findByEmail(email);
+        Ride ride = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.PENDING).orElse(null);
+        Ride accepted = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.ACCEPTED).orElse(null);
+        if (ride != null || accepted != null){
+            throw new BadRequestException("Cannot create a ride while you have one already pending!");
+        }
+    }
+
     public Driver findPotentialDriver(Ride ride){
         return this.rideSchedulingService.findDriver(ride);
     }
 
     public Ride save(RideDTO rideDTO){
         for(UserShortDTO u : rideDTO.getPassengers()){
-            this.checkPassengerRide((long)u.getId());
+            this.checkPassengerRideByEmail(u.getEmail());
         }
         Ride ride = new Ride();
         // potential start of ride
@@ -202,7 +219,8 @@ public class RideService {
         if(ride.getStatus() == RideStatus.ACCEPTED){
             ride.setStatus(RideStatus.ACTIVE);
             ride.setStartTime(LocalDateTime.now());
-            return RideDTOMapper.fromRideToDTO(rideRepository.save(ride));
+            ride = rideRepository.save(ride);
+            return RideDTOMapper.fromRideToDTO(ride);
         }
         throw new BadRequestException("Cannot start a ride that is not in status ACCEPTED!");
     }
@@ -223,7 +241,8 @@ public class RideService {
         }
         ride.setStatus(RideStatus.FINISHED);
         ride.setEndTime(LocalDateTime.now());
-        return RideDTOMapper.fromRideToDTO(rideRepository.save(ride));
+        ride = rideRepository.save(ride);
+        return RideDTOMapper.fromRideToDTO(ride);
     }
 
     public RideResponseDTO cancelRide(Long id, Rejection rejection){
@@ -270,7 +289,55 @@ public class RideService {
         return  list.size();
     }
 
-//    public Page<Ride> findAllByPassenger(Passenger passenger, Pageable pageable){
-//        return rideRepository.findAllByPassengers(passenger, pageable);
-//    }
+    public void updateLocations(RideStatus rideStatus) {
+        if (rideStatus == RideStatus.ACCEPTED) {
+            resolveLocationsUsingGoogle(findByStatus(rideStatus));
+
+        } else {    //Active
+            resolveLocationsUsingGoogle(findByStatus(RideStatus.ACTIVE));
+        }
+    }
+
+    private void resolveLocationsUsingGoogle(List<Ride> rides) {
+        for (Ride ride : rides) {
+            Vehicle vehicle = ride.getVehicle();
+            Location departure, destination;
+            List<Route> routeList = new ArrayList<>(ride.getLocations());
+            if (ride.getStatus() == RideStatus.ACCEPTED) {
+                departure = vehicle.getCurrentLocation();
+                destination = routeList.get(0).getDeparture();
+                System.err.println("departure:" + departure + "\ndestination"+destination.getAddress());
+            } else {    //Active
+                departure = vehicle.getCurrentLocation();
+                destination = routeList.get(routeList.size()-1).getDestination();
+                System.err.println("departure:" + departure + "\ndestination"+destination.getAddress());
+            }
+            Location currentLoc = getLocAtTime(departure, destination);
+            if (!Objects.equals(currentLoc.getLatitude(), destination.getLatitude()) ||
+                    !Objects.equals(currentLoc.getLongitude(), destination.getLongitude())) {
+                currentLoc.setAddress("");
+                locationRepository.save(currentLoc);
+                vehicle.setCurrentLocation(currentLoc);
+                vehicleRepository.save(vehicle);
+
+//                if(ride.getStatus() == RideStatus.ACCEPTED) {
+//                    Location newDeparture = vehicle.getCurrentLocation();
+//                    Location nextVehicleLocation = GoogleMapUtils.getLocationAtTime(newDeparture.getLatitude(), newDeparture.getLongitude(),
+//                            destination.getLatitude(), destination.getLongitude());
+//
+//                    if (Objects.equals(nextVehicleLocation.getLatitude(), destination.getLatitude()) &&
+//                            Objects.equals(nextVehicleLocation.getLongitude(), destination.getLongitude())) {
+//
+//                        //TODO notify vehicle arrived on address
+//                    }
+//                }
+            }
+        }
+    }
+
+    private Location getLocAtTime(Location departure, Location destination) {
+        return GoogleMapUtils.getLocationAtTime(departure.getLatitude(), departure.getLongitude(),
+                destination.getLatitude(), destination.getLongitude());
+    }
+
 }

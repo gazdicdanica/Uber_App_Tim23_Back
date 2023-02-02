@@ -1,5 +1,6 @@
 package com.uber.app.team23.AirRide.model.users.driverData.vehicleData;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import jakarta.persistence.*;
@@ -17,6 +18,7 @@ public class Vehicle {
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "driver_id")
+    @JsonIgnore
     public Driver driver;
 
     @Column(name = "vehicle_model")
