@@ -240,4 +240,16 @@ public class RideController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @Scheduled(fixedRate = 1000 * 60 * 2)
+    public void scheduledRides() {
+        List<Ride> rides = rideService.findAll();
+        rides = rideService.filterRidesForScheduling(rides);
+        for (Ride ride : rides) {
+            Driver driver = rideService.findPotentialDriver(ride);
+            ride = rideService.addDriver(ride, driver);
+            RideResponseDTO dto = new RideResponseDTO(ride);
+            webSocketController.simpMessagingTemplate.convertAndSend("/ride-driver/" + driver.getId(), dto);
+        }
+    }
+
 }

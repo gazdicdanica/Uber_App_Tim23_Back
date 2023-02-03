@@ -52,27 +52,17 @@ public class RideService {
     @Autowired
     private RejectionRepository rejectionRepository;
     @Autowired
-    WebSocketController webSocketController;
-    @Autowired
     DriverService driverService;
     @Autowired
     private LocationRepository locationRepository;
     @Autowired
     private VehicleRepository vehicleRepository;
 
-    @Scheduled(fixedRate = 1000 * 60 * 2)
-    public void scheduledRides() {
-        List<Ride> rides = rideRepository.findAll();
-        rides = filterRidesForScheduling(rides);
-        for (Ride ride : rides) {
-            Driver driver = findPotentialDriver(ride);
-            ride = addDriver(ride, driver);
-            RideResponseDTO dto = new RideResponseDTO(ride);
-            webSocketController.simpMessagingTemplate.convertAndSend("/ride-driver/" + driver.getId(), dto);
-        }
+    public List<Ride> findAll(){
+        return rideRepository.findAll();
     }
 
-    private List<Ride> filterRidesForScheduling(List<Ride> rides) {
+    public List<Ride> filterRidesForScheduling(List<Ride> rides) {
         List<Ride> schedule = new ArrayList<>();
         for (Ride ride : rides) {
             if (ride.getStatus() == RideStatus.PENDING) {
@@ -111,11 +101,8 @@ public class RideService {
     public Ride addPassengers(RideDTO rideDTO, Long rideId, Long userId){
         Ride ride = this.findOne(rideId);
         Passenger creator = passengerService.findOne(userId);
-        System.err.println("Pukao Ovde");
         ride.addPassenger(creator);
-        System.err.println("Broj ulinkovanih: "+rideDTO.getPassengers().size());
         for(UserShortDTO user: rideDTO.getPassengers()){
-            System.err.println("Ili mozda ovde");
             Passenger p = passengerService.findByEmail(user.getEmail());
             ride.getPassengers().add(p);
         }
@@ -269,10 +256,6 @@ public class RideService {
         ride.setStatus(RideStatus.PANIC);
         ride = rideRepository.save(ride);
         return ride;
-    }
-
-    public Page<Ride> findAllByDriver(Driver byId, Pageable pageable) {
-        return rideRepository.findAllByDriver(byId, pageable);
     }
 
     public List<Ride> findByStatus(RideStatus status){

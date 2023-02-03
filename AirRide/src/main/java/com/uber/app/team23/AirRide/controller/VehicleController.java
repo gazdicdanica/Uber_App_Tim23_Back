@@ -1,20 +1,28 @@
 package com.uber.app.team23.AirRide.controller;
 
+import com.google.maps.model.Duration;
+import com.uber.app.team23.AirRide.Utils.GoogleMapUtils;
 import com.uber.app.team23.AirRide.dto.UpdateLocationDTO;
+import com.uber.app.team23.AirRide.dto.VehicleLocatingDTO;
 import com.uber.app.team23.AirRide.exceptions.EntityNotFoundException;
 import com.uber.app.team23.AirRide.model.rideData.Location;
+import com.uber.app.team23.AirRide.model.rideData.RideStatus;
+import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleType;
+import com.uber.app.team23.AirRide.service.DriverService;
 import com.uber.app.team23.AirRide.service.LocationService;
 import com.uber.app.team23.AirRide.service.VehicleService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController @RequestMapping("/api/vehicle")
@@ -25,6 +33,38 @@ public class VehicleController {
 
     @Autowired
     LocationService locationService;
+    @Autowired
+    DriverService driverService;
+    @Autowired
+    WebSocketController webSocketController;
+
+    @Scheduled(fixedRate = 1000 * 4)
+    @Transactional
+    public void updateVehiclesLocation() {
+        List<Driver> onlineDrivers = this.driverService.findOnlineDrivers();
+        List<VehicleLocatingDTO> vehicles = new ArrayList<>();
+        for (Driver driver : onlineDrivers) {
+            if (driver.getVehicle() == null) {
+                continue;
+            }
+            Vehicle vehicle = driver.getVehicle();
+
+            VehicleLocatingDTO vldto = new VehicleLocatingDTO();
+            vldto.setDriverEmail(driver.getEmail());
+            vldto.setDriverId(driver.getId());
+            vldto.setVehicle(vehicle);
+            RideStatus rs = driverService.findDriverStatus(driver);
+            vldto.setRideStatus(rs);
+            Duration d = GoogleMapUtils.durations.get(vehicle.getId());
+            if(d != null){
+                vldto.setDuration(d.toString());
+            }
+            vehicles.add(vldto);
+            System.err.println(vldto);
+        }
+//        List<VehicleDTO> dto = vehicles.stream().map(VehicleDTOMapper::fromVehicleToDTO).collect(Collectors.toList());
+        webSocketController.simpMessagingTemplate.convertAndSend("/update-vehicle-location/", vehicles);
+    }
 
     @PutMapping("/{id}/location")
 //    @PreAuthorize("hasAuthority('ROLE_DRIVER')")
