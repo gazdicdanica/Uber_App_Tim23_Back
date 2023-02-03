@@ -149,13 +149,11 @@ public class RideController {
         Ride ride = rideService.setPanic(id);
         if(panic != null){
             PanicDTO p = panicService.save(panic, ride);
-            if (p.getUser().getId() == ride.getDriver().getId()){
-                for(Passenger passenger : ride.getPassengers()){
-                    webSocketController.simpMessagingTemplate.convertAndSend("/ride-panic/"+passenger.getId(), new RideResponseDTO(ride));
-                }
-            }else{
-                webSocketController.simpMessagingTemplate.convertAndSend("/ride-panic/"+ride.getDriver().getId(), new RideResponseDTO(ride));
+            for(Passenger passenger : ride.getPassengers()){
+                   webSocketController.simpMessagingTemplate.convertAndSend("/ride-panic/"+passenger.getId(), new RideResponseDTO(ride));
             }
+            webSocketController.simpMessagingTemplate.convertAndSend("/ride-panic/"+ride.getDriver().getId(), new RideResponseDTO(ride));
+
             return new ResponseEntity<>(p, HttpStatus.OK);
         }
         return new ResponseEntity<>(new PanicDTO(), HttpStatus.OK);
