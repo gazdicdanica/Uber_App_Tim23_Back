@@ -312,7 +312,7 @@ public class RideService {
                 destination = routeList.get(routeList.size()-1).getDestination();
                 System.err.println("departure:" + departure + "\ndestination"+destination.getAddress());
             }
-            Location currentLoc = getLocAtTime(departure, destination);
+            Location currentLoc = getLocAtTime(departure, destination, vehicle);
             if (!Objects.equals(currentLoc.getLatitude(), destination.getLatitude()) ||
                     !Objects.equals(currentLoc.getLongitude(), destination.getLongitude())) {
                 currentLoc.setAddress("");
@@ -335,9 +335,9 @@ public class RideService {
         }
     }
 
-    private Location getLocAtTime(Location departure, Location destination) {
+    private Location getLocAtTime(Location departure, Location destination, Vehicle vehicle) {
         return GoogleMapUtils.getLocationAtTime(departure.getLatitude(), departure.getLongitude(),
-                destination.getLatitude(), destination.getLongitude());
+                destination.getLatitude(), destination.getLongitude(), vehicle);
     }
 
 }

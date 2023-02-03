@@ -1,5 +1,7 @@
 package com.uber.app.team23.AirRide.service;
 
+import com.google.maps.model.Duration;
+import com.uber.app.team23.AirRide.Utils.GoogleMapUtils;
 import com.uber.app.team23.AirRide.controller.WebSocketController;
 import com.uber.app.team23.AirRide.dto.VehicleDTO;
 import com.uber.app.team23.AirRide.dto.VehicleLocatingDTO;
@@ -53,7 +55,10 @@ public class VehicleService {
             vldto.setVehicle(vehicle);
             RideStatus rs = driverService.findDriverStatus(driver);
             vldto.setRideStatus(rs);
-
+            Duration d = GoogleMapUtils.durations.get(vehicle.getId());
+            if(d != null){
+                vldto.setDuration(d.toString());
+            }
             vehicles.add(vldto);
             System.err.println(vldto);
         }

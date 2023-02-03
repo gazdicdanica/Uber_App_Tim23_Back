@@ -7,16 +7,17 @@ import com.google.maps.DirectionsApi;
 import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
 import com.google.maps.errors.ApiException;
-import com.google.maps.model.DirectionsResult;
-import com.google.maps.model.EncodedPolyline;
-import com.google.maps.model.LatLng;
+import com.google.maps.model.*;
 import com.uber.app.team23.AirRide.model.rideData.Location;
+import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
 
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GoogleMapUtils {
 
@@ -24,9 +25,17 @@ public class GoogleMapUtils {
     private static final String LOCAL_STORAGE = "C:/Users/danic/OneDrive/Desktop/api_key.txt";
     private static String API_KEY;
 
-    public static Location getLocationAtTime(double lat1, double lng1, double lat2, double lng2) {
+    public static Map<Long, Duration> durations = new HashMap<>();
+
+    public static Location getLocationAtTime(double lat1, double lng1, double lat2, double lng2, Vehicle vehicle) {
         DirectionsResult direction = getDirection(lat1, lng1, lat2, lng2);
         DirectionsResult inverse = getDirection(lat2, lng2, lat1, lng1);
+
+        DirectionsRoute route = direction.routes[0];
+        DirectionsLeg leg = route.legs[0];
+        durations.put(vehicle.getId(), leg.duration);
+        System.err.println(durations.get(vehicle.getId()));
+
         EncodedPolyline overviewPolyline = direction.routes[0].overviewPolyline;
         List<LatLng> cords = overviewPolyline.decodePath();
         long distanceInMeters = direction.routes[0].legs[0].distance.inMeters;
@@ -37,7 +46,6 @@ public class GoogleMapUtils {
         }
         return new Location(lat2, lng2);
     }
-
     public static DirectionsResult getDirection(double lat1, double lng1, double lat2, double lng2) {
         try {
             API_KEY = new String(Files.readAllBytes(Paths.get(LOCAL_STORAGE)));
