@@ -55,6 +55,7 @@ public class VehicleService {
             vldto.setRideStatus(rs);
 
             vehicles.add(vldto);
+            System.err.println(vldto);
         }
 //        List<VehicleDTO> dto = vehicles.stream().map(VehicleDTOMapper::fromVehicleToDTO).collect(Collectors.toList());
         webSocketController.simpMessagingTemplate.convertAndSend("/update-vehicle-location/", vehicles);

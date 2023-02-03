@@ -45,7 +45,6 @@ public class DriverController {
     }
 
     @GetMapping(value = "/{id}/location")
-    @PreAuthorize("hasAuthority('ROLE_DRIVER')")
     public ResponseEntity<Location> getDriverLocation(@PathVariable Long id) {
         Driver driver = driverService.findById(id);
         VehicleDTO vehicle = driverService.getVehicleForDriver(driver);

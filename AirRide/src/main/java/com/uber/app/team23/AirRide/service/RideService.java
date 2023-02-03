@@ -293,7 +293,7 @@ public class RideService {
         if (rideStatus == RideStatus.ACCEPTED) {
             resolveLocationsUsingGoogle(findByStatus(rideStatus));
 
-        } else {    //Active
+        } else if(rideStatus == RideStatus.ACTIVE){    //Active
             resolveLocationsUsingGoogle(findByStatus(RideStatus.ACTIVE));
         }
     }

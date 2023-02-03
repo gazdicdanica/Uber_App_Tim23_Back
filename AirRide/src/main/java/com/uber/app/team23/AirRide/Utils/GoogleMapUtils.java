@@ -20,8 +20,8 @@ import java.util.List;
 
 public class GoogleMapUtils {
 
-    private static final String LOCAL_STORAGE = "C:/Users/Obrad/Desktop/Google/api_key.txt";
-
+//    private static final String LOCAL_STORAGE = "C:/Users/Obrad/Desktop/Google/api_key.txt";
+    private static final String LOCAL_STORAGE = "C:/Users/danic/OneDrive/Desktop/api_key.txt";
     private static String API_KEY;
 
     public static Location getLocationAtTime(double lat1, double lng1, double lat2, double lng2) {
@@ -41,6 +41,7 @@ public class GoogleMapUtils {
     public static DirectionsResult getDirection(double lat1, double lng1, double lat2, double lng2) {
         try {
             API_KEY = new String(Files.readAllBytes(Paths.get(LOCAL_STORAGE)));
+            System.err.println("KEY: " + API_KEY);
             List<LatLng> path = new ArrayList<>();
             GeoApiContext context = new GeoApiContext.Builder().
                     apiKey(API_KEY).build();
