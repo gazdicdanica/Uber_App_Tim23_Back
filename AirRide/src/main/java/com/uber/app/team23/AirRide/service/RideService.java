@@ -58,20 +58,6 @@ public class RideService {
         return rideRepository.findAll();
     }
 
-    public List<Ride> filterRidesForScheduling(List<Ride> rides) {
-        List<Ride> schedule = new ArrayList<>();
-        for (Ride ride : rides) {
-            if (ride.getStatus() == RideStatus.PENDING) {
-                if (ride.getScheduledTime() != null) {
-                    if (ride.getScheduledTime().isAfter(LocalDateTime.now()) &&
-                            ride.getScheduledTime().isBefore(LocalDateTime.now().plusMinutes(15))) {
-                        schedule.add(ride);
-                    }
-                }
-            }
-        }
-        return schedule;
-    }
 
     public Ride findOne(Long id){
         return rideRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Ride does not exist"));
@@ -319,4 +305,32 @@ public class RideService {
                 destination.getLatitude(), destination.getLongitude(), vehicle);
     }
 
+    public List<Ride> filterRidesForNotification(List<Ride> rides, int i) {
+        List<Ride> forNotifying = new ArrayList<>();
+        for (Ride ride : rides) {
+            if(ride.getScheduledTime() != null) {
+                if (ride.getScheduledTime().isAfter(LocalDateTime.now()) &&
+                        ride.getScheduledTime().isBefore(LocalDateTime.now().plusMinutes(i+1))) {
+                    forNotifying.add(ride);
+                }
+            }
+        }
+        
+        return forNotifying;
+    }
+    
+    public List<Ride> filterRidesForScheduling(List<Ride> rides) {
+        List<Ride> schedule = new ArrayList<>();
+        for (Ride ride : rides) {
+            if (ride.getStatus() == RideStatus.PENDING) {
+                if (ride.getScheduledTime() != null) {
+                    if (ride.getScheduledTime().isAfter(LocalDateTime.now()) &&
+                            ride.getScheduledTime().isBefore(LocalDateTime.now().plusMinutes(15))) {
+                        schedule.add(ride);
+                    }
+                }
+            }
+        }
+        return schedule;
+    }
 }

@@ -282,5 +282,36 @@ public class RideController {
 
         }
     }
+    @Scheduled(fixedRate = 1337 * 1)
+    public void notification15Minutes() {
+        List<Ride> rides = rideService.findByStatus(RideStatus.PENDING);
+        rides = rideService.filterRidesForNotification(rides, 15);
+        for (Ride ride : rides) {
+            for (Passenger p : ride.getPassengers()) {
+                webSocketController.simpMessagingTemplate.convertAndSend("/notify15/" + p.getId(), "");
+            }
+        }
+    }
+
+    @Scheduled(fixedRate = 1337 * 1)
+    public void notification10Minutes() {
+        List<Ride> rides = rideService.findByStatus(RideStatus.PENDING);
+        rides = rideService.filterRidesForNotification(rides, 10);
+        for (Ride ride : rides) {
+            for (Passenger p : ride.getPassengers()) {
+                webSocketController.simpMessagingTemplate.convertAndSend("/notify10/" + p.getId(), "");
+            }
+        }
+    }
+    @Scheduled(fixedRate = 1337 * 1)
+    public void notification5Minutes() {
+        List<Ride> rides = rideService.findByStatus(RideStatus.PENDING);
+        rides = rideService.filterRidesForNotification(rides, 5);
+        for (Ride ride : rides) {
+            for (Passenger p : ride.getPassengers()) {
+                webSocketController.simpMessagingTemplate.convertAndSend("/notify5/" + p.getId(), "");
+            }
+        }
+    }
 
 }
