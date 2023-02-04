@@ -79,6 +79,7 @@ public class RideController {
     public ResponseEntity<?> createRide(@Valid @RequestBody @Nullable RideDTO rideDTO){
 
         if (rideDTO.getScheduledTime() == null) {
+            System.err.println("scheduled time null");
             User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             if(rideService.findActiveByPassenger(user.getId()) != null){
                 throw new BadRequestException("Cannot order a ride while you have an active one");
@@ -96,6 +97,7 @@ public class RideController {
             webSocketController.simpMessagingTemplate.convertAndSend("/ride-driver/" + potential.getId(), dto);
             return new ResponseEntity<>(dto, HttpStatus.OK);
         } else {
+            System.err.println("not null");
             User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Ride ride = rideService.save(rideDTO);
             ride = rideService.addRoutes(rideDTO, ride.getId());
@@ -256,15 +258,28 @@ public class RideController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @Scheduled(fixedRate = 1000 * 60 * 2)
+    @Scheduled(fixedRate = 1000 * 60)
     public void scheduledRides() {
         List<Ride> rides = rideService.findAll();
         rides = rideService.filterRidesForScheduling(rides);
         for (Ride ride : rides) {
-            Driver driver = rideService.findPotentialDriver(ride);
-            ride = rideService.addDriver(ride, driver);
-            RideResponseDTO dto = new RideResponseDTO(ride);
-            webSocketController.simpMessagingTemplate.convertAndSend("/ride-driver/" + driver.getId(), dto);
+            try{
+                Driver driver = rideService.findPotentialDriver(ride);
+                ride = rideService.addDriver(ride, driver);
+                RideResponseDTO dto = new RideResponseDTO(ride);
+                webSocketController.simpMessagingTemplate.convertAndSend("/ride-driver/" + driver.getId(), dto);
+            }catch(BadRequestException ex){
+                System.err.println("Bad request");
+                rideService.withdrawRide(ride.getId());
+                for(Passenger p : ride.getPassengers()){
+                    System.err.println( "passenger " + p.getId());
+                    System.err.println(ex.getMessage());
+                    RideResponseDTO dto = new RideResponseDTO(ride);
+                    webSocketController.simpMessagingTemplate.convertAndSend("/scheduledNotifications/"+ p.getId(), dto);
+                }
+            }
+
+
         }
     }
 

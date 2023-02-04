@@ -154,7 +154,7 @@ public class RideService {
         }
     }
 
-    public Driver findPotentialDriver(Ride ride){
+    public Driver findPotentialDriver(Ride ride) throws BadRequestException{
         return this.rideSchedulingService.findDriver(ride);
     }
 

@@ -41,7 +41,7 @@ public class Ride {
     @OneToMany(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Set<Review> reviews = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     public List<Route> locations = new ArrayList<>();
     @Column(name = "ride_status")
     public RideStatus status;
