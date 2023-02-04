@@ -26,7 +26,7 @@ public class EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(msg, true);
             helper.setTo(details.getRecipient());
             helper.setSubject(details.getSubject());
-            String link = "http://192.168.0.20:4200/confirmation?code=" + activationId.toString();
+            String link = "http://192.168.0.21:4200/confirmation?code=" + activationId.toString();
             helper.setText("<a href='"+ link + "'>Click to confirm</a>", true);
             helper.setFrom(sender);
 

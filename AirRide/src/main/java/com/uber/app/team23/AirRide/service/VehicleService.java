@@ -1,5 +1,7 @@
 package com.uber.app.team23.AirRide.service;
 
+import com.google.maps.model.Duration;
+import com.uber.app.team23.AirRide.Utils.GoogleMapUtils;
 import com.uber.app.team23.AirRide.controller.WebSocketController;
 import com.uber.app.team23.AirRide.dto.VehicleDTO;
 import com.uber.app.team23.AirRide.dto.VehicleLocatingDTO;
@@ -33,32 +35,6 @@ public class VehicleService {
     VehicleTypeRepository vehicleTypeRepository;
     @Autowired
     DriverService driverService;
-    @Autowired
-    WebSocketController webSocketController;
-
-    @Scheduled(fixedRate = 1000 * 4)
-    @Transactional
-    public void updateVehiclesLocation() {
-        List<Driver> onlineDrivers = this.driverService.findOnlineDrivers();
-        List<VehicleLocatingDTO> vehicles = new ArrayList<>();
-        for (Driver driver : onlineDrivers) {
-            if (driver.getVehicle() == null) {
-                continue;
-            }
-            Vehicle vehicle = driver.getVehicle();
-
-            VehicleLocatingDTO vldto = new VehicleLocatingDTO();
-            vldto.setDriverEmail(driver.getEmail());
-            vldto.setDriverId(driver.getId());
-            vldto.setVehicle(vehicle);
-            RideStatus rs = driverService.findDriverStatus(driver);
-            vldto.setRideStatus(rs);
-
-            vehicles.add(vldto);
-        }
-//        List<VehicleDTO> dto = vehicles.stream().map(VehicleDTOMapper::fromVehicleToDTO).collect(Collectors.toList());
-        webSocketController.simpMessagingTemplate.convertAndSend("/update-vehicle-location/", vehicles);
-    }
 
     public Vehicle findOne(Long id){
         return this.vehicleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Vehicle does not exist"));

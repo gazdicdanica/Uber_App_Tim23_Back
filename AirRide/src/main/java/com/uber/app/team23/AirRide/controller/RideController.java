@@ -149,13 +149,11 @@ public class RideController {
         Ride ride = rideService.setPanic(id);
         if(panic != null){
             PanicDTO p = panicService.save(panic, ride);
-            if (p.getUser().getId() == ride.getDriver().getId()){
-                for(Passenger passenger : ride.getPassengers()){
-                    webSocketController.simpMessagingTemplate.convertAndSend("/ride-panic/"+passenger.getId(), new RideResponseDTO(ride));
-                }
-            }else{
-                webSocketController.simpMessagingTemplate.convertAndSend("/ride-panic/"+ride.getDriver().getId(), new RideResponseDTO(ride));
+            for(Passenger passenger : ride.getPassengers()){
+                   webSocketController.simpMessagingTemplate.convertAndSend("/ride-panic/"+passenger.getId(), new RideResponseDTO(ride));
             }
+            webSocketController.simpMessagingTemplate.convertAndSend("/ride-panic/"+ride.getDriver().getId(), new RideResponseDTO(ride));
+
             return new ResponseEntity<>(p, HttpStatus.OK);
         }
         return new ResponseEntity<>(new PanicDTO(), HttpStatus.OK);
@@ -240,6 +238,18 @@ public class RideController {
     public ResponseEntity<Void> deleteFavorite(@PathVariable Long id){
         favoriteService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Scheduled(fixedRate = 1000 * 60 * 2)
+    public void scheduledRides() {
+        List<Ride> rides = rideService.findAll();
+        rides = rideService.filterRidesForScheduling(rides);
+        for (Ride ride : rides) {
+            Driver driver = rideService.findPotentialDriver(ride);
+            ride = rideService.addDriver(ride, driver);
+            RideResponseDTO dto = new RideResponseDTO(ride);
+            webSocketController.simpMessagingTemplate.convertAndSend("/ride-driver/" + driver.getId(), dto);
+        }
     }
 
 }

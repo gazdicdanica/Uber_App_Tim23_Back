@@ -52,27 +52,17 @@ public class RideService {
     @Autowired
     private RejectionRepository rejectionRepository;
     @Autowired
-    WebSocketController webSocketController;
-    @Autowired
     DriverService driverService;
     @Autowired
     private LocationRepository locationRepository;
     @Autowired
     private VehicleRepository vehicleRepository;
 
-    @Scheduled(fixedRate = 1000 * 60 * 2)
-    public void scheduledRides() {
-        List<Ride> rides = rideRepository.findAll();
-        rides = filterRidesForScheduling(rides);
-        for (Ride ride : rides) {
-            Driver driver = findPotentialDriver(ride);
-            ride = addDriver(ride, driver);
-            RideResponseDTO dto = new RideResponseDTO(ride);
-            webSocketController.simpMessagingTemplate.convertAndSend("/ride-driver/" + driver.getId(), dto);
-        }
+    public List<Ride> findAll(){
+        return rideRepository.findAll();
     }
 
-    private List<Ride> filterRidesForScheduling(List<Ride> rides) {
+    public List<Ride> filterRidesForScheduling(List<Ride> rides) {
         List<Ride> schedule = new ArrayList<>();
         for (Ride ride : rides) {
             if (ride.getStatus() == RideStatus.PENDING) {
@@ -111,11 +101,8 @@ public class RideService {
     public Ride addPassengers(RideDTO rideDTO, Long rideId, Long userId){
         Ride ride = this.findOne(rideId);
         Passenger creator = passengerService.findOne(userId);
-        System.err.println("Pukao Ovde");
         ride.addPassenger(creator);
-        System.err.println("Broj ulinkovanih: "+rideDTO.getPassengers().size());
         for(UserShortDTO user: rideDTO.getPassengers()){
-            System.err.println("Ili mozda ovde");
             Passenger p = passengerService.findByEmail(user.getEmail());
             ride.getPassengers().add(p);
         }
@@ -271,10 +258,6 @@ public class RideService {
         return ride;
     }
 
-    public Page<Ride> findAllByDriver(Driver byId, Pageable pageable) {
-        return rideRepository.findAllByDriver(byId, pageable);
-    }
-
     public List<Ride> findByStatus(RideStatus status){
         return rideRepository.findByStatus(status);
     }
@@ -293,7 +276,7 @@ public class RideService {
         if (rideStatus == RideStatus.ACCEPTED) {
             resolveLocationsUsingGoogle(findByStatus(rideStatus));
 
-        } else {    //Active
+        } else if(rideStatus == RideStatus.ACTIVE){    //Active
             resolveLocationsUsingGoogle(findByStatus(RideStatus.ACTIVE));
         }
     }
@@ -312,7 +295,7 @@ public class RideService {
                 destination = routeList.get(routeList.size()-1).getDestination();
                 System.err.println("departure:" + departure + "\ndestination"+destination.getAddress());
             }
-            Location currentLoc = getLocAtTime(departure, destination);
+            Location currentLoc = getLocAtTime(departure, destination, vehicle);
             if (!Objects.equals(currentLoc.getLatitude(), destination.getLatitude()) ||
                     !Objects.equals(currentLoc.getLongitude(), destination.getLongitude())) {
                 currentLoc.setAddress("");
@@ -320,24 +303,25 @@ public class RideService {
                 vehicle.setCurrentLocation(currentLoc);
                 vehicleRepository.save(vehicle);
 
-//                if(ride.getStatus() == RideStatus.ACCEPTED) {
-//                    Location newDeparture = vehicle.getCurrentLocation();
-//                    Location nextVehicleLocation = GoogleMapUtils.getLocationAtTime(newDeparture.getLatitude(), newDeparture.getLongitude(),
-//                            destination.getLatitude(), destination.getLongitude());
-//
-//                    if (Objects.equals(nextVehicleLocation.getLatitude(), destination.getLatitude()) &&
-//                            Objects.equals(nextVehicleLocation.getLongitude(), destination.getLongitude())) {
-//
-//                        //TODO notify vehicle arrived on address
-//                    }
-//                }
+                if(ride.getStatus() == RideStatus.ACCEPTED) {
+                    Location newDeparture = vehicle.getCurrentLocation();
+                    Location nextVehicleLocation = GoogleMapUtils.getLocationAtTime(newDeparture.getLatitude(), newDeparture.getLongitude(),
+                            destination.getLatitude(), destination.getLongitude(), vehicle);
+
+                    if (Objects.equals(nextVehicleLocation.getLatitude(), destination.getLatitude()) &&
+                            Objects.equals(nextVehicleLocation.getLongitude(), destination.getLongitude())) {
+
+                        System.err.println("DRIVER JE STIGAO");
+                        //TODO notify vehicle arrived on address
+                    }
+                }
             }
         }
     }
 
-    private Location getLocAtTime(Location departure, Location destination) {
+    private Location getLocAtTime(Location departure, Location destination, Vehicle vehicle) {
         return GoogleMapUtils.getLocationAtTime(departure.getLatitude(), departure.getLongitude(),
-                destination.getLatitude(), destination.getLongitude());
+                destination.getLatitude(), destination.getLongitude(), vehicle);
     }
 
 }
