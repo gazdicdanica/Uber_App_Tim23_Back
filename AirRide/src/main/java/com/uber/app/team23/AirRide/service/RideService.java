@@ -303,17 +303,18 @@ public class RideService {
                 vehicle.setCurrentLocation(currentLoc);
                 vehicleRepository.save(vehicle);
 
-//                if(ride.getStatus() == RideStatus.ACCEPTED) {
-//                    Location newDeparture = vehicle.getCurrentLocation();
-//                    Location nextVehicleLocation = GoogleMapUtils.getLocationAtTime(newDeparture.getLatitude(), newDeparture.getLongitude(),
-//                            destination.getLatitude(), destination.getLongitude());
-//
-//                    if (Objects.equals(nextVehicleLocation.getLatitude(), destination.getLatitude()) &&
-//                            Objects.equals(nextVehicleLocation.getLongitude(), destination.getLongitude())) {
-//
-//                        //TODO notify vehicle arrived on address
-//                    }
-//                }
+                if(ride.getStatus() == RideStatus.ACCEPTED) {
+                    Location newDeparture = vehicle.getCurrentLocation();
+                    Location nextVehicleLocation = GoogleMapUtils.getLocationAtTime(newDeparture.getLatitude(), newDeparture.getLongitude(),
+                            destination.getLatitude(), destination.getLongitude(), vehicle);
+
+                    if (Objects.equals(nextVehicleLocation.getLatitude(), destination.getLatitude()) &&
+                            Objects.equals(nextVehicleLocation.getLongitude(), destination.getLongitude())) {
+
+                        System.err.println("DRIVER JE STIGAO");
+                        //TODO notify vehicle arrived on address
+                    }
+                }
             }
         }
     }
