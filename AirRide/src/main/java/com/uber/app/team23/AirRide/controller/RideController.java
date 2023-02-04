@@ -8,15 +8,13 @@ import com.uber.app.team23.AirRide.mapper.RideDTOMapper;
 import com.uber.app.team23.AirRide.model.messageData.Panic;
 import com.uber.app.team23.AirRide.model.messageData.Rejection;
 import com.uber.app.team23.AirRide.model.rideData.Favorite;
+import com.uber.app.team23.AirRide.model.rideData.Location;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.rideData.RideStatus;
 import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
-import com.uber.app.team23.AirRide.service.FavoriteService;
-import com.uber.app.team23.AirRide.service.PanicService;
-import com.uber.app.team23.AirRide.service.RideService;
-import com.uber.app.team23.AirRide.service.UserService;
+import com.uber.app.team23.AirRide.service.*;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import org.json.JSONObject;
@@ -45,6 +43,8 @@ public class RideController {
     FavoriteService favoriteService;
     @Autowired
     UserService userService;
+    @Autowired
+    RideSchedulingService rideSchedulingService;
 
     @Autowired
     WebSocketController webSocketController;
@@ -54,6 +54,22 @@ public class RideController {
     public void simulate() {
         rideService.updateLocations(RideStatus.ACCEPTED);
         rideService.updateLocations(RideStatus.ACTIVE);
+    }
+
+    @Scheduled(fixedRate = 2000)
+    @Transactional
+    public void sendOnLocationNotification(){
+        for(Ride r : rideService.findByStatus(RideStatus.ACCEPTED)){
+            Location currentLocation = r.getVehicle().getCurrentLocation();
+            Location departure = r.getLocations().get(0).getDeparture();
+            List<Double> estimates =  rideSchedulingService.getEstimates(currentLocation, departure);
+            Double distance = estimates.get(1);
+            if(distance < 0.1){
+                System.err.println("DRIVER STIGAO");
+                System.err.println("RIDE ID " + r.getId());
+                webSocketController.simpMessagingTemplate.convertAndSend("/driver-arrived/"+r.getId(), "");
+            }
+        }
     }
 
 
