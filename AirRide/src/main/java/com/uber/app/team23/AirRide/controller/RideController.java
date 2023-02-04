@@ -240,7 +240,7 @@ public class RideController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @Scheduled(fixedRate = 1000 * 60 * 2)
+    @Scheduled(fixedRate = 1000 * 60 * 1)
     public void scheduledRides() {
         List<Ride> rides = rideService.findAll();
         rides = rideService.filterRidesForScheduling(rides);

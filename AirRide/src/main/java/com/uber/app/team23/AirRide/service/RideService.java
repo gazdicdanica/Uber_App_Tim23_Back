@@ -275,10 +275,9 @@ public class RideService {
     public void updateLocations(RideStatus rideStatus) {
         if (rideStatus == RideStatus.ACCEPTED) {
             resolveLocationsUsingGoogle(findByStatus(rideStatus));
-
-        } else if(rideStatus == RideStatus.ACTIVE){    //Active
+        } else if (rideStatus == RideStatus.ACTIVE){
             resolveLocationsUsingGoogle(findByStatus(RideStatus.ACTIVE));
-        }
+        } 
     }
 
     private void resolveLocationsUsingGoogle(List<Ride> rides) {
@@ -290,7 +289,7 @@ public class RideService {
                 departure = vehicle.getCurrentLocation();
                 destination = routeList.get(0).getDeparture();
                 System.err.println("departure:" + departure + "\ndestination"+destination.getAddress());
-            } else {    //Active
+            } else {        //RIDE STATUS ACTIVE
                 departure = vehicle.getCurrentLocation();
                 destination = routeList.get(routeList.size()-1).getDestination();
                 System.err.println("departure:" + departure + "\ndestination"+destination.getAddress());

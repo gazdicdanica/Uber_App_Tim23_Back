@@ -104,6 +104,7 @@ public class RideSchedulingService {
     }
 
     public Driver findDriver(Ride ride){
+        System.err.println("RIDE:" + ride);
         List<Driver> onlineDrivers = driverService.findOnlineDrivers();
         if(onlineDrivers.isEmpty()){
             throw new BadRequestException("No drivers are online.");
@@ -121,6 +122,7 @@ public class RideSchedulingService {
         }
 
         List<Route> routes = ride.getLocations();
+        System.err.println("Locations" + routes.toString());
         return findFastestDriver(driversWorkHours, routes.get(0).getDeparture());
 
     }

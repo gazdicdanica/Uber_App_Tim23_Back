@@ -38,7 +38,7 @@ public class VehicleController {
     @Autowired
     WebSocketController webSocketController;
 
-    @Scheduled(fixedRate = 1000 * 4)
+    @Scheduled(fixedRate = 1000 * 3)
     @Transactional
     public void updateVehiclesLocation() {
         List<Driver> onlineDrivers = this.driverService.findOnlineDrivers();

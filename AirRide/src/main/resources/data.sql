@@ -15,8 +15,6 @@ VALUES ('driver', true, 'Adresa2', false, 'pa@gmail.com', 'Bro', 'Da', 'pa@gmail
 insert into users (type, active, address, blocked, email, last_name, name, username, password, telephone_number, profile_picture, online)
 VALUES ('driver', true, 'Adresa2', false, 'isomidobradovicv3@gmail.com', 'Obradovic', 'Milos', 'isomidobradovicv3@gmail.com', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '0649144773', 'qwer', false);
 
-
-
 insert into role (name) VALUES ('ROLE_USER');
 insert into role (name) VALUES ('ROLE_ADMIN');
 insert into role (name) VALUES ('ROLE_DRIVER');
@@ -45,18 +43,14 @@ insert into vehicle_type (price, type) VALUES (100, 0);
 insert into vehicle_type (price, type) VALUES (200, 1);
 insert into vehicle_type (price, type) VALUES (300, 2);
 
-
 insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, vehicle_type_id, current_location) VALUES (true, true, 4, 'NS-680HS', 'Škoda Fabia', 4, 1, 1);
 insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, vehicle_type_id, current_location) VALUES (true, true, 3, 'BG-123AB' , 'Volkswagen golf', 5, 1, 2);
 insert into vehicles (babies, pets, capacity, plates, vehicle_model, driver_id, vehicle_type_id, current_location) VALUES (true, true, 4, 'NS-555VV', 'BMW 530i', 6, 1, 3);
 
-
-
-
 insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id,  vehicle_type)
 VALUES (true, '2023-01-11T17:43:49.439927', false, false, 4, 6, 350, 4, 1, 1);
 insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, vehicle_type)
-VALUES (true, '2023-01-11T17:43:49.439927', true, false, 4, 2, 350, 5, 1, 2);
+VALUES (true, '2023-01-12T17:43:49.439927', true, false, 4, 2, 350, 4, 1, 2);
 insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, vehicle_type)
 VALUES (true, '2023-01-11T18:00:49.439927', true, false, 4, 9, 350, 7, 1, 0);
 insert into rides (babies, start_time, panic, pets, ride_status, time_estimate, total_price, driver_id, vehicle_id, vehicle_type)
@@ -64,17 +58,21 @@ VALUES (false,'2023-01-11T17:43:49.439927', false, false, 4, 3, 500, 6, 1, 1);
 
 insert into ride_passengers (passenger_id, ride_id) VALUES (2, 1);
 insert into ride_passengers (passenger_id, ride_id) VALUES (3, 1);
-
+insert into ride_passengers (passenger_id, ride_id) VALUES (3, 2);
 insert into ride_passengers (passenger_id, ride_id) VALUES (3, 3);
 
 insert into messages (message, time_of_sending, message_type, receiver_id, ride_id, sender_id)
-VALUES ('Pozdrav svima', '2022-12-21T16:48:49.439927', 2, 2, 1, 4);
+VALUES ('Pozdrav svima1', '2022-12-21T16:48:49.439927', 2, 2, 1, 4);
+insert into messages (message, time_of_sending, message_type, receiver_id, ride_id, sender_id)
+VALUES ('Pozdrav svima2', '2022-12-22T16:48:49.439927', 2, 4, 1, 2);
+insert into messages (message, time_of_sending, message_type, receiver_id, ride_id, sender_id)
+VALUES ('Pozdrav svima3', '2022-12-23T16:48:49.439927', 2, 4, 2, 2);
 
 insert into panic (reason, time, ride_id, user_id) VALUES ('Fatal crash', '2022-12-21T16:48:43.439927', 2, 2);
 
 insert into rejections (reason, time, ride_id, user_id) VALUES ('Putnik se nije pojavio', '2022-12-22T17:26:00.093044', 2, 1);
 
-insert into reviews (comment, grade, driver_id, passenger_id, ride_id, vehicle) VALUES ('Svaka cst', 5, 3, 2, 1, true);
+insert into reviews (comment, grade, driver_id, passenger_id, ride_id, vehicle) VALUES ('Svaka cst', 5, 4, 2, 1, true);
 insert into reviews (comment, grade, driver_id, passenger_id, ride_id, vehicle) VALUES ('Svaka ti', 5, 4, 3, 1, true);
 insert into reviews (comment, grade, driver_id, passenger_id, ride_id, vehicle) VALUES ('Svaka bajo', 5, 5, 2, 1, false);
 insert into reviews (comment, grade, driver_id, passenger_id, ride_id, vehicle) VALUES ('Svaka moj', 5, 4, 2, 1, false);
