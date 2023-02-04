@@ -1,7 +1,6 @@
 package com.uber.app.team23.AirRide.service;
 
 import com.uber.app.team23.AirRide.Utils.GoogleMapUtils;
-import com.uber.app.team23.AirRide.controller.WebSocketController;
 import com.uber.app.team23.AirRide.dto.RideDTO;
 import com.uber.app.team23.AirRide.dto.RideResponseDTO;
 import com.uber.app.team23.AirRide.dto.UserShortDTO;
@@ -21,9 +20,6 @@ import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnu
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleType;
 import com.uber.app.team23.AirRide.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -158,7 +154,7 @@ public class RideService {
         }
     }
 
-    public Driver findPotentialDriver(Ride ride){
+    public Driver findPotentialDriver(Ride ride) throws BadRequestException{
         return this.rideSchedulingService.findDriver(ride);
     }
 
@@ -302,18 +298,18 @@ public class RideService {
                 vehicle.setCurrentLocation(currentLoc);
                 vehicleRepository.save(vehicle);
 
-                if(ride.getStatus() == RideStatus.ACCEPTED) {
-                    Location newDeparture = vehicle.getCurrentLocation();
-                    Location nextVehicleLocation = GoogleMapUtils.getLocationAtTime(newDeparture.getLatitude(), newDeparture.getLongitude(),
-                            destination.getLatitude(), destination.getLongitude(), vehicle);
-
-                    if (Objects.equals(nextVehicleLocation.getLatitude(), destination.getLatitude()) &&
-                            Objects.equals(nextVehicleLocation.getLongitude(), destination.getLongitude())) {
-
-                        System.err.println("DRIVER JE STIGAO");
-                        //TODO notify vehicle arrived on address
-                    }
-                }
+//                if(ride.getStatus() == RideStatus.ACCEPTED) {
+//                    Location newDeparture = vehicle.getCurrentLocation();
+//                    Location nextVehicleLocation = GoogleMapUtils.getLocationAtTime(newDeparture.getLatitude(), newDeparture.getLongitude(),
+//                            destination.getLatitude(), destination.getLongitude(), vehicle);
+//
+//                    if (Objects.equals(nextVehicleLocation.getLatitude(), destination.getLatitude()) &&
+//                            Objects.equals(nextVehicleLocation.getLongitude(), destination.getLongitude())) {
+//
+//                        System.err.println("DRIVER JE STIGAO");
+//                        //TODO notify vehicle arrived on address
+//                    }
+//                }
             }
         }
     }
