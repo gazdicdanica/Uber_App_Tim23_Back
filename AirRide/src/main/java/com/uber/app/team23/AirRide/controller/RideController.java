@@ -199,10 +199,10 @@ public class RideController {
                 }
                 webSocketController.simpMessagingTemplate.convertAndSend("/ride-passenger/" + user.getId(), ride);
                 i++;
-                continue;
+            }else{
+                webSocketController.simpMessagingTemplate.convertAndSend("/linkPassengers/" + user.getId(), ride);
+                i++;
             }
-            webSocketController.simpMessagingTemplate.convertAndSend("/linkPassengers/" + user.getId(), ride);
-            i++;
         }
         return new ResponseEntity<>(ride, HttpStatus.OK);
 
@@ -258,7 +258,8 @@ public class RideController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @Scheduled(fixedRate = 1000 * 60)
+    @Transactional
+    @Scheduled(fixedRate = 1000 * 60 * 2)
     public void scheduledRides() {
         List<Ride> rides = rideService.findAll();
         rides = rideService.filterRidesForScheduling(rides);
