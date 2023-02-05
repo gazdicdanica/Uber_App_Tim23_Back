@@ -1,46 +1,116 @@
 package com.uber.app.team23.AirRide.model.users;
 
-//import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.*;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.*;
+import lombok.*;
+import org.springframework.format.annotation.NumberFormat;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 
-@Getter @Setter @NoArgsConstructor //@Entity //@Table(name = "Users")
-public abstract class User {
-    //@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Data
+@NoArgsConstructor @AllArgsConstructor
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Table(name = "users")
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
+public abstract class User implements UserDetails {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     protected Long id;
-//    @Column(name = "name", nullable = false)
+
+    @NotNull @NotEmpty
+    @Size(min = 2, max = 20)
+    @Column(name = "name")
     protected String name;
-//    @Column(name = "lastName", nullable = false)
-    protected String lastName;
-//    @Column(name = "profilePhoto")
-    protected String profilePhoto;
-//    @Column(name = "phoneNum", unique = true, nullable = false)
-    protected String phoneNumber;
-//    @Column(name = "email", unique = true, nullable = false)
+
+    @NotNull @NotEmpty
+    @Size(min = 2, max = 30)
+    @Column(name = "last_name")
+    protected String surname;
+
+    @Lob
+    @Nullable
+    @Column(name = "profile_picture")
+    protected byte[] profilePicture;
+
+    @Column(name = "telephone_number")
+    @NotNull @NotEmpty
+//    @NumberFormat
+//    @Size(min = 3, max = 15)
+    protected String telephoneNumber;
+
+    @Column(name = "email", unique = true)
+//    @Size(min = 3, max = 25)
+    @Email(message = "Email Not Valid", regexp = "^[a-zA-Z0-9_!#$%&amp;'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
+    @NotEmpty(message = "Email cannot be empty")
     protected String email;
-//    @Column(name = "address")
+
+    @Column(name = "username", unique = true)
+    protected String username;
+
+    @Column(name = "address")
     protected String address;
-//    @Column(name = "password", nullable = false)
+
+    @NotNull @NotEmpty
+    @Column(name = "password")
     protected String password;
-//    @Column(name = "blockedStatus")
+
+    @Column(name = "blocked")
     protected boolean blocked;
-//    @Column(name = "activeStatus")
+
+    @Column(name = "active")
     protected boolean active;
 
-    public User(Long id, String name, String lastName, String profilePhoto, String phoneNumber, String email,
-                String address, String password, boolean blocked, boolean active) {
-        this.id = id;
-        this.name = name;
-        this.lastName = lastName;
-        this.profilePhoto = profilePhoto;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.address = address;
-        this.password = password;
-        this.blocked = blocked;
-        this.active = active;
+    @Transient
+    @JsonIgnore
+    private String jwt;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    protected List<Role> role;
+
+    @JsonIgnore
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.role;
     }
+    @JsonIgnore
+    @Override
+    public String getUsername() {
+        return this.username;
+    }
+    @JsonIgnore
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
 }

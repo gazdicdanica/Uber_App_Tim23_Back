@@ -12,10 +12,10 @@ import java.util.List;
 @Setter @Getter @NoArgsConstructor
 public class DriverWorkingHoursDTO {
     private double totalCount = 0.0;
-    private List<WorkingHours> results = new ArrayList<>();
+    private List<WorkHoursDTO> results = new ArrayList<>();
 
-    public void updateWorkingHours(WorkingHours workingHours) {
-        this.totalCount += (double)Duration.between(workingHours.getStart(), workingHours.getEnd()).toMinutes()/60;
-        this.results.add(workingHours);
+    public DriverWorkingHoursDTO(List<WorkHoursDTO> results) {
+        this.results = results;
+        this.totalCount = results.size();
     }
 }

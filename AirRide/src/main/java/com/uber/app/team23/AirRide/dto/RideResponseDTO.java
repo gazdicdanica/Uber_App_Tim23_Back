@@ -1,59 +1,64 @@
 package com.uber.app.team23.AirRide.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.uber.app.team23.AirRide.model.messageData.Rejection;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.rideData.RideStatus;
 import com.uber.app.team23.AirRide.model.rideData.Route;
+import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
-@Getter @Setter @NoArgsConstructor
+@Getter @Setter @NoArgsConstructor @Data
 public class RideResponseDTO {
 
     private Long id;
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime startTime;
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime endTime;
     private double totalCost;
     private UserShortDTO driver;
     private int estimatedTimeInMinutes;
-    private ArrayList<Route> locations;
+    private List<Route> locations;
     private ArrayList<UserShortDTO> passengers;
     private VehicleEnum vehicleType;
     private boolean babyTransport;
     private boolean petTransport;
     private RideStatus status;
     private Rejection rejection;
+    private LocalDateTime scheduledTime;
+    private Double totalDistance;
 
-    public RideResponseDTO(Ride ride, ArrayList<Route> locations, ArrayList<UserShortDTO> passengers){
-        this(ride.getId(), ride.getStart(), ride.getEnd(), ride.getTotalPrice(),null, ride.getTimeEstimate(),
-                null, null, ride.getVehicle().getVehicleType().getType(), ride.isBabies(),
-                ride.isPets(), ride.getRideStatus(), ride.getRejection());
-        this.driver = new UserShortDTO(ride.getDriver().getId().intValue(), ride.getDriver().getEmail());
-        this.locations = locations;
-        this.passengers = passengers;
-
+    public RideResponseDTO(Ride ride){
+        this.id = ride.getId();
+        this.startTime = ride.getStartTime();
+        this.endTime = ride.getEndTime();
+        this.totalCost = ride.getTotalCost();
+        if(ride.getDriver() != null){
+            this.driver = new UserShortDTO(ride.getDriver());
+        }
+        this.estimatedTimeInMinutes = ride.getEstimatedTimeInMinutes();
+        this.locations = ride.getLocations();
+        this.passengers = new ArrayList<>();
+        for(User u: ride.getPassengers()){
+            UserShortDTO dto = new UserShortDTO(u);
+            this.passengers.add(dto);
+        }
+        this.vehicleType = ride.getVehicleType();
+        this.babyTransport = ride.isBabyTransport();
+        this.petTransport = ride.isPetTransport();
+        this.status = ride.getStatus();
+        this.rejection = ride.getRejection();
+        this.scheduledTime = ride.getScheduledTime();
+        this.totalDistance = ride.getTotalDistance();
     }
 
-    public RideResponseDTO(Long id, LocalDateTime startTime, LocalDateTime endTime, double totalCost, UserShortDTO driver,
-                           int estimatedTimeInMinutes, ArrayList<Route> locations, ArrayList<UserShortDTO> passengers,
-                           VehicleEnum vehicleType, boolean babyTransport, boolean petTransport, RideStatus status, Rejection rejection) {
-        this.id = id;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.totalCost = totalCost;
-        this.driver = driver;
-        this.estimatedTimeInMinutes = estimatedTimeInMinutes;
-        this.locations = locations;
-        this.passengers = passengers;
-        this.vehicleType = vehicleType;
-        this.babyTransport = babyTransport;
-        this.petTransport = petTransport;
-        this.status = status;
-        this.rejection = rejection;
-    }
 }

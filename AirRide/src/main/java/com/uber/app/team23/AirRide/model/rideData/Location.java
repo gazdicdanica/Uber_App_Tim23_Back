@@ -1,33 +1,38 @@
 package com.uber.app.team23.AirRide.model.rideData;
 
 
-//import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import lombok.*;
 
-@Getter
-@Setter
-@NoArgsConstructor
-//@Entity
-//@Table(name = "Location")
+@Data
+@NoArgsConstructor @AllArgsConstructor
+@Entity @Table(name = "locations")
 public class Location {
-//    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
-//    @Column(name = "longitude", nullable = false)
+
+    @Column(name = "longitude")
+    @NotNull
+    @DecimalMin(value="-180.0", message = "Longitude value must be between -180 and 180")
+    @DecimalMax(value="180.0", message = "Longitude value must be between -180 and 180")
     public double longitude;
-//    @Column(name = "latitude", nullable = false)
+
+    @Column(name = "latitude")
+    @NotNull
+    @DecimalMin(value="-90.0", message = "Longitude value must be between -90 and 90")
+    @DecimalMax(value="90.0", message = "Longitude value must be between -90 and 90")
     public double latitude;
-//    @Column(name = "address")
+
+    @Column(name = "address")
     public String address;
 
-
-    public Location(Long id, double longitude, double latitude, String address) {
-        this.id = id;
-        this.longitude = longitude;
+    public Location(double latitude, double longitude) {
         this.latitude = latitude;
-        this.address = address;
+        this.longitude = longitude;
+        this.address = "Address";
     }
-
 }
 

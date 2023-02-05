@@ -1,202 +1,225 @@
 package com.uber.app.team23.AirRide.controller;
 
 import com.uber.app.team23.AirRide.dto.*;
+import com.uber.app.team23.AirRide.exceptions.BadRequestException;
+import com.uber.app.team23.AirRide.mapper.*;
 import com.uber.app.team23.AirRide.model.rideData.Location;
+import com.uber.app.team23.AirRide.model.rideData.Ride;
+import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.WorkingHours;
-import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
-import com.uber.app.team23.AirRide.service.DriverService;
+import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Document;
+import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
+import com.uber.app.team23.AirRide.service.*;
+import jakarta.validation.*;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
-@RestController @RequestMapping("api/driver")
+@RestController
+@RequestMapping(value = "api/driver", produces = MediaType.APPLICATION_JSON_VALUE)
 public class DriverController {
 
     @Autowired
     private DriverService driverService;
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> createDriver(@RequestBody UserDTO userDTO) {
-        Driver driver = new Driver();
-        driver.setId((long)123);
-        driver.setName(userDTO.getName());
-        driver.setLastName(userDTO.getSurname());
-        driver.setProfilePhoto(userDTO.getProfilePicture());
-        driver.setPhoneNumber(userDTO.getTelephoneNumber());
-        driver.setEmail(userDTO.getEmail());
-        driver.setAddress(userDTO.getAddress());
+    @Autowired
+    private WorkingHoursService workingHoursService;
 
-//        driver = driverService.save(driver);
-        return new ResponseEntity<>(new UserDTO(driver), HttpStatus.OK);
+    @PostMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<UserDTO> createDriver(@Valid @RequestBody Driver driver) throws ConstraintViolationException {
+        Driver newDriver = driverService.save(driver);
+        return new ResponseEntity<>(new UserDTO(newDriver), HttpStatus.OK);
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserPaginatedDTO> getPaginatedDrivers(@RequestParam int page, @RequestParam int size) {
-        UserDTO driver = new UserDTO(12, "Pera", "Peric", "sghdh", "1234", "email", "adresa");
-        List<UserDTO> users = new ArrayList<>();
-        users.add(driver);
+    @GetMapping(value = "/{id}/location")
+    public ResponseEntity<Location> getDriverLocation(@PathVariable Long id) {
+        Driver driver = driverService.findById(id);
+        VehicleDTO vehicle = driverService.getVehicleForDriver(driver);
+        return new ResponseEntity<>(vehicle.getCurrentLocation(), HttpStatus.OK);
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
+    public ResponseEntity<UserPaginatedDTO> getPaginatedDrivers(Pageable page) {
+        Page<Driver> drivers = driverService.findAll(page);
+
+        List<UserDTO> users = drivers.stream().map(DriverDTOMapper::fromDriverToDTO).collect(Collectors.toList());
+
         return new ResponseEntity<>(new UserPaginatedDTO(users), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<UserDTO> getDriver(@PathVariable Integer id) {
-//        Driver driver = driverService.findOne(id);
-//        if (driver == null) {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-
-        Driver driver = new Driver();
-        driver.setId((long)id);
-        driver.setName("Pera");
-        driver.setLastName("Perić");
-        driver.setProfilePhoto("U3dhZ2dlciByb2Nrcw==");
-        driver.setPhoneNumber("+381123123");
-        driver.setEmail("pera.peric@email.com");
-        driver.setAddress("Bulevar Oslobodjenja 74");
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER', 'ROLE_USER')")
+    public ResponseEntity<UserDTO> getDriver(@PathVariable Long id) {
+        Driver driver = driverService.findOne(id);
         return new ResponseEntity<>(new UserDTO(driver), HttpStatus.OK);
     }
 
-    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}")
-    public ResponseEntity<UserDTO> updateDriver(@RequestBody UserDTO driverDTO, @PathVariable Integer id) {
-        Driver driver = new Driver();
-        driver.setId((long) id);
-        driver.setName(driverDTO.getName());
-        driver.setLastName(driverDTO.getSurname());
-        driver.setProfilePhoto(driverDTO.getProfilePicture());
-        driver.setPhoneNumber(driverDTO.getTelephoneNumber());
-        driver.setEmail(driverDTO.getEmail());
-        driver.setAddress(driverDTO.getAddress());
-
-        return new ResponseEntity<>(new UserDTO(driver), HttpStatus.OK);
+    @Transactional
+    @PutMapping(value = "/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
+    public ResponseEntity<Object> updateDriver(@Valid @RequestBody UserDTO driverDTO, @PathVariable Long id) {
+        Driver driver = driverService.changeDriverData(driverService.findById(id), driverDTO);
+        UserDTO ret = new UserDTO(driverService.update(driver));
+        return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}/documents")
-    public ResponseEntity<DriverDocumentsDTO> getDriverDocuments(@PathVariable Integer id) {
-        Driver driver = new Driver();
-        driver.setId((long)10);
-
-        DriverDocumentsDTO documentsDTO = new DriverDocumentsDTO((long)123, "Vozačka dozvola",
-                "U3dhZ2dlciByb2Nrcw=", driver.getId());
-
-        return new ResponseEntity<>(documentsDTO, HttpStatus.OK);
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
+    public ResponseEntity<List<DriverDocumentsDTO>> getDriverDocuments(@PathVariable Long id) {
+        Driver driver = driverService.findById(id);
+        List<Document> documentList = driverService.getDocuments(driver);
+        List<DriverDocumentsDTO> resp = new ArrayList<>(); //= documentList.stream().map(DocumentDTOMapper::fromDocToDTO).collect(Collectors.toList());
+        for(Document doc : documentList){
+            DriverDocumentsDTO dto = new DriverDocumentsDTO(doc);
+            resp.add(dto);
+        }
+        return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/document/{id}")
-    public ResponseEntity<DriverDocumentsDTO> deleteDriverDocuments(@PathVariable Integer id) {
-        DriverDocumentsDTO documentsDTO = new DriverDocumentsDTO();
-        documentsDTO.setId(id);
-        return new ResponseEntity<>(documentsDTO, HttpStatus.NO_CONTENT);
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<String> deleteDriverDocuments(@PathVariable Long id) {
+        driverService.deleteDocsById(id);
+        return new ResponseEntity<>("Document Deleted Successfully", HttpStatus.OK);
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/documents")
-    public ResponseEntity<DriverDocumentsDTO> addDriverDocuments(@RequestBody DriverDocumentsDTO documentsDTO, @PathVariable Integer id) {
-        DriverDocumentsDTO driverDocumentsDTO = new DriverDocumentsDTO();
-        driverDocumentsDTO.setId((long) 123);
-        driverDocumentsDTO.setName(documentsDTO.getName());
-        driverDocumentsDTO.setDocumentImage(documentsDTO.getDocumentImage());
-        driverDocumentsDTO.setDriverId((long) id);
+    @Transactional
+    @DeleteMapping(value = "/document")
+    @PreAuthorize("hasAuthority('ROLE_DRIVER')")
+    public ResponseEntity<String> deleteDocument(@RequestParam(value = "name") String value){
+        driverService.deleteDocumentByName(value);
+        JSONObject obj = new JSONObject();
+        obj.put("message", "Document deleted successfully");
+        return new ResponseEntity<>(obj.toString(), HttpStatus.OK);
+    }
 
-        return new ResponseEntity<>(driverDocumentsDTO, HttpStatus.OK);
+    @PostMapping(value = "/{id}/documents")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
+    public ResponseEntity<DriverDocumentsDTO> addDriverDocuments(@Valid @RequestBody DriverDocumentsDTO dto, @PathVariable Long id) {
+        Driver driver = driverService.findById(id);
+        DriverDocumentsDTO document = driverService.saveDocsForDriver(driver, dto);
+        return new ResponseEntity<>(document, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}/vehicle")
-    public ResponseEntity<VehicleDTO> getVehicleForDriver(@PathVariable Integer id) {
-        VehicleDTO vehicle = new VehicleDTO();
-        vehicle.setId((long) 123);
-        vehicle.setDriverId((long) id);
-        vehicle.setVehicleType(VehicleEnum.STANDARDNO);
-        vehicle.setModel("VW Golf 2");
-        vehicle.setLicenseNumber("NS 123-AB");
-        vehicle.setCurrentLocation(new Location((long) 1, 19.833549, 45.267136, "Bulevar oslobodjenja 46"));
-        vehicle.setPassengerSeats(4);
-        vehicle.setBabyTransport(true);
-        vehicle.setPetTransport(true);
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER', 'ROLE_USER')")
+    public ResponseEntity<VehicleDTO> getVehicleForDriver(@PathVariable Long id) {
+        Driver driver = driverService.findById(id);
+        VehicleDTO vehicle = driverService.getVehicleForDriver(driver);
+        return new ResponseEntity<>(vehicle, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/{id}/vehicle")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<VehicleDTO> addVehicleToDriver(@PathVariable Long id, @Valid @RequestBody VehicleDTO vehicleDTO) {
+        driverService.findById(id);
+        VehicleDTO vehicle = driverService.saveVehicleForDriver(id, vehicleDTO);
 
         return new ResponseEntity<>(vehicle, HttpStatus.OK);
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/vehicle")
-    public ResponseEntity<VehicleDTO> addVehicleToDriver(@PathVariable Integer id, @RequestBody VehicleDTO vehicleDTO) {
-        VehicleDTO vehicle = new VehicleDTO();
-        vehicle.setId((long) 12);
-        vehicle.setDriverId((long) id);
-        vehicle.setVehicleType(vehicleDTO.getVehicleType());
-        vehicle.setModel(vehicleDTO.getModel());
-        vehicle.setLicenseNumber(vehicleDTO.getLicenseNumber());
-        vehicle.setCurrentLocation(new Location((long) 1, 19.833549, 45.267136, "Bulevar oslobodjenja 46"));
-        vehicle.setPassengerSeats(vehicleDTO.getPassengerSeats());
-        vehicle.setBabyTransport(vehicleDTO.isBabyTransport());
-        vehicle.setPetTransport(vehicleDTO.isPetTransport());
-
-        return new ResponseEntity<>(vehicle, HttpStatus.OK);
-    }
-
-    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/vehicle")
-    public ResponseEntity<VehicleDTO> updateDriverVehicle(@PathVariable Integer id, @RequestBody VehicleDTO vehicleDTO) {
-        VehicleDTO vehicle = new VehicleDTO();
-        vehicle.setId((long) 12);
-        vehicle.setDriverId((long) id);
-        vehicle.setVehicleType(vehicleDTO.getVehicleType());
-        vehicle.setModel(vehicleDTO.getModel());
-        vehicle.setLicenseNumber(vehicleDTO.getLicenseNumber());
-        vehicle.setCurrentLocation(new Location((long) 1, 19.833549, 45.267136, "Bulevar oslobodjenja 46"));
-        vehicle.setPassengerSeats(vehicleDTO.getPassengerSeats());
-        vehicle.setBabyTransport(vehicleDTO.isBabyTransport());
-        vehicle.setPetTransport(vehicleDTO.isPetTransport());
-
+    @Transactional
+    @PutMapping(value = "/{id}/vehicle")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
+    public ResponseEntity<VehicleDTO> updateDriverVehicle(@PathVariable Long id, @Valid @RequestBody VehicleDTO vehicleDTO) {
+        driverService.findById(id);
+        VehicleDTO vehicle = driverService.updateVehicleForDriver(id, vehicleDTO);
         return new ResponseEntity<>(vehicle, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}/working-hour")
-    public ResponseEntity<DriverWorkingHoursDTO> getTotalWorkHours(
-            @PathVariable Integer id, @RequestParam int page, @RequestParam int size, @RequestParam String from,
-            @RequestParam String to) {
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<DriverWorkingHoursDTO> getTotalWorkHours(@PathVariable Long id, Pageable pageable) {
+        driverService.findById(id);
+        Page<WorkingHours> workHours = workingHoursService.findAll(pageable);
+        List<WorkHoursDTO> dto = workHours.stream().map(WorkHoursDTOMapper::fromWorkHoursToDTO).collect(Collectors.toList());
 
-        WorkingHours wh1 = new WorkingHours(LocalDateTime.now(), LocalDateTime.now().plusHours(2), (long) 1);
-        WorkingHours wh2 = new WorkingHours(LocalDateTime.now(), LocalDateTime.now().plusHours(2), (long) 1);
-        DriverWorkingHoursDTO workingHoursDTO = new DriverWorkingHoursDTO();
-        workingHoursDTO.updateWorkingHours(wh1);
-        workingHoursDTO.updateWorkingHours(wh2);
-
-        return new ResponseEntity<>(workingHoursDTO, HttpStatus.OK);
+        return new ResponseEntity<>(new DriverWorkingHoursDTO(dto), HttpStatus.OK);
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/{id}/working-hour")
-    public ResponseEntity<WorkingHours> updateDriverWorkingHours(@PathVariable Integer id) {
+    @PostMapping(value = "/{id}/working-hour")
+    @PreAuthorize("hasAuthority('ROLE_DRIVER')")
+    public ResponseEntity<WorkHoursDTO> createDriverWorkingHours(@PathVariable Long id, @RequestBody WorkHoursDTO workHoursDTO) {
         // Time generated when driver logged
-        LocalDateTime startShift = LocalDateTime.now().minusHours(3);
-        // Time generated when driver finished shift
-        LocalDateTime endShift = LocalDateTime.now();
-        WorkingHours wh = new WorkingHours(startShift, endShift, (long) 1);
+        // TODO cannot start shift 400
+        Driver d = driverService.findById(id);
+        VehicleDTO vehicle = driverService.getVehicleForDriver(d);
+        if(vehicle == null){
+            throw new BadRequestException("Cannot start shift because the vehicle is not defined!");
+        }
+        WorkingHours workingHours = workingHoursService.save(d, workHoursDTO);
+        driverService.changeDriverStatus(true, id);
 
-        return new ResponseEntity<>(wh, HttpStatus.OK);
+        WorkHoursDTO dto = new WorkHoursDTO(workingHours.getStart(),null, id);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/{id}/ride", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DriverWorkingHoursDTO> getRidesSorted(
-            @PathVariable Integer id, @RequestParam int page, @RequestParam int size, @RequestParam String sort,
-            @RequestParam String from, @RequestParam String to){
-
-        return new ResponseEntity<>(new DriverWorkingHoursDTO(), HttpStatus.OK);
+    @Transactional
+    @GetMapping(value = "/{id}/ride")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
+    public ResponseEntity<RidePaginatedDTO> getRidesSorted(@PathVariable Long id, Pageable pageable){
+        Page<Ride> rides = driverService.findAllRides(driverService.findById(id), pageable);
+        List<RideResponseDTO> dto = rides.stream().map(RideDTOMapper::fromRideToDTO).collect(Collectors.toList());
+        return new ResponseEntity<>(new RidePaginatedDTO(dto), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/working-hour/{id}")
-    public ResponseEntity<WorkingHours> getOneWorkingHour(@PathVariable Integer id) {
-        return new ResponseEntity<>(new WorkingHours(LocalDateTime.now(), LocalDateTime.now().plusHours(2), (long) id), HttpStatus.OK);
+    @GetMapping(value = "/working-hour/{working-hour-id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
+    public ResponseEntity<WorkHoursDTO> getOneWorkingHour(@PathVariable("working-hour-id") Long id) {
+        WorkingHours wh = workingHoursService.findOne(id);
+        return new ResponseEntity<>(new WorkHoursDTO(wh.getStart(), wh.getEnd(), wh.getId()), HttpStatus.OK);
     }
 
-    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/working-hour/{id}")
-    public ResponseEntity<WorkingHours> updateWorkingHours(@PathVariable Integer id) {
-        WorkingHours wh = new WorkingHours(LocalDateTime.now().minusHours(4), LocalDateTime.now().minusHours(2), (long) id);
-        wh.setEnd(LocalDateTime.now());
-        return new ResponseEntity<>(wh, HttpStatus.OK);
+    @PutMapping(value = "/working-hour/{working-hour-id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
+    public ResponseEntity<WorkHoursDTO> updateWorkingHours(@PathVariable("working-hour-id") Long id) {
+        WorkingHours wh = workingHoursService.update(id);
+        driverService.changeDriverStatus(false, wh.getDriver().getId());
+        return new ResponseEntity<>(new WorkHoursDTO(wh.getStart(), wh.getEnd(), wh.getId()), HttpStatus.OK);
     }
+
+
+    @PutMapping(value = "/{id}/working-hour/start")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
+    @Transactional
+    public ResponseEntity<WorkHoursDTO> startWorkingHours(@PathVariable Long id) {
+        Driver d = driverService.findById(id);
+        WorkingHours workingHours = workingHoursService.save(d, null);
+        driverService.changeDriverStatus(true, id);
+
+        WorkHoursDTO dto = new WorkHoursDTO(workingHours.getStart(),null, id);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/{id}/working-hour/end")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
+    @Transactional
+    public ResponseEntity<WorkHoursDTO> endWorkingHours(@PathVariable Long id){
+        Driver d = driverService.findById(id);
+        WorkingHours workingHours = workingHoursService.endWorkingHours(d);
+        driverService.changeDriverStatus(false, id);
+        return new ResponseEntity<>(new WorkHoursDTO(workingHours.getStart(), workingHours.getEnd(), id), HttpStatus.OK );
+    }
+
+    @GetMapping(value = "/{id}/status")
+    @PreAuthorize("hasAuthority('ROLE_DRIVER')")
+    public ResponseEntity<Boolean> getDriverStatus(@PathVariable Long id){
+        Driver d = driverService.findById(id);
+        return new ResponseEntity<>(d.online, HttpStatus.OK);
+    }
+
 }
