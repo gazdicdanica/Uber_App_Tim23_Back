@@ -259,7 +259,7 @@ public class RideController {
     }
 
     @Transactional
-    @Scheduled(fixedRate = 1000 * 60)
+    @Scheduled(fixedRate = 1000 * 60 * 2)
     public void scheduledRides() {
         List<Ride> rides = rideService.findAll();
         rides = rideService.filterRidesForScheduling(rides);
