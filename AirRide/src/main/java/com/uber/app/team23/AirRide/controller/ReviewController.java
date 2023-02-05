@@ -68,7 +68,7 @@ public class ReviewController {
         Ride ride = rideService.findOne(id);
         Vehicle vehicle = ride.getVehicle();
 //        Vehicle vehicle = vehicleService.findOne(id);
-        List<ReviewDTO> reviewDTOS = reviewService.findAll(vehicle.getDriver(), true);
+        List<ReviewDTO> reviewDTOS = reviewService.findAllByDriver(vehicle.getDriver(), true);
 
         return new ResponseEntity<>(new ReviewLongDTO(reviewDTOS), HttpStatus.OK);
     }
@@ -76,7 +76,7 @@ public class ReviewController {
     @GetMapping(value = "/driver/{id}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<ReviewLongDTO> getReviewsForDriver(@PathVariable Long id) {
-        List<ReviewDTO> reviewDTOS = reviewService.findAll(driverService.findById(id), false);
+        List<ReviewDTO> reviewDTOS = reviewService.findAllByDriver(driverService.findById(id), false);
 
         return new ResponseEntity<>(new ReviewLongDTO(reviewDTOS), HttpStatus.OK);
     }
@@ -107,8 +107,8 @@ public class ReviewController {
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_DRIVER')")
     public ResponseEntity<ReviewExtraLongDTO> getAllReview(@PathVariable Long rideId) {
         Ride ride = rideService.findOne(rideId);
-        List<ReviewDTO> vehicleReviews = reviewService.findAll(ride.getDriver(), true);
-        List<ReviewDTO> driverReviews = reviewService.findAll(ride.getDriver(), false);
+        List<ReviewDTO> vehicleReviews = reviewService.findAllByRide(ride, true);
+        List<ReviewDTO> driverReviews = reviewService.findAllByRide(ride, false);
 
         return new ResponseEntity<>(new ReviewExtraLongDTO(vehicleReviews, driverReviews), HttpStatus.OK);
     }
