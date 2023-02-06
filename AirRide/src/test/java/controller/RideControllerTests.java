@@ -403,4 +403,6 @@ public class RideControllerTests {
                 rejectionEntity,
                 RideResponseDTO.class);
     }
+
+    
 }
