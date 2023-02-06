@@ -238,10 +238,15 @@ public class DriverService {
     public RideStatus findDriverStatus(Driver driver) {
         Driver d = this.findById(driver.getId());
         Ride esp = rideRepository.findByDriverAndStatus(d, RideStatus.ACTIVE).orElse(null);
-        if (esp == null) {
-            return RideStatus.FINISHED;
+        Ride isPanic = rideRepository.findByDriverAndStatus(d, RideStatus.PANIC).orElse(null);
+        if (isPanic == null) {
+            if (esp == null) {
+                return RideStatus.FINISHED;
+            } else {
+                return RideStatus.ACTIVE;
+            }
         } else {
-            return RideStatus.ACTIVE;
+            return RideStatus.PANIC;
         }
     }
 }

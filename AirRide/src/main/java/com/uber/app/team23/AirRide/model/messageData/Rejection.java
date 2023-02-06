@@ -20,17 +20,26 @@ public class Rejection {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     public Long id;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "ride_id", referencedColumnName = "id")
     @JsonIgnore
     public Ride ride;
+
     @Column(name = "reason")
     public String reason;
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     @JsonIgnore
     public User user;
+
     @Column(name = "time")
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     public LocalDateTime timeOfRejection;
+
+    public Rejection(String reason) {
+        this.reason = reason;
+        this.timeOfRejection = LocalDateTime.now();
+    }
 }

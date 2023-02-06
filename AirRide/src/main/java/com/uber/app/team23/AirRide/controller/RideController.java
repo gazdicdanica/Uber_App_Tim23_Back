@@ -49,28 +49,28 @@ public class RideController {
     @Autowired
     WebSocketController webSocketController;
 
-    @Scheduled(fixedRate = 1000 * 2)
-    @Transactional
-    public void simulate() {
-        rideService.updateLocations(RideStatus.ACCEPTED);
-        rideService.updateLocations(RideStatus.ACTIVE);
-    }
+//    @Scheduled(fixedRate = 1000 * 2)
+//    @Transactional
+//    public void simulate() {
+//        rideService.updateLocations(RideStatus.ACCEPTED);
+//        rideService.updateLocations(RideStatus.ACTIVE);
+//    }
 
-    @Scheduled(fixedRate = 2000)
-    @Transactional
-    public void sendOnLocationNotification(){
-        for(Ride r : rideService.findByStatus(RideStatus.ACCEPTED)){
-            Location currentLocation = r.getVehicle().getCurrentLocation();
-            Location departure = r.getLocations().get(0).getDeparture();
-            List<Double> estimates =  rideSchedulingService.getEstimates(currentLocation, departure);
-            Double distance = estimates.get(1);
-            if(distance < 0.1){
-                System.err.println("DRIVER STIGAO");
-                System.err.println("RIDE ID " + r.getId());
-                webSocketController.simpMessagingTemplate.convertAndSend("/driver-arrived/"+r.getId(), "");
-            }
-        }
-    }
+//    @Scheduled(fixedRate = 2000)
+//    @Transactional
+//    public void sendOnLocationNotification(){
+//        for(Ride r : rideService.findByStatus(RideStatus.ACCEPTED)){
+//            Location currentLocation = r.getVehicle().getCurrentLocation();
+//            Location departure = r.getLocations().get(0).getDeparture();
+//            List<Double> estimates =  rideSchedulingService.getEstimates(currentLocation, departure);
+//            Double distance = estimates.get(1);
+//            if(distance < 0.1){
+//                System.err.println("DRIVER STIGAO");
+//                System.err.println("RIDE ID " + r.getId());
+//                webSocketController.simpMessagingTemplate.convertAndSend("/driver-arrived/"+r.getId(), "");
+//            }
+//        }
+//    }
 
 
     @Transactional
@@ -115,7 +115,7 @@ public class RideController {
         return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
     @GetMapping("/driver/{driverId}/active")
     public ResponseEntity<RideResponseDTO> getActiveRideDriver(@PathVariable Long driverId){
         RideResponseDTO ride = rideService.findActiveByDriver(driverId);
@@ -125,9 +125,10 @@ public class RideController {
         return new ResponseEntity<>(ride, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/passenger/{passengerId}/active")
     public ResponseEntity<RideResponseDTO> getActiveRidePassenger(@PathVariable Long passengerId){
+        System.err.println("Passenger ID: " + passengerId);
         RideResponseDTO ride = rideService.findActiveByPassenger(passengerId);
         if(ride == null){
             throw new EntityNotFoundException("Active ride for this passenger does not exist");
@@ -174,7 +175,7 @@ public class RideController {
 
             return new ResponseEntity<>(p, HttpStatus.OK);
         }
-        return new ResponseEntity<>(new PanicDTO(), HttpStatus.OK);
+        return new ResponseEntity<>(new PanicDTO(panic.getUser(), panic.getReason()), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ROLE_DRIVER')")
@@ -234,9 +235,11 @@ public class RideController {
     @Transactional
     @PostMapping("/favorites")
     public ResponseEntity<FavoriteDTO> setFavorite(@Valid @RequestBody FavoriteDTO favorite){
+        System.err.println("USAOOOO");
         Favorite newFavorite = favoriteService.save(favorite);
         newFavorite = favoriteService.addLocations(newFavorite.getId(), favorite.getLocations());
         newFavorite = favoriteService.addPassengers(newFavorite.getId(), favorite.getPassengers());
+        System.err.println("Test na beack=u" +FavoriteDTOMapper.fromFavoriteToDTO(newFavorite));
         return new ResponseEntity<>(FavoriteDTOMapper.fromFavoriteToDTO(newFavorite), HttpStatus.OK);
     }
 
@@ -256,6 +259,39 @@ public class RideController {
     public ResponseEntity<Void> deleteFavorite(@PathVariable Long id){
         favoriteService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
+    @Scheduled(fixedRate = 1337 * 1)
+    public void notification15Minutes() {
+        List<Ride> rides = rideService.findByStatus(RideStatus.PENDING);
+        rides = rideService.filterRidesForNotification(rides, 15);
+        for (Ride ride : rides) {
+            for (Passenger p : ride.getPassengers()) {
+                webSocketController.simpMessagingTemplate.convertAndSend("/notify15/" + p.getId(), "");
+            }
+        }
+    }
+
+    @Scheduled(fixedRate = 1337 * 1)
+    public void notification10Minutes() {
+        List<Ride> rides = rideService.findByStatus(RideStatus.PENDING);
+        rides = rideService.filterRidesForNotification(rides, 10);
+        for (Ride ride : rides) {
+            for (Passenger p : ride.getPassengers()) {
+                webSocketController.simpMessagingTemplate.convertAndSend("/notify10/" + p.getId(), "");
+            }
+        }
+    }
+    @Scheduled(fixedRate = 1337 * 1)
+    public void notification5Minutes() {
+        List<Ride> rides = rideService.findByStatus(RideStatus.PENDING);
+        rides = rideService.filterRidesForNotification(rides, 5);
+        for (Ride ride : rides) {
+            for (Passenger p : ride.getPassengers()) {
+                webSocketController.simpMessagingTemplate.convertAndSend("/notify5/" + p.getId(), "");
+            }
+        }
     }
 
     @Transactional

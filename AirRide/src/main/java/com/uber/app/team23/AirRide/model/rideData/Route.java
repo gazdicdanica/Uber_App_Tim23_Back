@@ -30,4 +30,9 @@ public class Route {
     @JsonIgnore
     private double distance;
 
+    public Route(Location departure, Location destination, double distance) {
+        this.departure = departure;
+        this.destination = destination;
+        this.distance = distance;
+    }
 }

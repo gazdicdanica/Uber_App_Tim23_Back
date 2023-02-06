@@ -21,8 +21,8 @@ import java.util.Map;
 
 public class GoogleMapUtils {
 
-//    private static final String LOCAL_STORAGE = "C:/Users/Obrad/Desktop/Google/api_key.txt";
-    private static final String LOCAL_STORAGE = "C:/Users/danic/OneDrive/Desktop/api_key.txt";
+    private static final String LOCAL_STORAGE = "C:/Users/Obrad/Desktop/Google/api_key.txt";
+//    private static final String LOCAL_STORAGE = "C:/Users/danic/OneDrive/Desktop/api_key.txt";
     private static String API_KEY;
 
     public static Map<Long, Duration> durations = new HashMap<>();

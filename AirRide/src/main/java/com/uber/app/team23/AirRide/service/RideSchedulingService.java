@@ -103,6 +103,7 @@ public class RideSchedulingService {
 
     }
 
+
     public Driver findDriver(Ride ride) throws BadRequestException{
         List<Driver> onlineDrivers = driverService.findOnlineDrivers();
         if(onlineDrivers.isEmpty()){
@@ -121,6 +122,7 @@ public class RideSchedulingService {
         }
 
         List<Route> routes = ride.getLocations();
+        System.err.println("Locations" + routes.toString());
         return findFastestDriver(driversWorkHours, routes.get(0).getDeparture());
 
     }

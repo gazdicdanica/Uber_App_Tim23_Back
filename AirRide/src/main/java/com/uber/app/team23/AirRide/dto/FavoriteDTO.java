@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,13 +19,12 @@ import java.util.stream.Collectors;
 public class FavoriteDTO {
     private Long id;
 
-//    @NotEmpty @NotNull
+//    @NotEmpty
+    @NotNull
     private String favoriteName;
 
-    @Valid
     private List<Route> locations;
 
-    @Valid
     private List<UserShortDTO> passengers;
 
 //    @NotNull
@@ -47,4 +47,14 @@ public class FavoriteDTO {
         this.passengers = favorite.getPassengers().stream().map(PassengerDTOMapper::fromPassengerToShortDTO).collect(Collectors.toList());
     }
 
+    public FavoriteDTO(String name, ArrayList<Route> routes, ArrayList<UserShortDTO> passengers,
+                       boolean isPet, boolean isBaby, VehicleEnum ve) {
+
+        this.favoriteName = name;
+        this.locations = routes;
+        this.passengers = passengers;
+        this.petTransport = isPet;
+        this.babyTransport = isBaby;
+        this.vehicleType = ve;
+    }
 }
