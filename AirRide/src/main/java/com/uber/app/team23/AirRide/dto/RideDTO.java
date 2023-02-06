@@ -10,6 +10,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor @NoArgsConstructor @Data
 public class RideDTO {
@@ -33,4 +34,14 @@ public class RideDTO {
     @NotNull
     private boolean petTransport;
     private double estimatedTime;
+
+    public RideDTO(ArrayList<Route> locations, ArrayList<UserShortDTO> passengers, VehicleEnum vt, boolean babyTransport,
+                   boolean petTransport, LocalDateTime scheduledTime) {
+        this.locations = locations;
+        this.passengers = passengers;
+        vehicleType = vt;
+        this.petTransport = petTransport;
+        this.babyTransport = babyTransport;
+        this.scheduledTime = scheduledTime;
+    }
 }
