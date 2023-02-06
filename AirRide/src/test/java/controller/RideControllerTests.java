@@ -4,20 +4,19 @@ import com.uber.app.team23.AirRide.AirRideApplication;
 import com.uber.app.team23.AirRide.dto.*;
 import com.uber.app.team23.AirRide.model.messageData.Panic;
 import com.uber.app.team23.AirRide.model.messageData.Rejection;
-import com.uber.app.team23.AirRide.model.rideData.Location;
-import com.uber.app.team23.AirRide.model.rideData.Ride;
-import com.uber.app.team23.AirRide.model.rideData.RideStatus;
-import com.uber.app.team23.AirRide.model.rideData.Route;
+import com.uber.app.team23.AirRide.model.rideData.*;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,6 +41,9 @@ public class RideControllerTests {
     private ArrayList<UserShortDTO> passengers = new ArrayList<>();
     private HttpHeaders headers = new HttpHeaders();
     private RideDTO requestRide;
+    private boolean favoriteSet = false, testFavNotSet = false, testFavNotDel = false;
+    private FavoriteDTO favoriteDTO;
+    private Long favoriteId;
 
     @BeforeAll
     public void login() {
@@ -67,6 +69,9 @@ public class RideControllerTests {
                 HttpMethod.PUT,
                 whEntity,
                 WorkHoursDTO.class);
+
+        favoriteDTO = new FavoriteDTO("Omiljena 1", locations, passengers, false, false, VehicleEnum.STANDARD);
+
         assertEquals(HttpStatus.OK, whResponse.getStatusCode());
 
     }
@@ -485,13 +490,18 @@ public class RideControllerTests {
                 RideResponseDTO.class);
         assertEquals(null, rejectionResponseInvalid.getBody().getStatus());
 
-        // Driver Cancels Ride With Explanation
-        HttpEntity<Rejection> rejectionEntity = new HttpEntity<>(rejection, headers);
-        ResponseEntity<RideResponseDTO> rejectionResponse = restTemplate.exchange(
-                "/api/ride/" + rideId + "/cancel",
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        Panic panic = new Panic(new Ride(), "Driving Too Fast");
+        HttpEntity<Panic> panicEntity = new HttpEntity<>(panic, headers);
+        ResponseEntity<PanicDTO> panicResponse = restTemplate.exchange(
+                "/api/ride/" + rideId + "/panic",
                 HttpMethod.PUT,
-                rejectionEntity,
-                RideResponseDTO.class);
+                panicEntity,
+                PanicDTO.class);
+        PanicDTO panicDTO = panicResponse.getBody();
+        assertEquals(HttpStatus.OK, panicResponse.getStatusCode());
+        assertEquals(panicDTO.getReason(), panic.getReason());
     }
 
     @Test
@@ -507,7 +517,6 @@ public class RideControllerTests {
                 HttpMethod.POST,
                 entity,
                 RideResponseDTO.class);
-        assertNotNull(response.getBody());
         RideResponseDTO rideResponse = response.getBody();
         Long rideId = rideResponse.getId();
         assertEquals(1, rideResponse.getPassengers().size());
@@ -625,5 +634,475 @@ public class RideControllerTests {
                 RideResponseDTO.class);
     }
 
+    @Test
+    @DisplayName("Get Active Ride For Driver")
+    public void getRidesDriverActive() {
+        // Create Instant Ride Request
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        HttpEntity<RideDTO> entity = new HttpEntity<>(requestRide, headers);
+        ResponseEntity<RideResponseDTO> response = restTemplate.exchange(
+                "/api/ride",
+                HttpMethod.POST,
+                entity,
+                RideResponseDTO.class);
+        assertNotNull(response.getBody());
+        RideResponseDTO rideResponse = response.getBody();
+        Long rideId = rideResponse.getId();
+        assertEquals(1, rideResponse.getPassengers().size());
+        assertEquals(VehicleEnum.STANDARD, rideResponse.getVehicleType());
+        assertEquals(RideStatus.PENDING, rideResponse.getStatus());
+        assertNotNull(rideResponse.getDriver());
 
+        // Driver Accepts Ride Request
+        headers.clear();
+        headers.add("authorization", "Bearer " + driverToken);
+        HttpEntity<Long> acceptRide = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> driverRideResponse = restTemplate.exchange(
+                "/api/ride/" + rideId + "/accept",
+                HttpMethod.PUT,
+                acceptRide,
+                RideResponseDTO.class);
+
+        assertNotNull(driverRideResponse.getBody());
+        assertEquals(HttpStatus.OK, driverRideResponse.getStatusCode());
+
+        // Driver Picked Up Passenger And Ride Started
+        HttpEntity<RideResponseDTO> startRide = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> startedRideDTO = restTemplate.exchange(
+                "/api/ride/" + rideId + "/start",
+                HttpMethod.PUT,
+                startRide,
+                RideResponseDTO.class);
+        assertEquals(HttpStatus.OK, startedRideDTO.getStatusCode());
+
+        // Getting Active Ride For Driver
+        HttpEntity<Long> activeRideEntity = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> activeRide = restTemplate.exchange(
+                "/api/ride/driver/" + ID_DRIVER + "/active",
+                HttpMethod.GET,
+                activeRideEntity,
+                RideResponseDTO.class);
+        RideResponseDTO resp = activeRide.getBody();
+        assertNotNull(resp);
+        assertEquals(rideId, resp.getId());
+        assertEquals(RideStatus.ACTIVE, resp.getStatus());
+
+        // Driver Panics
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        Panic panic = new Panic(new Ride(), "Driving Too Fast");
+        HttpEntity<Panic> panicEntity = new HttpEntity<>(panic, headers);
+        ResponseEntity<PanicDTO> panicResponse = restTemplate.exchange(
+                "/api/ride/" + rideId + "/panic",
+                HttpMethod.PUT,
+                panicEntity,
+                PanicDTO.class);
+        PanicDTO panicDTO = panicResponse.getBody();
+        assertEquals(HttpStatus.OK, panicResponse.getStatusCode());
+        assertEquals(panicDTO.getReason(), panic.getReason());
+
+    }
+
+    @Test
+    @DisplayName("Get Active Ride When No Active")
+    public void getRidesDriverActiveWhenNonActive() {
+
+        headers.clear();
+        headers.add("authorization", "Bearer " + driverToken);
+
+        // Getting Active Ride For Driver
+        HttpEntity<Long> activeRideEntity = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> activeRide = restTemplate.exchange(
+                "/api/ride/driver/" + ID_DRIVER + "/active",
+                HttpMethod.GET,
+                activeRideEntity,
+                RideResponseDTO.class);
+        RideResponseDTO resp = activeRide.getBody();
+        assertNull(resp.getId());
+    }
+
+    @Test
+    @DisplayName("Bad Input For Get Active Ride For Driver")
+    public void getRidesDriverActiveBadInput() {
+        // Create Instant Ride Request
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        HttpEntity<RideDTO> entity = new HttpEntity<>(requestRide, headers);
+        ResponseEntity<RideResponseDTO> response = restTemplate.exchange(
+                "/api/ride",
+                HttpMethod.POST,
+                entity,
+                RideResponseDTO.class);
+        assertNotNull(response.getBody());
+        RideResponseDTO rideResponse = response.getBody();
+        Long rideId = rideResponse.getId();
+        assertEquals(1, rideResponse.getPassengers().size());
+        assertEquals(VehicleEnum.STANDARD, rideResponse.getVehicleType());
+        assertEquals(RideStatus.PENDING, rideResponse.getStatus());
+        assertNotNull(rideResponse.getDriver());
+
+        // Driver Accepts Ride Request
+        headers.clear();
+        headers.add("authorization", "Bearer " + driverToken);
+        HttpEntity<Long> acceptRide = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> driverRideResponse = restTemplate.exchange(
+                "/api/ride/" + rideId + "/accept",
+                HttpMethod.PUT,
+                acceptRide,
+                RideResponseDTO.class);
+
+        assertNotNull(driverRideResponse.getBody());
+        assertEquals(HttpStatus.OK, driverRideResponse.getStatusCode());
+
+        // Driver Picked Up Passenger And Ride Started
+        HttpEntity<RideResponseDTO> startRide = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> startedRideDTO = restTemplate.exchange(
+                "/api/ride/" + rideId + "/start",
+                HttpMethod.PUT,
+                startRide,
+                RideResponseDTO.class);
+        assertEquals(HttpStatus.OK, startedRideDTO.getStatusCode());
+
+        // Getting Active Ride For Driver
+        HttpEntity<Long> activeRideEntity = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> activeRide = restTemplate.exchange(
+                "/api/ride/driver/" + " " + "/active",
+                HttpMethod.GET,
+                activeRideEntity,
+                RideResponseDTO.class);
+        assertNull(activeRide.getBody().getId());
+
+        //Panics
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        Panic panic = new Panic(new Ride(), "Driving Too Fast");
+        HttpEntity<Panic> panicEntity = new HttpEntity<>(panic, headers);
+        ResponseEntity<PanicDTO> panicResponse = restTemplate.exchange(
+                "/api/ride/" + rideId + "/panic",
+                HttpMethod.PUT,
+                panicEntity,
+                PanicDTO.class);
+        PanicDTO panicDTO = panicResponse.getBody();
+        assertEquals(HttpStatus.OK, panicResponse.getStatusCode());
+        assertEquals(panicDTO.getReason(), panic.getReason());
+
+    }
+
+    @Test
+    @DisplayName("Get Active Ride For Passenger")
+    public void getActiveRidesPassenger() {
+        // Create Instant Ride Request
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        HttpEntity<RideDTO> entity = new HttpEntity<>(requestRide, headers);
+        ResponseEntity<RideResponseDTO> response = restTemplate.exchange(
+                "/api/ride",
+                HttpMethod.POST,
+                entity,
+                RideResponseDTO.class);
+        assertNotNull(response.getBody());
+        RideResponseDTO rideResponse = response.getBody();
+        Long rideId = rideResponse.getId();
+        assertEquals(1, rideResponse.getPassengers().size());
+        assertEquals(VehicleEnum.STANDARD, rideResponse.getVehicleType());
+        assertEquals(RideStatus.PENDING, rideResponse.getStatus());
+        assertNotNull(rideResponse.getDriver());
+
+        // Driver Accepts Ride Request
+        headers.clear();
+        headers.add("authorization", "Bearer " + driverToken);
+        HttpEntity<Long> acceptRide = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> driverRideResponse = restTemplate.exchange(
+                "/api/ride/" + rideId + "/accept",
+                HttpMethod.PUT,
+                acceptRide,
+                RideResponseDTO.class);
+
+        assertNotNull(driverRideResponse.getBody());
+        assertEquals(HttpStatus.OK, driverRideResponse.getStatusCode());
+
+        // Driver Picked Up Passenger And Ride Started
+        HttpEntity<RideResponseDTO> startRide = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> startedRideDTO = restTemplate.exchange(
+                "/api/ride/" + rideId + "/start",
+                HttpMethod.PUT,
+                startRide,
+                RideResponseDTO.class);
+        assertEquals(HttpStatus.OK, startedRideDTO.getStatusCode());
+
+        // Get Active Ride For Passenger
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        HttpEntity<Long> activeRideEntity = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> activeRide = restTemplate.exchange(
+                "/api/ride/passenger/" + 2 + "/active",
+                HttpMethod.GET,
+                activeRideEntity,
+                RideResponseDTO.class);
+        assertEquals(rideId, activeRide.getBody().getId());
+
+        // Panics
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        Panic panic = new Panic(new Ride(), "Driving Too Fast");
+        HttpEntity<Panic> panicEntity = new HttpEntity<>(panic, headers);
+        ResponseEntity<PanicDTO> panicResponse = restTemplate.exchange(
+                "/api/ride/" + rideId + "/panic",
+                HttpMethod.PUT,
+                panicEntity,
+                PanicDTO.class);
+        PanicDTO panicDTO = panicResponse.getBody();
+        assertEquals(HttpStatus.OK, panicResponse.getStatusCode());
+        assertEquals(panicDTO.getReason(), panic.getReason());
+    }
+
+    @Test
+    @DisplayName("Get Active Ride When No Active")
+    public void getActiveRidePassengerWhenNonActive() {
+        // Get Active Ride For Passenger
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        HttpEntity<Long> activeRideEntity = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> activeRide = restTemplate.exchange(
+                "/api/ride/passenger/" + 1L + "/active",
+                HttpMethod.GET,
+                activeRideEntity,
+                RideResponseDTO.class);
+
+        assertNull(activeRide.getBody().getId());
+    }
+
+    @Test
+    @DisplayName("Get Active Ride For Bad Input")
+    public void getActiveRidePassengerBadInput() {
+        // Create Instant Ride Request
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        HttpEntity<RideDTO> entity = new HttpEntity<>(requestRide, headers);
+        ResponseEntity<RideResponseDTO> response = restTemplate.exchange(
+                "/api/ride",
+                HttpMethod.POST,
+                entity,
+                RideResponseDTO.class);
+        assertNotNull(response.getBody());
+        RideResponseDTO rideResponse = response.getBody();
+        Long rideId = rideResponse.getId();
+        assertEquals(1, rideResponse.getPassengers().size());
+        assertEquals(VehicleEnum.STANDARD, rideResponse.getVehicleType());
+        assertEquals(RideStatus.PENDING, rideResponse.getStatus());
+        assertNotNull(rideResponse.getDriver());
+
+        // Driver Accepts Ride Request
+        headers.clear();
+        headers.add("authorization", "Bearer " + driverToken);
+        HttpEntity<Long> acceptRide = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> driverRideResponse = restTemplate.exchange(
+                "/api/ride/" + rideId + "/accept",
+                HttpMethod.PUT,
+                acceptRide,
+                RideResponseDTO.class);
+
+        assertNotNull(driverRideResponse.getBody());
+        assertEquals(HttpStatus.OK, driverRideResponse.getStatusCode());
+
+        // Driver Picked Up Passenger And Ride Started
+        HttpEntity<RideResponseDTO> startRide = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> startedRideDTO = restTemplate.exchange(
+                "/api/ride/" + rideId + "/start",
+                HttpMethod.PUT,
+                startRide,
+                RideResponseDTO.class);
+        assertEquals(HttpStatus.OK, startedRideDTO.getStatusCode());
+
+        // Get Active Ride For Passenger
+        headers.clear();
+        headers.add("authorization", "Baerer" + passengerToken);
+        HttpEntity<Long> activeRideEntity = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> activeRide = restTemplate.exchange(
+                "/api/ride/passenger/" + " " + "/active",
+                HttpMethod.GET,
+                activeRideEntity,
+                RideResponseDTO.class);
+
+        assertNull(activeRide.getBody().getId());
+
+        // Panics
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        Panic panic = new Panic(new Ride(), "Driving Too Fast");
+        HttpEntity<Panic> panicEntity = new HttpEntity<>(panic, headers);
+        ResponseEntity<PanicDTO> panicResponse = restTemplate.exchange(
+                "/api/ride/" + rideId + "/panic",
+                HttpMethod.PUT,
+                panicEntity,
+                PanicDTO.class);
+        PanicDTO panicDTO = panicResponse.getBody();
+        assertEquals(HttpStatus.OK, panicResponse.getStatusCode());
+        assertEquals(panicDTO.getReason(), panic.getReason());
+    }
+
+    @Test
+    @DisplayName("Set Favorite Route")
+    public void postFavorites() {
+        headers.clear();
+        headers.set("authorization", "Bearer " + passengerToken);
+        HttpEntity<FavoriteDTO> setFav = new HttpEntity<>(favoriteDTO, headers);
+        ResponseEntity<FavoriteDTO> favResponse = restTemplate.exchange(
+                "/api/ride/favorites",
+                HttpMethod.POST,
+                setFav,
+                FavoriteDTO.class);
+        assertEquals(favoriteDTO.getFavoriteName(), favResponse.getBody().getFavoriteName());
+        favoriteDTO = favResponse.getBody();
+        favoriteId = favResponse.getBody().getId();
+        favoriteSet = true;
+    }
+
+    @Test
+    @DisplayName("Set Favorite Route Bad Input")
+    public void postFavoritesBadInput() {
+        FavoriteDTO favoriteDTO = new FavoriteDTO(null, locations, passengers, false, false, VehicleEnum.STANDARD);
+        headers.clear();
+        headers.set("authorization", "Bearer " + passengerToken);
+        HttpEntity<FavoriteDTO> setFav = new HttpEntity<>(favoriteDTO, headers);
+        ResponseEntity<FavoriteDTO> favResponse = restTemplate.exchange(
+                "/api/ride/favorites",
+                HttpMethod.POST,
+                setFav,
+                FavoriteDTO.class);
+        assertNull(favResponse.getBody().getId());
+    }
+
+    @Test
+    @DisplayName("Get Favorite Routes")
+    public void getFavorites() {
+        if (!testFavNotSet) {
+            return;
+        }
+        if (!favoriteSet) {
+            return;
+        }
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        HttpEntity<?> getFav = new HttpEntity<>(headers);
+        ResponseEntity<List<FavoriteDTO>> getFavResp = restTemplate.exchange(
+                "/api/ride/favorites",
+                HttpMethod.GET,
+                getFav,
+                new ParameterizedTypeReference<List<FavoriteDTO>>(){});
+        System.err.println(getFavResp.getBody());
+        assertTrue(getFavResp.getBody().contains(favoriteDTO));
+    }
+
+    @Test
+    @DisplayName("Get Favorite Not Set")
+    public void getFavoritesWhenNoFavoritesSet() {
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        HttpEntity<?> getFav = new HttpEntity<>(headers);
+        ResponseEntity<List<FavoriteDTO>> getFavResp = restTemplate.exchange(
+                "/api/ride/favorites",
+                HttpMethod.GET,
+                getFav,
+                new ParameterizedTypeReference<List<FavoriteDTO>>(){});
+        assertFalse(getFavResp.getBody().contains(favoriteDTO));
+        testFavNotSet = true;
+    }
+
+    @Test
+    @DisplayName("Delete Favorite Route")
+    public void deleteFavorites() {
+        if (!favoriteSet) {
+            return;
+        }
+        if (!testFavNotDel) {
+            return;
+        }
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        HttpEntity<Long> getFav = new HttpEntity<>(favoriteId, headers);
+        ResponseEntity<Void> getFavResp = restTemplate.exchange(
+                "/api/ride/favorites/" + favoriteId,
+                HttpMethod.DELETE,
+                getFav,
+                Void.class);
+
+        // Set Favorite Again
+        headers.clear();
+        headers.set("authorization", "Bearer " + passengerToken);
+        HttpEntity<FavoriteDTO> setFav = new HttpEntity<>(favoriteDTO, headers);
+        ResponseEntity<FavoriteDTO> favResponse = restTemplate.exchange(
+                "/api/ride/favorites",
+                HttpMethod.POST,
+                setFav,
+                FavoriteDTO.class);
+        favoriteDTO = favResponse.getBody();
+        favoriteId = favResponse.getBody().getId();
+
+
+        assertEquals(HttpStatus.NO_CONTENT, getFavResp.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Delete Route For Invalid Input")
+    public void deleteFavoritesBadId() {
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        HttpEntity<Long> getFav = new HttpEntity<>(favoriteId, headers);
+        ResponseEntity<Void> getFavResp = restTemplate.exchange(
+                "/api/ride/favorites/",
+                HttpMethod.DELETE,
+                getFav,
+                Void.class);
+        assertNull(getFavResp.getBody());
+    }
+
+    @Test
+    @DisplayName("Delete Non Existing Favorite Route")
+    public void deleteFavoritesWhenNoFavoritesSet() {
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        HttpEntity<Long> getFav = new HttpEntity<>(favoriteId, headers);
+        ResponseEntity<Void> getFavResp = restTemplate.exchange(
+                "/api/ride/favorites/" + favoriteId,
+                HttpMethod.DELETE,
+                getFav,
+                Void.class);
+        assertNull(getFavResp.getBody());
+        testFavNotDel = true;
+    }
+
+    @Test
+    @DisplayName("Delete FavRide That Is Not Linked To You ")
+    public void deleteFavoriteRideThatIsNotYoursShouldFail() {
+        if(!favoriteSet) {
+            return;
+        }
+        if (!testFavNotDel) {
+            return;
+        }
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        HttpEntity<Long> getFav = new HttpEntity<>(favoriteId, headers);
+        ResponseEntity<Void> getFavResp = restTemplate.exchange(
+                "/api/ride/favorites/" + favoriteId,
+                HttpMethod.DELETE,
+                getFav,
+                Void.class);
+        System.err.println(getFavResp.getBody());
+        assertNull(getFavResp.getBody());
+
+        // Add Another Favorite For Other Tests To Success
+        headers.clear();
+        headers.set("authorization", "Bearer " + passengerToken);
+        HttpEntity<FavoriteDTO> setFav = new HttpEntity<>(favoriteDTO, headers);
+        ResponseEntity<FavoriteDTO> favResponse = restTemplate.exchange(
+                "/api/ride/favorites",
+                HttpMethod.POST,
+                setFav,
+                FavoriteDTO.class);
+        favoriteDTO = favResponse.getBody();
+        favoriteId = favResponse.getBody().getId();
+    }
 }

@@ -115,7 +115,7 @@ public class RideController {
         return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
     @GetMapping("/driver/{driverId}/active")
     public ResponseEntity<RideResponseDTO> getActiveRideDriver(@PathVariable Long driverId){
         RideResponseDTO ride = rideService.findActiveByDriver(driverId);
@@ -125,9 +125,10 @@ public class RideController {
         return new ResponseEntity<>(ride, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/passenger/{passengerId}/active")
     public ResponseEntity<RideResponseDTO> getActiveRidePassenger(@PathVariable Long passengerId){
+        System.err.println("Passenger ID: " + passengerId);
         RideResponseDTO ride = rideService.findActiveByPassenger(passengerId);
         if(ride == null){
             throw new EntityNotFoundException("Active ride for this passenger does not exist");
@@ -234,9 +235,11 @@ public class RideController {
     @Transactional
     @PostMapping("/favorites")
     public ResponseEntity<FavoriteDTO> setFavorite(@Valid @RequestBody FavoriteDTO favorite){
+        System.err.println("USAOOOO");
         Favorite newFavorite = favoriteService.save(favorite);
         newFavorite = favoriteService.addLocations(newFavorite.getId(), favorite.getLocations());
         newFavorite = favoriteService.addPassengers(newFavorite.getId(), favorite.getPassengers());
+        System.err.println("Test na beack=u" +FavoriteDTOMapper.fromFavoriteToDTO(newFavorite));
         return new ResponseEntity<>(FavoriteDTOMapper.fromFavoriteToDTO(newFavorite), HttpStatus.OK);
     }
 
