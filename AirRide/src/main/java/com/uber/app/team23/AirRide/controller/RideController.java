@@ -49,28 +49,28 @@ public class RideController {
     @Autowired
     WebSocketController webSocketController;
 
-    @Scheduled(fixedRate = 1000 * 2)
-    @Transactional
-    public void simulate() {
-        rideService.updateLocations(RideStatus.ACCEPTED);
-        rideService.updateLocations(RideStatus.ACTIVE);
-    }
+//    @Scheduled(fixedRate = 1000 * 2)
+//    @Transactional
+//    public void simulate() {
+//        rideService.updateLocations(RideStatus.ACCEPTED);
+//        rideService.updateLocations(RideStatus.ACTIVE);
+//    }
 
-    @Scheduled(fixedRate = 2000)
-    @Transactional
-    public void sendOnLocationNotification(){
-        for(Ride r : rideService.findByStatus(RideStatus.ACCEPTED)){
-            Location currentLocation = r.getVehicle().getCurrentLocation();
-            Location departure = r.getLocations().get(0).getDeparture();
-            List<Double> estimates =  rideSchedulingService.getEstimates(currentLocation, departure);
-            Double distance = estimates.get(1);
-            if(distance < 0.1){
-                System.err.println("DRIVER STIGAO");
-                System.err.println("RIDE ID " + r.getId());
-                webSocketController.simpMessagingTemplate.convertAndSend("/driver-arrived/"+r.getId(), "");
-            }
-        }
-    }
+//    @Scheduled(fixedRate = 2000)
+//    @Transactional
+//    public void sendOnLocationNotification(){
+//        for(Ride r : rideService.findByStatus(RideStatus.ACCEPTED)){
+//            Location currentLocation = r.getVehicle().getCurrentLocation();
+//            Location departure = r.getLocations().get(0).getDeparture();
+//            List<Double> estimates =  rideSchedulingService.getEstimates(currentLocation, departure);
+//            Double distance = estimates.get(1);
+//            if(distance < 0.1){
+//                System.err.println("DRIVER STIGAO");
+//                System.err.println("RIDE ID " + r.getId());
+//                webSocketController.simpMessagingTemplate.convertAndSend("/driver-arrived/"+r.getId(), "");
+//            }
+//        }
+//    }
 
 
     @Transactional
@@ -174,7 +174,7 @@ public class RideController {
 
             return new ResponseEntity<>(p, HttpStatus.OK);
         }
-        return new ResponseEntity<>(new PanicDTO(), HttpStatus.OK);
+        return new ResponseEntity<>(new PanicDTO(panic.getUser(), panic.getReason()), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ROLE_DRIVER')")
@@ -258,30 +258,60 @@ public class RideController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @Transactional
-    @Scheduled(fixedRate = 1000 * 60 * 2)
-    public void scheduledRides() {
-        List<Ride> rides = rideService.findAll();
-        rides = rideService.filterRidesForScheduling(rides);
-        for (Ride ride : rides) {
-            try{
-                Driver driver = rideService.findPotentialDriver(ride);
-                ride = rideService.addDriver(ride, driver);
-                RideResponseDTO dto = new RideResponseDTO(ride);
-                webSocketController.simpMessagingTemplate.convertAndSend("/ride-driver/" + driver.getId(), dto);
-            }catch(BadRequestException ex){
-                System.err.println("Bad request");
-                rideService.withdrawRide(ride.getId());
-                for(Passenger p : ride.getPassengers()){
-                    System.err.println( "passenger " + p.getId());
-                    System.err.println(ex.getMessage());
-                    RideResponseDTO dto = new RideResponseDTO(ride);
-                    webSocketController.simpMessagingTemplate.convertAndSend("/scheduledNotifications/"+ p.getId(), dto);
-                }
-            }
-
-
-        }
-    }
+//    @Scheduled(fixedRate = 1000 * 60 * 1)
+//    public void scheduledRides() {
+//        List<Ride> rides = rideService.findAll();
+//        rides = rideService.filterRidesForScheduling(rides);
+//        for (Ride ride : rides) {
+//            try{
+//                Driver driver = rideService.findPotentialDriver(ride);
+//                ride = rideService.addDriver(ride, driver);
+//                RideResponseDTO dto = new RideResponseDTO(ride);
+//                webSocketController.simpMessagingTemplate.convertAndSend("/ride-driver/" + driver.getId(), dto);
+//            }catch(BadRequestException ex){
+//                System.err.println("Bad request");
+//                rideService.withdrawRide(ride.getId());
+//                for(Passenger p : ride.getPassengers()){
+//                    System.err.println( "passenger " + p.getId());
+//                    System.err.println(ex.getMessage());
+//                    RideResponseDTO dto = new RideResponseDTO(ride);
+//                    webSocketController.simpMessagingTemplate.convertAndSend("/scheduledNotifications/"+ p.getId(), dto);
+//                }
+//            }
+//
+//
+//        }
+//    }
+//    @Scheduled(fixedRate = 1337 * 1)
+//    public void notification15Minutes() {
+//        List<Ride> rides = rideService.findByStatus(RideStatus.PENDING);
+//        rides = rideService.filterRidesForNotification(rides, 15);
+//        for (Ride ride : rides) {
+//            for (Passenger p : ride.getPassengers()) {
+//                webSocketController.simpMessagingTemplate.convertAndSend("/notify15/" + p.getId(), "");
+//            }
+//        }
+//    }
+//
+//    @Scheduled(fixedRate = 1337 * 1)
+//    public void notification10Minutes() {
+//        List<Ride> rides = rideService.findByStatus(RideStatus.PENDING);
+//        rides = rideService.filterRidesForNotification(rides, 10);
+//        for (Ride ride : rides) {
+//            for (Passenger p : ride.getPassengers()) {
+//                webSocketController.simpMessagingTemplate.convertAndSend("/notify10/" + p.getId(), "");
+//            }
+//        }
+//    }
+//    @Scheduled(fixedRate = 1337 * 1)
+//    public void notification5Minutes() {
+//        List<Ride> rides = rideService.findByStatus(RideStatus.PENDING);
+//        rides = rideService.filterRidesForNotification(rides, 5);
+//        for (Ride ride : rides) {
+//            for (Passenger p : ride.getPassengers()) {
+//                webSocketController.simpMessagingTemplate.convertAndSend("/notify5/" + p.getId(), "");
+//            }
+//        }
+//    }
 
 }

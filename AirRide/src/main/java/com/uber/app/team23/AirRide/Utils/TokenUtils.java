@@ -24,7 +24,8 @@ public class TokenUtils {
     @Value("Dana.!.")
     public String SECRET;
 
-    private int EXPIRES_IN = 18000000;
+    // ~12h
+    private int EXPIRES_IN = 43200000;
 
     @Value("Authorization")
     private String AUTH_HEADER;
@@ -66,7 +67,7 @@ public class TokenUtils {
         Date date = generateExpirationDate();
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
-        cal.add(Calendar.DATE, 7);
+        cal.add(Calendar.DAY_OF_MONTH, 7);
         return cal.getTime();
     }
 

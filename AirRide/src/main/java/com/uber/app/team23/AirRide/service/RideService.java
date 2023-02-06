@@ -58,20 +58,6 @@ public class RideService {
         return rideRepository.findAll();
     }
 
-    public List<Ride> filterRidesForScheduling(List<Ride> rides) {
-        List<Ride> schedule = new ArrayList<>();
-        for (Ride ride : rides) {
-            if (ride.getStatus() == RideStatus.PENDING) {
-                if (ride.getScheduledTime() != null) {
-                    if (ride.getScheduledTime().isAfter(LocalDateTime.now()) &&
-                            ride.getScheduledTime().isBefore(LocalDateTime.now().plusMinutes(15))) {
-                        schedule.add(ride);
-                    }
-                }
-            }
-        }
-        return schedule;
-    }
 
     public Ride findOne(Long id){
         return rideRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Ride does not exist"));
@@ -271,10 +257,9 @@ public class RideService {
     public void updateLocations(RideStatus rideStatus) {
         if (rideStatus == RideStatus.ACCEPTED) {
             resolveLocationsUsingGoogle(findByStatus(rideStatus));
-
-        } else if(rideStatus == RideStatus.ACTIVE){    //Active
+        } else if (rideStatus == RideStatus.ACTIVE){
             resolveLocationsUsingGoogle(findByStatus(RideStatus.ACTIVE));
-        }
+        } 
     }
 
     private void resolveLocationsUsingGoogle(List<Ride> rides) {
@@ -286,7 +271,7 @@ public class RideService {
                 departure = vehicle.getCurrentLocation();
                 destination = routeList.get(0).getDeparture();
                 System.err.println("departure:" + departure + "\ndestination"+destination.getAddress());
-            } else {    //Active
+            } else {        //RIDE STATUS ACTIVE
                 departure = vehicle.getCurrentLocation();
                 destination = routeList.get(routeList.size()-1).getDestination();
                 System.err.println("departure:" + departure + "\ndestination"+destination.getAddress());
@@ -320,4 +305,32 @@ public class RideService {
                 destination.getLatitude(), destination.getLongitude(), vehicle);
     }
 
+    public List<Ride> filterRidesForNotification(List<Ride> rides, int i) {
+        List<Ride> forNotifying = new ArrayList<>();
+        for (Ride ride : rides) {
+            if(ride.getScheduledTime() != null) {
+                if (ride.getScheduledTime().isAfter(LocalDateTime.now()) &&
+                        ride.getScheduledTime().isBefore(LocalDateTime.now().plusMinutes(i+1))) {
+                    forNotifying.add(ride);
+                }
+            }
+        }
+        
+        return forNotifying;
+    }
+    
+    public List<Ride> filterRidesForScheduling(List<Ride> rides) {
+        List<Ride> schedule = new ArrayList<>();
+        for (Ride ride : rides) {
+            if (ride.getStatus() == RideStatus.PENDING) {
+                if (ride.getScheduledTime() != null) {
+                    if (ride.getScheduledTime().isAfter(LocalDateTime.now()) &&
+                            ride.getScheduledTime().isBefore(LocalDateTime.now().plusMinutes(15))) {
+                        schedule.add(ride);
+                    }
+                }
+            }
+        }
+        return schedule;
+    }
 }

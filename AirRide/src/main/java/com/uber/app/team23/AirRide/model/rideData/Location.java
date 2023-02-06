@@ -34,5 +34,11 @@ public class Location {
         this.longitude = longitude;
         this.address = "Address";
     }
+
+    public Location(double lat, double lng, String address) {
+        this.latitude = lat;
+        this.longitude = lng;
+        this.address = address;
+    }
 }
 
