@@ -58,7 +58,6 @@ public class RideService {
         return rideRepository.findAll();
     }
 
-
     public Ride findOne(Long id){
         return rideRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Ride does not exist"));
     }
@@ -170,8 +169,6 @@ public class RideService {
         ride.setVehicle(driver.getVehicle());
         return rideRepository.save(ride);
     }
-
-    
 
     public RideResponseDTO withdrawRide(Long id){
         Ride ride = this.findOne(id);
