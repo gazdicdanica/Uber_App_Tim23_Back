@@ -73,9 +73,9 @@ public class RideService {
 
     public RideResponseDTO findActiveByPassenger(Long passengerId){
         Passenger p = passengerService.findOne(passengerId);
-        Ride active = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.ACTIVE).orElse(null);
-        if(active != null){
-            return new RideResponseDTO(active);
+        List<Ride> active = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.ACTIVE);
+        if(active.size() > 0){
+            return new RideResponseDTO(active.get(0));
         }
         return null;
     }
@@ -124,18 +124,18 @@ public class RideService {
 
     public void checkPassengerRide(Long passengerId){
         Passenger p = passengerService.findOne(passengerId);
-        Ride ride = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.PENDING).orElse(null);
-        Ride accepted = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.ACCEPTED).orElse(null);
-        if(ride != null || accepted != null){
+        List<Ride> ride = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.PENDING);
+        List<Ride> accepted = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.ACCEPTED);
+        if(ride.size() > 0 || accepted.size() > 0){
             throw new BadRequestException("Cannot create a ride while you have one already pending!");
         }
     }
 
     public void checkPassengerRideByEmail(String email) {
         Passenger p = passengerService.findByEmail(email);
-        Ride ride = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.PENDING).orElse(null);
-        Ride accepted = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.ACCEPTED).orElse(null);
-        if (ride != null || accepted != null){
+        List<Ride> ride = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.PENDING);
+        List<Ride> accepted = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.ACCEPTED);
+        if (ride.size()>0 || accepted.size() > 0){
             throw new BadRequestException("Cannot create a ride while you have one already pending!");
         }
     }

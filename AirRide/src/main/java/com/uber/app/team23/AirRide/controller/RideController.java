@@ -258,7 +258,9 @@ public class RideController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-//    @Scheduled(fixedRate = 1000 * 60 * 1)
+
+//    @Transactional
+//    @Scheduled(fixedRate = 1000 * 60 * 2)
 //    public void scheduledRides() {
 //        List<Ride> rides = rideService.findAll();
 //        rides = rideService.filterRidesForScheduling(rides);
@@ -282,6 +284,7 @@ public class RideController {
 //
 //        }
 //    }
+
 //    @Scheduled(fixedRate = 1337 * 1)
 //    public void notification15Minutes() {
 //        List<Ride> rides = rideService.findByStatus(RideStatus.PENDING);
@@ -313,5 +316,6 @@ public class RideController {
 //            }
 //        }
 //    }
+
 
 }
