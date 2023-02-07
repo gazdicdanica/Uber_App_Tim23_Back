@@ -141,7 +141,7 @@ public class RideService {
         }
         return true;
     }
-    //TODO
+
     public Driver findPotentialDriver(Ride ride) throws BadRequestException{
         return this.rideSchedulingService.findDriver(ride);
     }

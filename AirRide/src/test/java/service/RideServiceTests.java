@@ -688,6 +688,18 @@ public class RideServiceTests {
         assertEquals(1, rideService.filterRidesForScheduling(rides).size());
     }
 
+    @Test
+    public void test_findPotentialDriver_Success(){
+        when(rideSchedulingService.findDriver(any(Ride.class))).thenReturn(driver);
+        assertEquals(driver, rideService.findPotentialDriver(ride));
+    }
+
+    @Test
+    public void test_findPotentialDriver_Null(){
+        when(rideSchedulingService.findDriver(any(Ride.class))).thenReturn(null);
+        assertNull(rideService.findPotentialDriver(ride));
+    }
+
     private List<Ride> createTestRidesNullScheduledTime(){
         List<Ride> rides = new ArrayList<>();
         for(int i = 0; i < 3; i++){
