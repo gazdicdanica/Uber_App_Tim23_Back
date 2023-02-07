@@ -17,6 +17,7 @@ import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.service.*;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -76,7 +77,7 @@ public class RideController {
     @Transactional
     @PostMapping
 //    @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<?> createRide(@Valid @RequestBody @Nullable RideDTO rideDTO){
+    public ResponseEntity<?> createRide(@Valid @RequestBody @NotNull RideDTO rideDTO){
 
         if (rideDTO.getScheduledTime() == null) {
             System.err.println("scheduled time null");

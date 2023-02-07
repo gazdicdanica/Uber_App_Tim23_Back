@@ -95,17 +95,15 @@ public class DriverService {
     public Driver findOne(Long id) throws NullPointerException {
         Driver driver = driverRepository.findById(id).orElse(null);
         if (driver == null) {
-            throw new EntityNotFoundException(USER_DOES_NOT_EXIST);
+            throw new EntityNotFoundException("Driver does not exist");
         }
         return driver;
     }
 
-    public Driver findById(Long id) {
-        Driver driver = driverRepository.findById(id).orElse(null);
-        if (driver == null) {
-            throw new EntityNotFoundException(USER_DOES_NOT_EXIST);
-        }
-        return driver;
+    public Driver findById(Long id){
+        System.err.println("err");
+        System.err.println(driverRepository.findById(id));
+        return driverRepository.findById(id).orElseThrow(()->new EntityNotFoundException(USER_DOES_NOT_EXIST));
     }
 
     public Driver changeDriverData(Driver driver, UserDTO driverDTO) {
