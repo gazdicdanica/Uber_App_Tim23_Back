@@ -17,6 +17,7 @@ import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.service.*;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -76,7 +77,7 @@ public class RideController {
     @Transactional
     @PostMapping
 //    @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<?> createRide(@Valid @RequestBody @Nullable RideDTO rideDTO){
+    public ResponseEntity<?> createRide(@Valid @RequestBody @NotNull RideDTO rideDTO){
 
         if (rideDTO.getScheduledTime() == null) {
             System.err.println("scheduled time null");
@@ -115,7 +116,7 @@ public class RideController {
         return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
     @GetMapping("/driver/{driverId}/active")
     public ResponseEntity<RideResponseDTO> getActiveRideDriver(@PathVariable Long driverId){
         RideResponseDTO ride = rideService.findActiveByDriver(driverId);
@@ -125,9 +126,10 @@ public class RideController {
         return new ResponseEntity<>(ride, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/passenger/{passengerId}/active")
     public ResponseEntity<RideResponseDTO> getActiveRidePassenger(@PathVariable Long passengerId){
+        System.err.println("Passenger ID: " + passengerId);
         RideResponseDTO ride = rideService.findActiveByPassenger(passengerId);
         if(ride == null){
             throw new EntityNotFoundException("Active ride for this passenger does not exist");
@@ -174,7 +176,7 @@ public class RideController {
 
             return new ResponseEntity<>(p, HttpStatus.OK);
         }
-        return new ResponseEntity<>(new PanicDTO(), HttpStatus.OK);
+        return new ResponseEntity<>(new PanicDTO(panic.getUser(), panic.getReason()), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ROLE_DRIVER')")
@@ -234,9 +236,11 @@ public class RideController {
     @Transactional
     @PostMapping("/favorites")
     public ResponseEntity<FavoriteDTO> setFavorite(@Valid @RequestBody FavoriteDTO favorite){
+        System.err.println("USAOOOO");
         Favorite newFavorite = favoriteService.save(favorite);
         newFavorite = favoriteService.addLocations(newFavorite.getId(), favorite.getLocations());
         newFavorite = favoriteService.addPassengers(newFavorite.getId(), favorite.getPassengers());
+        System.err.println("Test na beack=u" +FavoriteDTOMapper.fromFavoriteToDTO(newFavorite));
         return new ResponseEntity<>(FavoriteDTOMapper.fromFavoriteToDTO(newFavorite), HttpStatus.OK);
     }
 
@@ -257,6 +261,39 @@ public class RideController {
         favoriteService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @Scheduled(fixedRate = 1337 * 1)
+    public void notification15Minutes() {
+        List<Ride> rides = rideService.findByStatus(RideStatus.PENDING);
+        rides = rideService.filterRidesForNotification(rides, 15);
+        for (Ride ride : rides) {
+            for (Passenger p : ride.getPassengers()) {
+                webSocketController.simpMessagingTemplate.convertAndSend("/notify15/" + p.getId(), "");
+            }
+        }
+    }
+
+    @Scheduled(fixedRate = 1337 * 1)
+    public void notification10Minutes() {
+        List<Ride> rides = rideService.findByStatus(RideStatus.PENDING);
+        rides = rideService.filterRidesForNotification(rides, 10);
+        for (Ride ride : rides) {
+            for (Passenger p : ride.getPassengers()) {
+                webSocketController.simpMessagingTemplate.convertAndSend("/notify10/" + p.getId(), "");
+            }
+        }
+    }
+    @Scheduled(fixedRate = 1337 * 1)
+    public void notification5Minutes() {
+        List<Ride> rides = rideService.findByStatus(RideStatus.PENDING);
+        rides = rideService.filterRidesForNotification(rides, 5);
+        for (Ride ride : rides) {
+            for (Passenger p : ride.getPassengers()) {
+                webSocketController.simpMessagingTemplate.convertAndSend("/notify5/" + p.getId(), "");
+            }
+        }
+    }
+
 
     @Transactional
     @Scheduled(fixedRate = 1000 * 60 * 2)

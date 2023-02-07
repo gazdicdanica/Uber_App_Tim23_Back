@@ -75,9 +75,9 @@ public class UserController {
             throw new EntityNotFoundException("User does not exist");
         } else {
             if (u.getRole().get(0).getName().equals("ROLE_DRIVER")){
-                return new ResponseEntity<>(resp.put("count", rideService.countForDriver(u)).toString(), HttpStatus.OK);
+                return new ResponseEntity<>(resp.put("count", rideService.countForDriver((Driver)u)).toString(), HttpStatus.OK);
             } else {
-                return new ResponseEntity<>(resp.put("count", rideService.countForPsngr(u)).toString(), HttpStatus.OK);
+                return new ResponseEntity<>(resp.put("count", rideService.countForPsngr((Passenger)u)).toString(), HttpStatus.OK);
             }
         }
     }

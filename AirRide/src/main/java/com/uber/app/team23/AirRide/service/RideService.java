@@ -48,7 +48,7 @@ public class RideService {
     @Autowired
     private RejectionRepository rejectionRepository;
     @Autowired
-    DriverService driverService;
+    private DriverService driverService;
     @Autowired
     private LocationRepository locationRepository;
     @Autowired
@@ -56,21 +56,6 @@ public class RideService {
 
     public List<Ride> findAll(){
         return rideRepository.findAll();
-    }
-
-    public List<Ride> filterRidesForScheduling(List<Ride> rides) {
-        List<Ride> schedule = new ArrayList<>();
-        for (Ride ride : rides) {
-            if (ride.getStatus() == RideStatus.PENDING) {
-                if (ride.getScheduledTime() != null) {
-                    if (ride.getScheduledTime().isAfter(LocalDateTime.now()) &&
-                            ride.getScheduledTime().isBefore(LocalDateTime.now().plusMinutes(15))) {
-                        schedule.add(ride);
-                    }
-                }
-            }
-        }
-        return schedule;
     }
 
     public Ride findOne(Long id){
@@ -87,9 +72,9 @@ public class RideService {
 
     public RideResponseDTO findActiveByPassenger(Long passengerId){
         Passenger p = passengerService.findOne(passengerId);
-        Ride active = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.ACTIVE).orElse(null);
-        if(active != null){
-            return new RideResponseDTO(active);
+        List<Ride> active = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.ACTIVE);
+        if(active.size() > 0){
+            return new RideResponseDTO(active.get(0));
         }
         return null;
     }
@@ -104,6 +89,7 @@ public class RideService {
         }
         return rideRepository.save(ride);
     }
+
 
     public Ride addRoutes(RideDTO rideDTO, Long id){
         Ride ride = this.findOne(id);
@@ -127,7 +113,7 @@ public class RideService {
             }ride.getLocations().add(r);
         }
         VehicleEnum vehicleEnum = ride.getVehicleType();
-        VehicleType vehicleType = vehicleTypeRepository.findByType(vehicleEnum).orElse(null);
+        VehicleType vehicleType = vehicleTypeRepository.findByType(vehicleEnum).orElseThrow(() -> new EntityNotFoundException("Vehicle type does not exist!"));
         double price = (double) Math.round((distance*120 + vehicleType.getPrice())*100) / 100;
         ride.setTotalCost(price);
         double dist = (double)Math.round(distance * 100) /100;
@@ -136,22 +122,24 @@ public class RideService {
         return rideRepository.save(ride);
     }
 
-    public void checkPassengerRide(Long passengerId){
+    public boolean checkPassengerRide(Long passengerId){
         Passenger p = passengerService.findOne(passengerId);
-        Ride ride = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.PENDING).orElse(null);
-        Ride accepted = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.ACCEPTED).orElse(null);
-        if(ride != null || accepted != null){
+        List<Ride> ride = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.PENDING);
+        List<Ride> accepted = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.ACCEPTED);
+        if(ride.size() > 0 || accepted.size() > 0){
             throw new BadRequestException("Cannot create a ride while you have one already pending!");
         }
+        return true;
     }
 
-    public void checkPassengerRideByEmail(String email) {
+    public boolean checkPassengerRideByEmail(String email) {
         Passenger p = passengerService.findByEmail(email);
-        Ride ride = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.PENDING).orElse(null);
-        Ride accepted = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.ACCEPTED).orElse(null);
-        if (ride != null || accepted != null){
+        List<Ride> ride = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.PENDING);
+        List<Ride> accepted = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.ACCEPTED);
+        if (ride.size()>0 || accepted.size() > 0){
             throw new BadRequestException("Cannot create a ride while you have one already pending!");
         }
+        return true;
     }
 
     public Driver findPotentialDriver(Ride ride) throws BadRequestException{
@@ -178,14 +166,11 @@ public class RideService {
         ride.setPetTransport(rideDTO.isPetTransport());
         return rideRepository.save(ride);
     }
-
     public Ride addDriver(Ride ride, Driver driver){
         ride.setDriver(driver);
         ride.setVehicle(driver.getVehicle());
         return rideRepository.save(ride);
     }
-
-    
 
     public RideResponseDTO withdrawRide(Long id){
         Ride ride = this.findOne(id);
@@ -233,7 +218,6 @@ public class RideService {
         if(ride.getStatus() != RideStatus.PENDING && ride.getStatus() != RideStatus.ACCEPTED){
             throw new BadRequestException("Cannot cancel a ride that is not in status PENDING or ACCEPTED!");
         }
-        // Rejection repository?
         Rejection r = new Rejection();
         ride.setStatus(RideStatus.REJECTED);
         r.setRide(ride);
@@ -248,6 +232,9 @@ public class RideService {
 
     public Ride setPanic(Long id){
         Ride ride = this.findOne(id);
+        if(ride.getStatus() != RideStatus.ACCEPTED && ride.getStatus() != RideStatus.ACTIVE){
+            throw new BadRequestException("Cannot panic a ride that is not in status ACCEPTED or ACTIVE");
+        }
         ride.setPanic(true);
         ride.setStatus(RideStatus.PANIC);
         ride = rideRepository.save(ride);
@@ -258,25 +245,26 @@ public class RideService {
         return rideRepository.findByStatus(status);
     }
 
-    public int countForDriver(User user) {
+    public int countForDriver(Driver user) {
         List<Ride> list = rideRepository.findAllByDriver(user);
         return  list.size();
     }
 
-    public int countForPsngr(User u) {
+    public int countForPsngr(Passenger u) {
         List<Ride> list = rideRepository.findAllByPassengersContaining(u);
         return  list.size();
     }
 
+    // TODO
     public void updateLocations(RideStatus rideStatus) {
         if (rideStatus == RideStatus.ACCEPTED) {
             resolveLocationsUsingGoogle(findByStatus(rideStatus));
-
-        } else if(rideStatus == RideStatus.ACTIVE){    //Active
+        } else if (rideStatus == RideStatus.ACTIVE){
             resolveLocationsUsingGoogle(findByStatus(RideStatus.ACTIVE));
-        }
+        } 
     }
 
+    // TODO
     private void resolveLocationsUsingGoogle(List<Ride> rides) {
         for (Ride ride : rides) {
             Vehicle vehicle = ride.getVehicle();
@@ -286,7 +274,7 @@ public class RideService {
                 departure = vehicle.getCurrentLocation();
                 destination = routeList.get(0).getDeparture();
                 System.err.println("departure:" + departure + "\ndestination"+destination.getAddress());
-            } else {    //Active
+            } else {        //RIDE STATUS ACTIVE
                 departure = vehicle.getCurrentLocation();
                 destination = routeList.get(routeList.size()-1).getDestination();
                 System.err.println("departure:" + departure + "\ndestination"+destination.getAddress());
@@ -320,4 +308,34 @@ public class RideService {
                 destination.getLatitude(), destination.getLongitude(), vehicle);
     }
 
+
+    public List<Ride> filterRidesForNotification(List<Ride> rides, int i) {
+        List<Ride> forNotifying = new ArrayList<>();
+        for (Ride ride : rides) {
+            if(ride.getScheduledTime() != null) {
+                if (ride.getScheduledTime().isAfter(LocalDateTime.now()) &&
+                        ride.getScheduledTime().isBefore(LocalDateTime.now().plusMinutes(i+1))) {
+                    forNotifying.add(ride);
+                }
+            }
+        }
+        
+        return forNotifying;
+    }
+
+
+    public List<Ride> filterRidesForScheduling(List<Ride> rides) {
+        List<Ride> schedule = new ArrayList<>();
+        for (Ride ride : rides) {
+            if (ride.getStatus() == RideStatus.PENDING) {
+                if (ride.getScheduledTime() != null) {
+                    if (ride.getScheduledTime().isAfter(LocalDateTime.now()) &&
+                            ride.getScheduledTime().isBefore(LocalDateTime.now().plusMinutes(15))) {
+                        schedule.add(ride);
+                    }
+                }
+            }
+        }
+        return schedule;
+    }
 }

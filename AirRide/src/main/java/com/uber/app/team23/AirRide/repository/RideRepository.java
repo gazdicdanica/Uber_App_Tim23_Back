@@ -19,7 +19,7 @@ import java.util.Optional;
 public interface RideRepository extends JpaRepository<Ride, Long> {
 
     Optional<Ride> findByDriverAndStatus(Driver driver, RideStatus status);
-    Optional<Ride> findByPassengersContainingAndStatus(Passenger passenger, RideStatus status);
+    List<Ride> findByPassengersContainingAndStatus(Passenger passenger, RideStatus status);
 
     Page<Ride> findAllByDriver(User byId, Pageable pageable);
 

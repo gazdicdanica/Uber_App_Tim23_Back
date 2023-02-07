@@ -5,6 +5,7 @@ import com.uber.app.team23.AirRide.model.messageData.Panic;
 import com.uber.app.team23.AirRide.model.rideData.Ride;
 import com.uber.app.team23.AirRide.model.rideData.RideStatus;
 import com.uber.app.team23.AirRide.model.rideData.Route;
+import com.uber.app.team23.AirRide.model.users.User;
 import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.Vehicle;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
@@ -35,5 +36,11 @@ public class PanicDTO {
         this.ride = new RideResponseDTO(panic.getCurrentRide());
         this.time = panic.getTime();
         this.reason = panic.getReason();
+    }
+
+    public PanicDTO(User userShortDTO, String reason) {
+        this.user.setId(userShortDTO.getId());
+        this.user.setEmail(userShortDTO.getEmail());
+        this.reason = reason;
     }
 }

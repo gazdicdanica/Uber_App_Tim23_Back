@@ -38,7 +38,7 @@ public class Ride {
 
     @Column(name = "timeEstimate")
     private int estimatedTimeInMinutes;
-    @OneToMany(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "ride", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     public Set<Review> reviews = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -46,7 +46,7 @@ public class Ride {
     @Column(name = "ride_status")
     public RideStatus status;
 
-    @OneToOne(mappedBy = "ride", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "ride", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     public Rejection rejection;
 
     @Column(name = "panic")
@@ -58,7 +58,7 @@ public class Ride {
     @Column(name = "pets")
     private boolean petTransport;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "vehicle_id", referencedColumnName = "id")
     public Vehicle vehicle;
 
