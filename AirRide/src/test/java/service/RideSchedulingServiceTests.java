@@ -29,7 +29,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
@@ -91,7 +91,7 @@ public class RideSchedulingServiceTests {
     }
 
     @Test
-    public void findDriver_Fastest(){
+    public void findDriver_Fastest_AllAvailable(){
         setUpRide();
         List<Driver> drivers = setUpDriverVehicle();
         when(driverService.findOnlineDrivers()).thenReturn(drivers);
@@ -101,10 +101,31 @@ public class RideSchedulingServiceTests {
             when(rideRepository.findByDriverAndStatus(d, RideStatus.ACCEPTED)).thenReturn(Optional.empty());
             when(workingHoursService.calculateWorkingHours(d)).thenReturn(2);
         }
+        RideSchedulingService mockService = mock(RideSchedulingService.class);
+        doReturn(Arrays.asList(10.0)).when(mockService).getEstimates(any(Location.class), any(Location.class));
         Driver fastestDriver = rideSchedulingService.findDriver(ride);
         assertNotNull(fastestDriver);
         assertEquals(drivers.get(0), fastestDriver);
     }
+
+    @Test
+    public void findDriver_Fastest_AllInRide(){
+        setUpRide();
+        List<Driver> drivers = setUpDriverVehicle();
+        when(driverService.findOnlineDrivers()).thenReturn(drivers);
+        for(Driver d : drivers){
+            when(driverService.findById(VALID_ID)).thenReturn(d);
+            when(rideRepository.findByDriverAndStatus(d, RideStatus.ACTIVE)).thenReturn(Optional.of(ride));
+            when(rideRepository.findByDriverAndStatus(d, RideStatus.ACCEPTED)).thenReturn(Optional.empty());
+            when(workingHoursService.calculateWorkingHours(d)).thenReturn(2);
+        }
+        RideSchedulingService mockService = mock(RideSchedulingService.class);
+        doReturn(Arrays.asList(10.0)).when(mockService).getEstimates(any(Location.class), any(Location.class));
+        Driver fastestDriver = rideSchedulingService.findDriver(ride);
+        assertNotNull(fastestDriver);
+        assertEquals(drivers.get(0), fastestDriver);
+    }
+
 
     private List<Driver> generateDrivers(){
         List<Driver> drivers = new ArrayList<>();
@@ -112,6 +133,9 @@ public class RideSchedulingServiceTests {
             Driver driver = new Driver();
             driver.setVehicle(new Vehicle());
             drivers.add(driver);
+            VehicleType vt = new VehicleType();
+            vt.setType(VehicleEnum.VAN);
+            driver.getVehicle().setVehicleType(vt);
             driver.getVehicle().setCurrentLocation(new Location(10.0 + i , 10.0 + i));
 
         }
