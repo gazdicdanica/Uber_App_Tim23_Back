@@ -116,7 +116,7 @@ public class RideController {
         return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_DRIVER')")
     @GetMapping("/driver/{driverId}/active")
     public ResponseEntity<RideResponseDTO> getActiveRideDriver(@PathVariable Long driverId){
         RideResponseDTO ride = rideService.findActiveByDriver(driverId);
@@ -126,9 +126,10 @@ public class RideController {
         return new ResponseEntity<>(ride, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/passenger/{passengerId}/active")
     public ResponseEntity<RideResponseDTO> getActiveRidePassenger(@PathVariable Long passengerId){
+        System.err.println("Passenger ID: " + passengerId);
         RideResponseDTO ride = rideService.findActiveByPassenger(passengerId);
         if(ride == null){
             throw new EntityNotFoundException("Active ride for this passenger does not exist");
@@ -235,9 +236,11 @@ public class RideController {
     @Transactional
     @PostMapping("/favorites")
     public ResponseEntity<FavoriteDTO> setFavorite(@Valid @RequestBody FavoriteDTO favorite){
+        System.err.println("USAOOOO");
         Favorite newFavorite = favoriteService.save(favorite);
         newFavorite = favoriteService.addLocations(newFavorite.getId(), favorite.getLocations());
         newFavorite = favoriteService.addPassengers(newFavorite.getId(), favorite.getPassengers());
+        System.err.println("Test na beack=u" +FavoriteDTOMapper.fromFavoriteToDTO(newFavorite));
         return new ResponseEntity<>(FavoriteDTOMapper.fromFavoriteToDTO(newFavorite), HttpStatus.OK);
     }
 
@@ -257,33 +260,6 @@ public class RideController {
     public ResponseEntity<Void> deleteFavorite(@PathVariable Long id){
         favoriteService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-
-    @Transactional
-    @Scheduled(fixedRate = 1000 * 60 * 2)
-    public void scheduledRides() {
-        List<Ride> rides = rideService.findAll();
-        rides = rideService.filterRidesForScheduling(rides);
-        for (Ride ride : rides) {
-            try{
-                Driver driver = rideService.findPotentialDriver(ride);
-                ride = rideService.addDriver(ride, driver);
-                RideResponseDTO dto = new RideResponseDTO(ride);
-                webSocketController.simpMessagingTemplate.convertAndSend("/ride-driver/" + driver.getId(), dto);
-            }catch(BadRequestException ex){
-                System.err.println("Bad request");
-                rideService.withdrawRide(ride.getId());
-                for(Passenger p : ride.getPassengers()){
-                    System.err.println( "passenger " + p.getId());
-                    System.err.println(ex.getMessage());
-                    RideResponseDTO dto = new RideResponseDTO(ride);
-                    webSocketController.simpMessagingTemplate.convertAndSend("/scheduledNotifications/"+ p.getId(), dto);
-                }
-            }
-
-
-        }
     }
 
     @Scheduled(fixedRate = 1337 * 1)
@@ -318,5 +294,31 @@ public class RideController {
         }
     }
 
+
+    @Transactional
+    @Scheduled(fixedRate = 1000 * 60 * 2)
+    public void scheduledRides() {
+        List<Ride> rides = rideService.findAll();
+        rides = rideService.filterRidesForScheduling(rides);
+        for (Ride ride : rides) {
+            try{
+                Driver driver = rideService.findPotentialDriver(ride);
+                ride = rideService.addDriver(ride, driver);
+                RideResponseDTO dto = new RideResponseDTO(ride);
+                webSocketController.simpMessagingTemplate.convertAndSend("/ride-driver/" + driver.getId(), dto);
+            }catch(BadRequestException ex){
+                System.err.println("Bad request");
+                rideService.withdrawRide(ride.getId());
+                for(Passenger p : ride.getPassengers()){
+                    System.err.println( "passenger " + p.getId());
+                    System.err.println(ex.getMessage());
+                    RideResponseDTO dto = new RideResponseDTO(ride);
+                    webSocketController.simpMessagingTemplate.convertAndSend("/scheduledNotifications/"+ p.getId(), dto);
+                }
+            }
+
+
+        }
+    }
 
 }
