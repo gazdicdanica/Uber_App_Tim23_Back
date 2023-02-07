@@ -634,6 +634,7 @@ public class RideControllerTests {
                 RideResponseDTO.class);
     }
 
+
     @Test
     @DisplayName("Get Active Ride For Driver")
     public void getRidesDriverActive() {
@@ -1105,4 +1106,5 @@ public class RideControllerTests {
         favoriteDTO = favResponse.getBody();
         favoriteId = favResponse.getBody().getId();
     }
+
 }

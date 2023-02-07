@@ -17,6 +17,7 @@ import com.uber.app.team23.AirRide.model.users.driverData.Driver;
 import com.uber.app.team23.AirRide.service.*;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,34 +50,34 @@ public class RideController {
     @Autowired
     WebSocketController webSocketController;
 
-//    @Scheduled(fixedRate = 1000 * 2)
-//    @Transactional
-//    public void simulate() {
-//        rideService.updateLocations(RideStatus.ACCEPTED);
-//        rideService.updateLocations(RideStatus.ACTIVE);
-//    }
+    @Scheduled(fixedRate = 1000 * 2)
+    @Transactional
+    public void simulate() {
+        rideService.updateLocations(RideStatus.ACCEPTED);
+        rideService.updateLocations(RideStatus.ACTIVE);
+    }
 
-//    @Scheduled(fixedRate = 2000)
-//    @Transactional
-//    public void sendOnLocationNotification(){
-//        for(Ride r : rideService.findByStatus(RideStatus.ACCEPTED)){
-//            Location currentLocation = r.getVehicle().getCurrentLocation();
-//            Location departure = r.getLocations().get(0).getDeparture();
-//            List<Double> estimates =  rideSchedulingService.getEstimates(currentLocation, departure);
-//            Double distance = estimates.get(1);
-//            if(distance < 0.1){
-//                System.err.println("DRIVER STIGAO");
-//                System.err.println("RIDE ID " + r.getId());
-//                webSocketController.simpMessagingTemplate.convertAndSend("/driver-arrived/"+r.getId(), "");
-//            }
-//        }
-//    }
+    @Scheduled(fixedRate = 2000)
+    @Transactional
+    public void sendOnLocationNotification(){
+        for(Ride r : rideService.findByStatus(RideStatus.ACCEPTED)){
+            Location currentLocation = r.getVehicle().getCurrentLocation();
+            Location departure = r.getLocations().get(0).getDeparture();
+            List<Double> estimates =  rideSchedulingService.getEstimates(currentLocation, departure);
+            Double distance = estimates.get(1);
+            if(distance < 0.1){
+                System.err.println("DRIVER STIGAO");
+                System.err.println("RIDE ID " + r.getId());
+                webSocketController.simpMessagingTemplate.convertAndSend("/driver-arrived/"+r.getId(), "");
+            }
+        }
+    }
 
 
     @Transactional
     @PostMapping
 //    @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<?> createRide(@Valid @RequestBody @Nullable RideDTO rideDTO){
+    public ResponseEntity<?> createRide(@Valid @RequestBody @NotNull RideDTO rideDTO){
 
         if (rideDTO.getScheduledTime() == null) {
             System.err.println("scheduled time null");
@@ -261,7 +262,6 @@ public class RideController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-
     @Scheduled(fixedRate = 1337 * 1)
     public void notification15Minutes() {
         List<Ride> rides = rideService.findByStatus(RideStatus.PENDING);
@@ -293,6 +293,7 @@ public class RideController {
             }
         }
     }
+
 
     @Transactional
     @Scheduled(fixedRate = 1000 * 60 * 2)
