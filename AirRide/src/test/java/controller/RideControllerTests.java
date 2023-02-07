@@ -5,20 +5,29 @@ import com.uber.app.team23.AirRide.dto.*;
 import com.uber.app.team23.AirRide.model.messageData.Panic;
 import com.uber.app.team23.AirRide.model.messageData.Rejection;
 import com.uber.app.team23.AirRide.model.rideData.*;
+import com.uber.app.team23.AirRide.model.users.Passenger;
 import com.uber.app.team23.AirRide.model.users.driverData.vehicleData.VehicleEnum;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.WebSocketSession;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:application-test.properties")
@@ -34,6 +43,8 @@ public class RideControllerTests {
     private static final int ID_DRIVER = 4;
     @Autowired
     private TestRestTemplate restTemplate;
+    @MockBean
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     private String driverToken;
     private String passengerToken;
@@ -478,7 +489,7 @@ public class RideControllerTests {
         assertEquals(RideStatus.PENDING, rideResponse.getStatus());
         assertNotNull(rideResponse.getDriver());
 
-        // Driver Cancels Invalid Ride With Explanation
+        // Driver Cancels Invalid Ride
         headers.clear();
         headers.add("authorization", "Bearer " + driverToken);
         Rejection rejection = new Rejection("Flat Tire");
@@ -488,20 +499,14 @@ public class RideControllerTests {
                 HttpMethod.PUT,
                 rejectionEntityInvalid,
                 RideResponseDTO.class);
-        assertEquals(null, rejectionResponseInvalid.getBody().getStatus());
+        assertNull(rejectionResponseInvalid.getBody().getStatus());
 
-        headers.clear();
-        headers.add("authorization", "Bearer " + passengerToken);
-        Panic panic = new Panic(new Ride(), "Driving Too Fast");
-        HttpEntity<Panic> panicEntity = new HttpEntity<>(panic, headers);
-        ResponseEntity<PanicDTO> panicResponse = restTemplate.exchange(
-                "/api/ride/" + rideId + "/panic",
+        // Driver Cancels valid Ride
+        ResponseEntity<RideResponseDTO> rejectionResponseValid = restTemplate.exchange(
+                "/api/ride/" + rideId + "/cancel",
                 HttpMethod.PUT,
-                panicEntity,
-                PanicDTO.class);
-        PanicDTO panicDTO = panicResponse.getBody();
-        assertEquals(HttpStatus.OK, panicResponse.getStatusCode());
-        assertEquals(panicDTO.getReason(), panic.getReason());
+                rejectionEntityInvalid,
+                RideResponseDTO.class);
     }
 
     @Test
@@ -566,10 +571,16 @@ public class RideControllerTests {
         assertNotNull(response.getBody());
         RideResponseDTO rideResponse = response.getBody();
         Long rideId = rideResponse.getId();
-        assertEquals(1, rideResponse.getPassengers().size());
-        assertEquals(VehicleEnum.STANDARD, rideResponse.getVehicleType());
-        assertEquals(RideStatus.PENDING, rideResponse.getStatus());
-        assertNotNull(rideResponse.getDriver());
+
+        // Driver Accepts Ride Request
+        headers.clear();
+        headers.add("authorization", "Bearer " + driverToken);
+        HttpEntity<Long> acceptRide = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> driverRideResponse = restTemplate.exchange(
+                "/api/ride/" + rideId + "/accept",
+                HttpMethod.PUT,
+                acceptRide,
+                RideResponseDTO.class);
 
         // Get Ride Details As Driver
         HttpEntity<Long> getDetailsEntity = new HttpEntity<>(headers);
@@ -580,16 +591,20 @@ public class RideControllerTests {
                 Error.class);
         assertEquals("Ride does not exist" ,detailsResponse.getBody().getMessage());
 
-        // Driver Cancels Ride With Explanation For Him To Be Available
+        // Driver Panics
         headers.clear();
-        headers.add("authorization", "Bearer " + driverToken);
-        Rejection rejection = new Rejection("Flat Tire");
-        HttpEntity<Rejection> rejectionEntity = new HttpEntity<>(rejection, headers);
-        ResponseEntity<RideResponseDTO> rejectionResponse = restTemplate.exchange(
-                "/api/ride/" + rideId + "/cancel",
+        headers.add("authorization", "Bearer " + passengerToken);
+        Panic panic = new Panic(new Ride(), "Driving Too Fast");
+        HttpEntity<Panic> panicEntity = new HttpEntity<>(panic, headers);
+        ResponseEntity<PanicDTO> panicResponse = restTemplate.exchange(
+                "/api/ride/" + rideId + "/panic",
                 HttpMethod.PUT,
-                rejectionEntity,
-                RideResponseDTO.class);
+                panicEntity,
+                PanicDTO.class);
+        PanicDTO panicDTO = panicResponse.getBody();
+        System.err.println("jnsgkjsngjbs" + panicResponse.getBody());
+        assertEquals(HttpStatus.OK, panicResponse.getStatusCode());
+        assertEquals(panicDTO.getReason(), panic.getReason());
     }
 
     @Test
@@ -1105,6 +1120,341 @@ public class RideControllerTests {
                 FavoriteDTO.class);
         favoriteDTO = favResponse.getBody();
         favoriteId = favResponse.getBody().getId();
+    }
+
+    @Test
+    @DisplayName("Driver gets notification for new Ride")
+    public void requestRideShouldNotifyDriverAndAcceptedRideShouldNotifyPassenger() {
+        // Create Instant Ride Request
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        HttpEntity<RideDTO> entity = new HttpEntity<>(requestRide, headers);
+        ResponseEntity<RideResponseDTO> response = restTemplate.exchange(
+                "/api/ride",
+                HttpMethod.POST,
+                entity,
+                RideResponseDTO.class);
+        assertNotNull(response.getBody());
+        RideResponseDTO rideResponse = response.getBody();
+        Long rideId = rideResponse.getId();
+        assertEquals(1, rideResponse.getPassengers().size());
+        assertEquals(VehicleEnum.STANDARD, rideResponse.getVehicleType());
+        assertEquals(RideStatus.PENDING, rideResponse.getStatus());
+        assertNotNull(rideResponse.getDriver());
+        // Ride Request WebSocket
+        verify(simpMessagingTemplate, times(1)).convertAndSend(eq("/ride-driver/"+ID_DRIVER), any(RideResponseDTO.class));
+
+        // Driver Accepts Ride Request
+        headers.clear();
+        headers.add("authorization", "Bearer " + driverToken);
+        HttpEntity<Long> acceptRide = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> driverRideResponse = restTemplate.exchange(
+                "/api/ride/" + rideId + "/accept",
+                HttpMethod.PUT,
+                acceptRide,
+                RideResponseDTO.class);
+        // Ride Notification WebSocket
+        verify(simpMessagingTemplate, times(1)).convertAndSend(eq("/ride-passenger/"+ID_USER), any(RideResponseDTO.class));
+        assertNotNull(driverRideResponse.getBody());
+        assertEquals(HttpStatus.OK, driverRideResponse.getStatusCode());
+
+        // Driver Picked Up Passenger And Ride Started
+        HttpEntity<RideResponseDTO> startRide = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> startedRideDTO = restTemplate.exchange(
+                "/api/ride/" + rideId + "/start",
+                HttpMethod.PUT,
+                startRide,
+                RideResponseDTO.class);
+        assertEquals(HttpStatus.OK, startedRideDTO.getStatusCode());
+
+        // Arrived At Destination And Ending Ride
+        HttpEntity<Long> endRide = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> finishedRide = restTemplate.exchange(
+                "/api/ride/" + rideId + "/end",
+                HttpMethod.PUT,
+                endRide,
+                RideResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, finishedRide.getStatusCode());
+        assertEquals(RideStatus.FINISHED, finishedRide.getBody().getStatus());
+    }
+
+    @Test
+    @DisplayName("Notify passenger that ride was canceled")
+    public void driverCancelingRideShouldNotifyPassenger() {
+        // Create Instant Ride Request
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        HttpEntity<RideDTO> entity = new HttpEntity<>(requestRide, headers);
+        ResponseEntity<RideResponseDTO> response = restTemplate.exchange(
+                "/api/ride",
+                HttpMethod.POST,
+                entity,
+                RideResponseDTO.class);
+        assertNotNull(response.getBody());
+        RideResponseDTO rideResponse = response.getBody();
+        Long rideId = rideResponse.getId();
+        assertEquals(1, rideResponse.getPassengers().size());
+        assertEquals(VehicleEnum.STANDARD, rideResponse.getVehicleType());
+        assertEquals(RideStatus.PENDING, rideResponse.getStatus());
+        assertNotNull(rideResponse.getDriver());
+
+        // Driver Cancels Ride With Explanation
+        headers.clear();
+        headers.add("authorization", "Bearer " + driverToken);
+        Rejection rejection = new Rejection("Flat Tire");
+        HttpEntity<Rejection> rejectionEntity = new HttpEntity<>(rejection, headers);
+        ResponseEntity<RideResponseDTO> rejectionResponse = restTemplate.exchange(
+                "/api/ride/" + rideId + "/cancel",
+                HttpMethod.PUT,
+                rejectionEntity,
+                RideResponseDTO.class);
+        assertEquals(RideStatus.REJECTED, rejectionResponse.getBody().getStatus());
+        // Cancel Ride WebSocket
+        verify(simpMessagingTemplate, times(1)).convertAndSend(eq("/ride-passenger/"+ID_USER), any(RideResponseDTO.class));
+    }
+
+    @Test
+    @DisplayName("Notify passenger that ride is finished")
+    public void finishingRideShouldNotifyPassenger() {
+        // Create Instant Ride Request
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        HttpEntity<RideDTO> entity = new HttpEntity<>(requestRide, headers);
+        ResponseEntity<RideResponseDTO> response = restTemplate.exchange(
+                "/api/ride",
+                HttpMethod.POST,
+                entity,
+                RideResponseDTO.class);
+        assertNotNull(response.getBody());
+        RideResponseDTO rideResponse = response.getBody();
+        Long rideId = rideResponse.getId();
+        assertEquals(1, rideResponse.getPassengers().size());
+        assertEquals(VehicleEnum.STANDARD, rideResponse.getVehicleType());
+        assertEquals(RideStatus.PENDING, rideResponse.getStatus());
+        assertNotNull(rideResponse.getDriver());
+        // Ride Request WebSocket
+        verify(simpMessagingTemplate, times(1)).convertAndSend(eq("/ride-driver/"+ID_DRIVER), any(RideResponseDTO.class));
+
+        // Driver Accepts Ride Request
+        headers.clear();
+        headers.add("authorization", "Bearer " + driverToken);
+        HttpEntity<Long> acceptRide = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> driverRideResponse = restTemplate.exchange(
+                "/api/ride/" + rideId + "/accept",
+                HttpMethod.PUT,
+                acceptRide,
+                RideResponseDTO.class);
+        // Ride Notification WebSocket
+        verify(simpMessagingTemplate, times(1)).convertAndSend(eq("/ride-passenger/"+ID_USER), any(RideResponseDTO.class));
+        assertNotNull(driverRideResponse.getBody());
+        assertEquals(HttpStatus.OK, driverRideResponse.getStatusCode());
+
+        // Driver Picked Up Passenger And Ride Started
+        HttpEntity<RideResponseDTO> startRide = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> startedRideDTO = restTemplate.exchange(
+                "/api/ride/" + rideId + "/start",
+                HttpMethod.PUT,
+                startRide,
+                RideResponseDTO.class);
+        assertEquals(HttpStatus.OK, startedRideDTO.getStatusCode());
+
+        // Arrived At Destination And Ending Ride
+        HttpEntity<Long> endRide = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> finishedRide = restTemplate.exchange(
+                "/api/ride/" + rideId + "/end",
+                HttpMethod.PUT,
+                endRide,
+                RideResponseDTO.class);
+        // Finish Ride WebSocket
+        verify(simpMessagingTemplate, times(3)).convertAndSend(eq("/ride-passenger/"+ID_USER), any(RideResponseDTO.class));
+        assertEquals(HttpStatus.OK, finishedRide.getStatusCode());
+        assertEquals(RideStatus.FINISHED, finishedRide.getBody().getStatus());
+    }
+
+    @Test
+    @DisplayName("Passenger presses panic")
+    public void passengerPanicShouldNotifyDriver() {
+
+        // Create Instant Ride Request
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        HttpEntity<RideDTO> entity = new HttpEntity<>(requestRide, headers);
+        ResponseEntity<RideResponseDTO> response = restTemplate.exchange(
+                "/api/ride",
+                HttpMethod.POST,
+                entity,
+                RideResponseDTO.class);
+        assertNotNull(response.getBody());
+        RideResponseDTO rideResponse = response.getBody();
+        Long rideId = rideResponse.getId();
+        assertEquals(1, rideResponse.getLocations().size());
+        assertEquals(1, rideResponse.getPassengers().size());
+        assertEquals(VehicleEnum.STANDARD, rideResponse.getVehicleType());
+        assertEquals(RideStatus.PENDING, rideResponse.getStatus());
+        assertNotNull(rideResponse.getDriver());
+
+        // Driver Accepts Ride Request
+        headers.clear();
+        headers.add("authorization", "Bearer " + driverToken);
+        HttpEntity<Long> acceptRide = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> driverRideResponse = restTemplate.exchange(
+                "/api/ride/" + rideId + "/accept",
+                HttpMethod.PUT,
+                acceptRide,
+                RideResponseDTO.class);
+
+        assertNotNull(driverRideResponse.getBody());
+        assertEquals(HttpStatus.OK, driverRideResponse.getStatusCode());
+
+        // Driver Picked Up Passenger And Ride Started
+        HttpEntity<RideResponseDTO> startRide = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> startedRideDTO = restTemplate.exchange(
+                "/api/ride/" + rideId + "/start",
+                HttpMethod.PUT,
+                startRide,
+                RideResponseDTO.class);
+        assertEquals(HttpStatus.OK, startedRideDTO.getStatusCode());
+
+        //Passenger Presses Panic Button
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        Panic panic = new Panic(new Ride(), "Driving Too Fast");
+        HttpEntity<Panic> panicEntity = new HttpEntity<>(panic, headers);
+        ResponseEntity<PanicDTO> panicResponse = restTemplate.exchange(
+                "/api/ride/" + rideId + "/panic",
+                HttpMethod.PUT,
+                panicEntity,
+                PanicDTO.class);
+        PanicDTO panicDTO = panicResponse.getBody();
+        assertEquals(HttpStatus.OK, panicResponse.getStatusCode());
+        assertEquals(panicDTO.getReason(), panic.getReason());
+        // Passenger Panic WebSocket
+        verify(simpMessagingTemplate, times(1)).convertAndSend(eq("/ride-panic/"+ID_DRIVER), any(RideResponseDTO.class));
+    }
+
+    @Test
+    @DisplayName("Driver presses panic")
+    public void driverPanicShouldNotifyPassenger() {
+
+        // Create Instant Ride Request
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        HttpEntity<RideDTO> entity = new HttpEntity<>(requestRide, headers);
+        ResponseEntity<RideResponseDTO> response = restTemplate.exchange(
+                "/api/ride",
+                HttpMethod.POST,
+                entity,
+                RideResponseDTO.class);
+        assertNotNull(response.getBody());
+        RideResponseDTO rideResponse = response.getBody();
+        Long rideId = rideResponse.getId();
+        assertEquals(1, rideResponse.getLocations().size());
+        assertEquals(1, rideResponse.getPassengers().size());
+        assertEquals(VehicleEnum.STANDARD, rideResponse.getVehicleType());
+        assertEquals(RideStatus.PENDING, rideResponse.getStatus());
+        assertNotNull(rideResponse.getDriver());
+
+        // Driver Accepts Ride Request
+        headers.clear();
+        headers.add("authorization", "Bearer " + driverToken);
+        HttpEntity<Long> acceptRide = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> driverRideResponse = restTemplate.exchange(
+                "/api/ride/" + rideId + "/accept",
+                HttpMethod.PUT,
+                acceptRide,
+                RideResponseDTO.class);
+
+        assertNotNull(driverRideResponse.getBody());
+        assertEquals(HttpStatus.OK, driverRideResponse.getStatusCode());
+
+        // Driver Picked Up Passenger And Ride Started
+        HttpEntity<RideResponseDTO> startRide = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> startedRideDTO = restTemplate.exchange(
+                "/api/ride/" + rideId + "/start",
+                HttpMethod.PUT,
+                startRide,
+                RideResponseDTO.class);
+        assertEquals(HttpStatus.OK, startedRideDTO.getStatusCode());
+
+        //Passenger Presses Panic Button
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        Panic panic = new Panic(new Ride(), "Driving Too Fast");
+        HttpEntity<Panic> panicEntity = new HttpEntity<>(panic, headers);
+        ResponseEntity<PanicDTO> panicResponse = restTemplate.exchange(
+                "/api/ride/" + rideId + "/panic",
+                HttpMethod.PUT,
+                panicEntity,
+                PanicDTO.class);
+        PanicDTO panicDTO = panicResponse.getBody();
+        assertEquals(HttpStatus.OK, panicResponse.getStatusCode());
+        assertEquals(panicDTO.getReason(), panic.getReason());
+        // Driver Panic WebSocket
+        verify(simpMessagingTemplate, times(1)).convertAndSend(eq("/ride-panic/"+ID_USER), any(RideResponseDTO.class));
+    }
+
+    public void linkedPassengerWebSocket() {
+        RideDTO rideWithLinked = new RideDTO();
+        rideWithLinked = requestRide;
+        ArrayList<UserShortDTO> newLi = new ArrayList<>();
+        newLi.add(new UserShortDTO(3, "test2@email.com"));
+        rideWithLinked.setPassengers(newLi);
+        // Create Instant Ride Request
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        HttpEntity<RideDTO> entity = new HttpEntity<>(requestRide, headers);
+        ResponseEntity<RideResponseDTO> response = restTemplate.exchange(
+                "/api/ride",
+                HttpMethod.POST,
+                entity,
+                RideResponseDTO.class);
+        assertNotNull(response.getBody());
+        RideResponseDTO rideResponse = response.getBody();
+        Long rideId = rideResponse.getId();
+        assertEquals(1, rideResponse.getLocations().size());
+        assertEquals(1, rideResponse.getPassengers().size());
+        assertEquals(VehicleEnum.STANDARD, rideResponse.getVehicleType());
+        assertEquals(RideStatus.PENDING, rideResponse.getStatus());
+        assertNotNull(rideResponse.getDriver());
+
+        // Driver Accepts Ride Request
+        headers.clear();
+        headers.add("authorization", "Bearer " + driverToken);
+        HttpEntity<Long> acceptRide = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> driverRideResponse = restTemplate.exchange(
+                "/api/ride/" + rideId + "/accept",
+                HttpMethod.PUT,
+                acceptRide,
+                RideResponseDTO.class);
+        // Linked Passenger WebSocket
+        verify(simpMessagingTemplate, times(1)).convertAndSend(eq("/ride-passenger/"+3), any(RideResponseDTO.class));
+
+        assertNotNull(driverRideResponse.getBody());
+        assertEquals(HttpStatus.OK, driverRideResponse.getStatusCode());
+
+        // Driver Picked Up Passenger And Ride Started
+        HttpEntity<RideResponseDTO> startRide = new HttpEntity<>(headers);
+        ResponseEntity<RideResponseDTO> startedRideDTO = restTemplate.exchange(
+                "/api/ride/" + rideId + "/start",
+                HttpMethod.PUT,
+                startRide,
+                RideResponseDTO.class);
+        assertEquals(HttpStatus.OK, startedRideDTO.getStatusCode());
+
+        //Passenger Presses Panic Button
+        headers.clear();
+        headers.add("authorization", "Bearer " + passengerToken);
+        Panic panic = new Panic(new Ride(), "Driving Too Fast");
+        HttpEntity<Panic> panicEntity = new HttpEntity<>(panic, headers);
+        ResponseEntity<PanicDTO> panicResponse = restTemplate.exchange(
+                "/api/ride/" + rideId + "/panic",
+                HttpMethod.PUT,
+                panicEntity,
+                PanicDTO.class);
+        PanicDTO panicDTO = panicResponse.getBody();
+        assertEquals(HttpStatus.OK, panicResponse.getStatusCode());
+        assertEquals(panicDTO.getReason(), panic.getReason());
     }
 
 }
