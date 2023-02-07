@@ -31,7 +31,7 @@ public class RideSchedulingService {
     private WorkingHoursService workingHoursService;
 
 
-    public boolean areAllDriversOccupied(List<Driver> drivers, LocalDateTime scheduledTime){
+    private boolean areAllDriversOccupied(List<Driver> drivers){
         for(Driver d: drivers){
             Driver driver = driverService.findById(d.getId());
             Ride active = rideRepository.findByDriverAndStatus(driver, RideStatus.ACTIVE).orElse(null);
@@ -112,11 +112,11 @@ public class RideSchedulingService {
         List<Driver> driversWithAppropriateVehicle = onlineDrivers.stream().filter(driver -> driver.getVehicle()!=null && driver.getVehicle().getVehicleType().getType() == ride.getVehicleType())
                 .filter(driver -> driver.getVehicle().babyTransport == ride.isBabyTransport() || driver.getVehicle().babyTransport)
                 .filter(driver -> driver.getVehicle().petTransport == ride.isPetTransport() || driver.getVehicle().petTransport).toList();
-
-        List<Driver> driversWorkHours = driversWithAppropriateVehicle.stream().filter(driver -> workingHoursService.calculateWorkingHours(driver) < 8).toList();
         if(driversWithAppropriateVehicle.isEmpty()){
             throw new BadRequestException("No driver is online with appropriate vehicle.");
-        }if(areAllDriversOccupied(onlineDrivers, ride.getScheduledTime()) || driversWorkHours.isEmpty()){
+        }
+        List<Driver> driversWorkHours = driversWithAppropriateVehicle.stream().filter(driver -> workingHoursService.calculateWorkingHours(driver) < 8).toList();
+        if(areAllDriversOccupied(onlineDrivers) || driversWorkHours.isEmpty()){
             // no drivers are available and all have scheduled rides
             throw new BadRequestException("No driver is available at the moment.");
         }
